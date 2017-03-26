@@ -8,16 +8,15 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.onsoftwares.becoolbro.R;
+import com.onsoftwares.becoolbro.components.GifView;
 
 /**
  * A simple {@link Fragment} subclass.
  * create an instance of this fragment.
  */
-public class TestFragment1 extends BaseFragment {
+public class BreathFragment extends BaseFragment {
 
-
-
-    public TestFragment1() {
+    public BreathFragment() {
         // Required empty public constructor
     }
 
@@ -27,10 +26,14 @@ public class TestFragment1 extends BaseFragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_test_fragment1, container, false);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View rootView = inflater.inflate(R.layout.fragment_breath, container, false);
+
+        GifView gifView = (GifView) rootView.findViewById(R.id.viewGif);
+        gifView.setImageResource(R.drawable.breath);
+
+
+        return rootView;
     }
 
 }

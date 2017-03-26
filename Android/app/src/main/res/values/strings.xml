@@ -8,4 +8,13 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+
+
+    <!-- Menu -->
+    <string name="zen_messages_menu">Zen Messages</string>
+    <string name="zen_breath_menu">Zen Breathing</string>
+
+    <!-- Breath fragment -->
+    <string name="breath_message">To get zen one should breath deep and calmly.\nSync your breath with the animation below:</string>
+
 </resources>
