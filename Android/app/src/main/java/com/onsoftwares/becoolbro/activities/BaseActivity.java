@@ -14,7 +14,6 @@ import com.onsoftwares.becoolbro.R;
 public class BaseActivity extends AppCompatActivity {
 
     protected Toolbar toolbar;
-    protected FloatingActionButton fab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

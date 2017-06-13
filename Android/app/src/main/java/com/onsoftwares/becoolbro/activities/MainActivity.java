@@ -19,6 +19,9 @@ import com.onsoftwares.becoolbro.fragments.ZenImagesFragment;
 
 public class MainActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener {
 
+    private FloatingActionButton fab;
+    private NavigationView mNavigationView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,9 +44,9 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
-
+        mNavigationView = (NavigationView) findViewById(R.id.nav_view);
+        mNavigationView.setNavigationItemSelectedListener(this);
+        mNavigationView.setCheckedItem(R.id.zen_breath_menu);
 
         getSupportFragmentManager().beginTransaction().add(R.id.main_fragment_holder, new BreathFragment()).commit();
 
@@ -95,8 +98,23 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             ft.replace(R.id.main_fragment_holder, new BreathFragment()).commit();
         }
 
+        // Handle the FAB when fragment changes
+        handleFabOnNavigationSelected(item);
+
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void handleFabOnNavigationSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        switch(id) {
+            case R.id.zen_messages_menu:
+                fab.setVisibility(View.VISIBLE);
+                break;
+            case R.id.zen_breath_menu:
+                fab.setVisibility(View.INVISIBLE);
+        }
     }
 }
