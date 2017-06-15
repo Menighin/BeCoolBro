@@ -86,3 +86,6 @@ msbuild.wrn
 
 # Visual Studio 2015
 .vs/
+
+# Config informations should not go to repo
+*sensitiveConfig.json

@@ -7,12 +7,14 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.EntityFrameworkCore.Infrastructure;
 using ZenSource.Models;
 using ZenSource.Repositories;
 using AutoMapper;
 using ZenSource.ViewModel;
 using ZenSource.Converters;
+using Microsoft.EntityFrameworkCore;
+using System.IO;
+using Newtonsoft.Json;
 
 namespace ZenSource
 {
@@ -36,9 +38,33 @@ namespace ZenSource
             // Add framework services.
             services.AddMvc();
 
-            services.AddEntityFramework()
-                .AddEntityFrameworkSqlServer()
-                .AddDbContext<ZenContext>();
+
+            try
+            {
+                using (var stream = new FileStream(@"sensitiveConfig.json", FileMode.Open))
+                using (StreamReader r = new StreamReader(stream))
+                {
+                    string json = r.ReadToEnd();
+                    try
+                    {
+                        var jsonDict = JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
+                        services.AddDbContext<ZenContext>(options => {
+                            options.UseNpgsql(jsonDict["ConnectionString"]);
+                        });
+                    }
+                    catch (Exception e)
+                    {
+                        throw (new Exception(@"The property 'ConnectionString' was not found on the 'sensitiveConfig.json' file"));
+                    }
+
+                }
+            }
+            catch (FileNotFoundException e)
+            {
+                throw (new Exception(@"The file 'sensitiveConfig.json' was not found at the root of the project."));
+            }
+
+            
 
             services.AddTransient<ZenContextSeedData>();
             services.AddScoped<ZenQuotesRepository>();
