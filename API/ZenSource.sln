@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26403.7
+VisualStudioVersion = 15.0.26430.13
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZenSource", "ZenSource\ZenSource.csproj", "{3FF85F5C-243A-47D8-BFBD-BE417498BA74}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZenSourceAPI", "ZenSource\ZenSourceAPI.csproj", "{3FF85F5C-243A-47D8-BFBD-BE417498BA74}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZenSourceWeb", "ZenSourceWeb\ZenSourceWeb.csproj", "{79C68F44-A121-4510-AD58-B95BCBD8951D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{3FF85F5C-243A-47D8-BFBD-BE417498BA74}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3FF85F5C-243A-47D8-BFBD-BE417498BA74}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3FF85F5C-243A-47D8-BFBD-BE417498BA74}.Release|Any CPU.Build.0 = Release|Any CPU
+		{79C68F44-A121-4510-AD58-B95BCBD8951D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{79C68F44-A121-4510-AD58-B95BCBD8951D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{79C68F44-A121-4510-AD58-B95BCBD8951D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{79C68F44-A121-4510-AD58-B95BCBD8951D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -89,3 +89,5 @@ msbuild.wrn
 
 # Config informations should not go to repo
 *sensitiveConfig.json
+
+*/node_modules/
