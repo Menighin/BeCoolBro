@@ -12,16 +12,31 @@ namespace ZenSource.Repositories
     {
         private ZenContext _context;
 
+        private readonly int PAGE_SIZE = 2;
+
         public ZenQuotesRepository(ZenContext context)
         {
             _context = context;
         }
 
-        public IEnumerable<ZenQuote> GetAll()
+        public IEnumerable<ZenQuote> GetAll(int? page = null)
         {
-            return _context.ZenQuotes
+            var query = _context.ZenQuotes.AsQueryable();
+
+            if (page != null)
+            {
+                int p = Convert.ToInt32(page) - 1;
+                if (p < 0) p = 0;
+                query = query
+                    .Skip(p * PAGE_SIZE)
+                    .Take(PAGE_SIZE);
+            }
+
+            query = query
                 .Include(o => o.Messages)
-                .ThenInclude(o => o.Language)
+                .ThenInclude(o => o.Language);
+
+            return query
                 .ToList();
         }
 

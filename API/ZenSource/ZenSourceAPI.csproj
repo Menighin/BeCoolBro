@@ -5,6 +5,39 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Resources\fonts\arial.ttf" />
+    <None Remove="Resources\imgs\quote_background.png" />
+    <None Remove="Resources\fonts\Cousine-Italic.png" />
+    <None Remove="Resources\fonts\Cousine.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Resources\imgs\quote_background.png">
+		<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	</Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Resources\fonts\arial.ttf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Content Include="Resources\fonts\Cousine-Italic.ttf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Content Include="Resources\fonts\Cousine.ttf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Models\POCOs\" />
+    <Folder Include="Properties\PublishProfiles\" />
     <Folder Include="Resources\fonts\" />
     <Folder Include="wwwroot\" />
   </ItemGroup>
@@ -23,6 +56,14 @@
   </ItemGroup>
   <ItemGroup>
     <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="1.0.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="Resources\fonts\arial.ttf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\imgs\quote_background.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

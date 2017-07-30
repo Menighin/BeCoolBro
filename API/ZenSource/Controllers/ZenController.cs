@@ -14,17 +14,21 @@ using System.IO;
 using SixLabors.Fonts;
 using SixLabors.Shapes;
 using System.Numerics;
+using Newtonsoft.Json;
+using Microsoft.AspNetCore.Hosting;
 
 namespace ZenSource.Controllers
 {
     [Route("api/zen")]
     public class ZenController : Controller
     {
-        private ZenQuotesRepository _repository;
+        private readonly ZenQuotesRepository _repository;
+        private readonly IHostingEnvironment _hostingEnvironment;
 
-        public ZenController(ZenQuotesRepository zenRepository)
+        public ZenController(ZenQuotesRepository zenRepository, IHostingEnvironment hostingEnvironment)
         {
             _repository = zenRepository;
+            _hostingEnvironment = hostingEnvironment;
         }
 
         /// <summary>
@@ -32,9 +36,9 @@ namespace ZenSource.Controllers
         /// </summary>
         /// <returns>Array of ZenMessageViewModels</returns>
         [HttpGet]
-        public JsonResult Get()
+        public JsonResult Get(int? page)
         {
-            var modelList = _repository.GetAll();
+            var modelList = _repository.GetAll(page);
 
             var viewModelList = Mapper.Map<IEnumerable<ZenMessageViewModel>>(modelList);
 
@@ -60,27 +64,10 @@ namespace ZenSource.Controllers
 
             var viewModel = ZenQuoteConverter.Convert(quote, l);
 
-            var quoteImage = new ZenQuoteImage(viewModel);
+            var quoteImage = new ZenQuoteImage(viewModel, _hostingEnvironment);
 
             return File(quoteImage.GetImage(), "image/png");
-        }
 
-        // POST api/values
-        [HttpPost]
-        public void Post([FromBody]string value)
-        {
-        }
-
-        // PUT api/values/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody]string value)
-        {
-        }
-
-        // DELETE api/values/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -22,27 +23,10 @@ namespace ZenSource.Models
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            try
-            {
-                using (var stream = new FileStream(@"sensitiveConfig.json", FileMode.Open))
-                using (StreamReader r = new StreamReader(stream))
-                {
-                    string json = r.ReadToEnd();
-                    try
-                    {
-                        var jsonDict = JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
-                        optionsBuilder.UseNpgsql(jsonDict["ConnectionString"]);
-                    } catch (Exception e)
-                    {
-                        throw (new Exception(@"The property 'ConnectionString' was not found on the 'sensitiveConfig.json' file"));
-                    }
-
-                    base.OnConfiguring(optionsBuilder);
-                }
-            } catch (FileNotFoundException e)
-            {
-                throw (new Exception(@"The file 'sensitiveConfig.json' was not found at the root of the project."));
-            }
+            var connectionString = Startup.Configuration.GetValue<string>("ConnectionString");
+            optionsBuilder.UseNpgsql(connectionString);
+                    
+            base.OnConfiguring(optionsBuilder);
         }
 
     }

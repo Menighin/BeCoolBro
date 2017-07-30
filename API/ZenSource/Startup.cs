@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -20,13 +21,14 @@ namespace ZenSource
 {
     public class Startup
     {
-        public static IConfigurationRoot Configuration;
+        public static IConfiguration Configuration;
 
         public Startup(IHostingEnvironment env)
         {
             var builder = new ConfigurationBuilder()
                 .SetBasePath(env.ContentRootPath)
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                .AddJsonFile("sensitiveConfig.json", optional: false, reloadOnChange: true)
                 .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
                 .AddEnvironmentVariables();
             Configuration = builder.Build();
@@ -38,36 +40,15 @@ namespace ZenSource
             // Add framework services.
             services.AddMvc();
 
-
-            try
+            var connectionString = Configuration.GetValue<string>("ConnectionString");
+            services.AddDbContext<ZenContext>(options =>
             {
-                using (var stream = new FileStream(@"sensitiveConfig.json", FileMode.Open))
-                using (StreamReader r = new StreamReader(stream))
-                {
-                    string json = r.ReadToEnd();
-                    try
-                    {
-                        var jsonDict = JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
-                        services.AddDbContext<ZenContext>(options => {
-                            options.UseNpgsql(jsonDict["ConnectionString"]);
-                        });
-                    }
-                    catch (Exception e)
-                    {
-                        throw (new Exception(@"The property 'ConnectionString' was not found on the 'sensitiveConfig.json' file"));
-                    }
-
-                }
-            }
-            catch (FileNotFoundException e)
-            {
-                throw (new Exception(@"The file 'sensitiveConfig.json' was not found at the root of the project."));
-            }
-
-            
+                options.UseNpgsql(connectionString);
+            });
 
             services.AddTransient<ZenContextSeedData>();
             services.AddScoped<ZenQuotesRepository>();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -76,15 +57,15 @@ namespace ZenSource
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
 
+            app.UseDeveloperExceptionPage();
             app.UseMvc();
-
             seeder.Seed();
 
             Mapper.Initialize(config =>
             {
                 config.CreateMap<IEnumerable<ZenQuote>, IEnumerable<ZenMessageViewModel>>().ConvertUsing<ZenQuoteConverter>();
             });
-           
+
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using ImageSharp;
+using Microsoft.AspNetCore.Hosting;
 using SixLabors.Fonts;
 using System;
 using System.Collections.Generic;
@@ -16,6 +17,7 @@ namespace ZenSource.Models
         private Image<Rgba32> _image;
         private FontCollection _fonts;
         private Font _font;
+        private Font _fontAuthor;
 
         private List<Tuple<int, int>> _fontMaps = new List<Tuple<int, int>>()
         {
@@ -26,12 +28,13 @@ namespace ZenSource.Models
             new Tuple<int, int>(30, 19)
         };
         
-        public ZenQuoteImage(ZenMessageViewModel viewModel)
+        public ZenQuoteImage(ZenMessageViewModel viewModel, IHostingEnvironment _hostingEnvironment)
         {
-            _image = Image.Load(@"Resources/imgs/quote_background.png");
+            _image = Image.Load($"{_hostingEnvironment.ContentRootPath}/Resources/imgs/quote_background.png");
 
             _fonts = new FontCollection();
-            _font = _fonts.Install(@"Resources/fonts/Cousine-Italic.ttf");
+            _font = _fonts.Install($"{_hostingEnvironment.ContentRootPath}/Resources/fonts/Cousine-Italic.ttf");
+            _fontAuthor = new Font(_fonts.Install($"{_hostingEnvironment.ContentRootPath}/Resources/fonts/Cousine.ttf"), 30);
 
             DrawText(viewModel);
 
@@ -117,9 +120,8 @@ namespace ZenSource.Models
                 authorX -= 10;
 
             // Defining the Font
-            var fontAuthor = new Font(_fonts.Install(@"Resources/fonts/Cousine.ttf"), 30);
 
-            _image.DrawText(viewModel.Author, fontAuthor, Rgba32.White, new Vector2(authorX, Y_TRANSLATE + (y++) * LINE_HEIGHT));
+            _image.DrawText(viewModel.Author, _fontAuthor, Rgba32.White, new Vector2(authorX, Y_TRANSLATE + (y++) * LINE_HEIGHT));
         }
 
     }
