@@ -16,6 +16,7 @@ using ZenSource.Converters;
 using Microsoft.EntityFrameworkCore;
 using System.IO;
 using Newtonsoft.Json;
+using Microsoft.AspNetCore.SpaServices.Webpack;
 
 namespace ZenSource
 {
@@ -65,6 +66,28 @@ namespace ZenSource
             {
                 config.CreateMap<IEnumerable<ZenQuote>, IEnumerable<ZenMessageViewModel>>().ConvertUsing<ZenQuoteConverter>();
             });
+
+            if (env.IsDevelopment())
+            {
+                //app.UseDeveloperExceptionPage();
+
+                var options = new WebpackDevMiddlewareOptions() { HotModuleReplacement = true };
+                app.UseWebpackDevMiddleware(options);
+            }
+            else
+            {
+                app.UseMvc(routes =>
+                {
+                    routes.MapRoute(
+                      name: "default",
+                      template: "{controller=Home}/{action=Index}/{id?}");
+
+                    // Setup additional routing for SPA
+                    routes.MapSpaFallbackRoute(
+                      name: "spa-fallback",
+                      defaults: new { controller = "Home", action = "Index" });
+                });
+            }
 
         }
     }
