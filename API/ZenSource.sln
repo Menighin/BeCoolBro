@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26430.13
+VisualStudioVersion = 15.0.26730.12
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ZenSourceAPI", "ZenSource\ZenSourceAPI.csproj", "{3FF85F5C-243A-47D8-BFBD-BE417498BA74}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ZenSource", "ZenSource.csproj", "{B5FE715F-AB99-4FA6-AEC1-D3B644C76DF7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,12 +11,15 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{3FF85F5C-243A-47D8-BFBD-BE417498BA74}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3FF85F5C-243A-47D8-BFBD-BE417498BA74}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3FF85F5C-243A-47D8-BFBD-BE417498BA74}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3FF85F5C-243A-47D8-BFBD-BE417498BA74}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B5FE715F-AB99-4FA6-AEC1-D3B644C76DF7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B5FE715F-AB99-4FA6-AEC1-D3B644C76DF7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B5FE715F-AB99-4FA6-AEC1-D3B644C76DF7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B5FE715F-AB99-4FA6-AEC1-D3B644C76DF7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F81C8636-F84A-4009-AA7B-98EC163F2675}
 	EndGlobalSection
 EndGlobal
