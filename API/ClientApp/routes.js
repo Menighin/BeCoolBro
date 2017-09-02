@@ -1,6 +1,6 @@
-import CounterExample from 'components/counter-example'
-import FetchData from 'components/fetch-data'
-import HomePage from 'components/home-page'
+import CounterExample from 'components/CounterExample'
+import FetchData from 'components/FetchData'
+import HomePage from './pages/Home.vue'
 
 export const routes = [
     { path: '/', component: HomePage, display: 'Home', style: 'glyphicon glyphicon-home' },
