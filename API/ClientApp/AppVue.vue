@@ -1,25 +1,24 @@
 <template>
-    <div id="app" class="container-fluid">
-        <div class="row">
-            <div class="col-sm-3">
-                <nav-menu params="route: route"></nav-menu>
-            </div>
-            <div class="col-sm-9">
+    <div id="app" class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+
+        <zen-header></zen-header>
+        
+        <main class="mdl-layout__content">
+            <div class="mdl-grid portfolio-max-width">
                 <router-view></router-view>
             </div>
-        </div>
-
+        </main>
     </div>
 
 </template>
 
 <script>
 
-import NavMenu from './components/NavMenu'
+import Header from './components/Header';
 
 export default {
     components: {
-        navMenu: NavMenu
+        zenHeader: Header
     }
 }
 </script>

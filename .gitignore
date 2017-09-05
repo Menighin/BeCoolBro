@@ -91,3 +91,7 @@ msbuild.wrn
 *sensitiveConfig.json
 
 */node_modules/
+
+*/wwwroot/dist
+*/nupkg
+*launchSettings.json

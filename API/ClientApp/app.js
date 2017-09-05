@@ -17,11 +17,4 @@ const app = new Vue({
     store,
     router,
     render: h => h(App)
-    // ...App
-})
-
-// export {
-//     app,
-//     router,
-//     store
-// }
+});
