@@ -19,7 +19,7 @@ module.exports = (env) => {
         },
         entry: {
             // vendor: ['bootstrap', 'bootstrap/dist/css/bootstrap.css', 'event-source-polyfill', 'vue', 'vuex', 'axios', 'vue-router', 'jquery'],
-            vendor: ['material-design-lite/dist/material.css', 'event-source-polyfill', 'vue', 'vuex', 'axios', 'vue-router', 'jquery', 'material-design-lite',],
+            vendor: ['material-design-lite/dist/material.grey-pink.min.css', 'event-source-polyfill', 'vue', 'vuex', 'axios', 'vue-router', 'jquery', 'material-design-lite',],
         },
         output: {
             path: path.join(__dirname, 'wwwroot', 'dist'),

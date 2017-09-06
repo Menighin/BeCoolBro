@@ -4,9 +4,7 @@
         <zen-header></zen-header>
         
         <main class="mdl-layout__content">
-            <div class="mdl-grid portfolio-max-width">
-                <router-view></router-view>
-            </div>
+            <router-view></router-view>
         </main>
     </div>
 
