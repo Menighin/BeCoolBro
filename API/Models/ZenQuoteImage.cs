@@ -1,4 +1,5 @@
 using ImageSharp;
+using ImageSharp.Formats;
 using Microsoft.AspNetCore.Hosting;
 using SixLabors.Fonts;
 using System;
@@ -16,7 +17,7 @@ namespace ZenSource.Models
 
         private Image<Rgba32> _image;
         private FontCollection _fonts;
-        private Font _font;
+        private FontFamily _font;
         private Font _fontAuthor;
 
         private List<Tuple<int, int>> _fontMaps = new List<Tuple<int, int>>()
@@ -30,11 +31,11 @@ namespace ZenSource.Models
         
         public ZenQuoteImage(ZenMessageViewModel viewModel, IHostingEnvironment _hostingEnvironment)
         {
-            _image = Image.Load($"{_hostingEnvironment.ContentRootPath}/Resources/imgs/quote_background.png");
+            _image = Image.Load($"{_hostingEnvironment.ContentRootPath}\\wwwroot\\img\\quote_background.png");
 
             _fonts = new FontCollection();
-            //_font = _fonts.Install($"{_hostingEnvironment.ContentRootPath}/Resources/fonts/Cousine-Italic.ttf");
-            _fontAuthor = new Font(_fonts.Install($"{_hostingEnvironment.ContentRootPath}/Resources/fonts/Cousine.ttf"), 30);
+            _font = _fonts.Install($"{_hostingEnvironment.ContentRootPath}\\wwwroot\\fonts\\Cousine-Italic.ttf");
+            _fontAuthor = new Font(_fonts.Install($"{_hostingEnvironment.ContentRootPath}\\wwwroot\\fonts\\Cousine.ttf"), 30);
 
             DrawText(viewModel);
 
@@ -43,8 +44,8 @@ namespace ZenSource.Models
         public Stream GetImage()
         {
             Stream output = new MemoryStream();
-            //_image.Save(output);
-            //output.Seek(0, SeekOrigin.Begin);
+            _image.Save(output, new JpegEncoder());
+            output.Seek(0, SeekOrigin.Begin);
             return output;
         }
 
