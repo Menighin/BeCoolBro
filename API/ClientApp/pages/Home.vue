@@ -1,18 +1,6 @@
 <template>
         <div class="mdl-grid portfolio-max-width">
-            <zen-card imgSrc="https://i.pinimg.com/736x/8b/d1/b8/8bd1b8b02e9cb633adb1d789dd4588c6--funny-things-funny-stuff.jpg" title="ZenCard">
-                This is a Zen Card. Use it wisely.
-            </zen-card>
-            <zen-card imgSrc="https://i.pinimg.com/736x/8b/d1/b8/8bd1b8b02e9cb633adb1d789dd4588c6--funny-things-funny-stuff.jpg" title="ZenCard">
-                This is a Zen Card. Use it wisely. 
-            </zen-card> 
-            <zen-card imgSrc="https://i.pinimg.com/736x/8b/d1/b8/8bd1b8b02e9cb633adb1d789dd4588c6--funny-things-funny-stuff.jpg" title="ZenCard">
-                This is a Zen Card. Use it wisely.
-            </zen-card>
-            <zen-card imgSrc="https://i.pinimg.com/736x/8b/d1/b8/8bd1b8b02e9cb633adb1d789dd4588c6--funny-things-funny-stuff.jpg" title="ZenCard">
-                This is a Zen Card. Use it wisely.
-            </zen-card>
-            <zen-card imgSrc="https://i.pinimg.com/736x/8b/d1/b8/8bd1b8b02e9cb633adb1d789dd4588c6--funny-things-funny-stuff.jpg" title="ZenCard">
+            <zen-card v-for="q in quotes" :img="q" title="ZenCard">
                 This is a Zen Card. Use it wisely.
             </zen-card>
         </div>
@@ -29,6 +17,17 @@
         },
         components: {
             zenCard: ZenCard
+        },
+        methods: {
+            
+        },
+        computed: {
+            quotes() {
+                return this.$store.getters.quotes;
+            }
+        },
+        created() {
+            this.$store.dispatch("fetchQuotes");
         }
     }
 </script>

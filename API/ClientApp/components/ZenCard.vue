@@ -21,8 +21,13 @@
 <script>
 
     export default {
+        computed: {
+            imgSrc() {
+                return 'data:image/png;base64,' + this.img;
+            }
+        },
         props: {
-            imgSrc: {
+            img: {
                 type: String,
                 required: true
             },
