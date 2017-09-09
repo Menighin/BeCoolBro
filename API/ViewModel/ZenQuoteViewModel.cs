@@ -6,10 +6,15 @@ using ZenSource.Models.Interfaces;
 
 namespace ZenSource.ViewModel
 {
-    public class ZenMessageViewModel : IZenDrawable
+    public class ZenQuoteViewModel : IZenDrawable
     {
         public string Message { get; set; }
         public string Author { get; set; }
         public string Language { get; set; }
+        public string Image64Encoded { get; set; }
+        public DateTime CreatedOn { get; set; }
+        public long Likes { get; set; }
+        public long Dislikes { get; set; }
+        public List<string> Tags { get; set; }
     }
 }

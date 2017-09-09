@@ -28,6 +28,10 @@
     <Content Remove="ClientApp\**" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Remove="Migrations\20170608153032_InitialDatabase.cs" />
+    <Compile Remove="Migrations\20170608153032_InitialDatabase.Designer.cs" />
+  </ItemGroup>
+  <ItemGroup>
     <Content Update="wwwroot\css\styles.css">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

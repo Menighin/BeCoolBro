@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -13,10 +13,12 @@ namespace ZenSource.Models
         public int Id { get; set; }
 
         [Required]
-        [StringLength(50, MinimumLength = 1)]
+        [MaxLength(50)]
         public string Author { get; set; }
 
-        public ICollection<ZenMessage> Messages { get; set; }
+        public ICollection<ZenMessage> ZenMessages { get; set; }
+
+        public ICollection<ZenQuoteTag> ZenQuoteTags { get; set; }
 
         [Required]
         public bool Valid { get; set; }
@@ -26,6 +28,10 @@ namespace ZenSource.Models
 
         [Required]
         public DateTime CreatedOn { get; set; }
+
+        public long Likes { get; set; }
+
+        public long Dislikes { get; set; }
 
     }
 }

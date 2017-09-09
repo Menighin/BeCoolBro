@@ -4,7 +4,7 @@
             <img class="article-image" :src="imgSrc" border="0" alt="">
         </div>
         <div class="mdl-card__title">
-            <h2 class="mdl-card__title-text">{{ title }}</h2>
+            <h2 class="mdl-card__title-text">OI</h2>
         </div>
         <div class="mdl-card__supporting-text">
             <slot></slot>
@@ -23,16 +23,12 @@
     export default {
         computed: {
             imgSrc() {
-                return 'data:image/png;base64,' + this.img;
+                return 'data:image/png;base64,' + this.zenQuote.image64Encoded;
             }
         },
         props: {
-            img: {
-                type: String,
-                required: true
-            },
-            title: {
-                type: String,
+            zenQuote: {
+                type: Object,
                 required: true
             }
         }

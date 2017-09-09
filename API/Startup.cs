@@ -61,7 +61,8 @@ namespace ZenSource
 
             Mapper.Initialize(config =>
             {
-                config.CreateMap<IEnumerable<ZenQuote>, IEnumerable<ZenMessageViewModel>>().ConvertUsing<ZenQuoteConverter>();
+                config.CreateMap<IEnumerable<ZenQuote>, IEnumerable<ZenMessageViewModel>>().ConvertUsing<ZenMessageConverter>();
+                config.CreateMap<IEnumerable<ZenQuote>, IEnumerable<ZenQuoteViewModel>>().ConvertUsing<ZenQuoteConverter>();
             });
 
             if (env.IsDevelopment())

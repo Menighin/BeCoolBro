@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
+using ZenSource.Models.Interfaces;
 using ZenSource.ViewModel;
 
 namespace ZenSource.Models
@@ -29,7 +30,7 @@ namespace ZenSource.Models
             new Tuple<int, int>(30, 19)
         };
         
-        public ZenQuoteImage(ZenMessageViewModel viewModel, IHostingEnvironment _hostingEnvironment)
+        public ZenQuoteImage(IZenDrawable drawable, IHostingEnvironment _hostingEnvironment)
         {
             _image = Image.Load($"{_hostingEnvironment.ContentRootPath}\\wwwroot\\img\\quote_background.png");
 
@@ -37,7 +38,7 @@ namespace ZenSource.Models
             _font = _fonts.Install($"{_hostingEnvironment.ContentRootPath}\\wwwroot\\fonts\\Cousine-Italic.ttf");
             _fontAuthor = new Font(_fonts.Install($"{_hostingEnvironment.ContentRootPath}\\wwwroot\\fonts\\Cousine.ttf"), 30);
 
-            DrawText(viewModel);
+            DrawText(drawable);
 
         }
 
@@ -49,7 +50,7 @@ namespace ZenSource.Models
             return output;
         }
 
-        private void DrawText(ZenMessageViewModel viewModel)
+        private void DrawText(IZenDrawable drawable)
         {
             var FONT_WIDTH = _fontMaps[0].Item2;
             var FONT_SIZE = _fontMaps[0].Item1;
@@ -59,7 +60,7 @@ namespace ZenSource.Models
             var MAX_WIDTH = 1050;
             var MAX_HEIGHT = 590;
 
-            var words = viewModel.Message.Split(' ');
+            var words = drawable.Message.Split(' ');
 
             // Find the right font size so it can fit on the specs above
             var fit = false;
@@ -115,14 +116,14 @@ namespace ZenSource.Models
 
             // Finding the position
             var authorFontWidth = 19;
-            var authorX = maxX - viewModel.Author.Length * authorFontWidth;
+            var authorX = maxX - drawable.Author.Length * authorFontWidth;
 
-            while (authorX + viewModel.Author.Length * authorFontWidth > MAX_WIDTH - X_TRANSLATE)
+            while (authorX + drawable.Author.Length * authorFontWidth > MAX_WIDTH - X_TRANSLATE)
                 authorX -= 10;
 
             // Defining the Font
 
-            _image.DrawText(viewModel.Author, _fontAuthor, Rgba32.White, new Vector2(authorX, Y_TRANSLATE + (y++) * LINE_HEIGHT));
+            _image.DrawText(drawable.Author, _fontAuthor, Rgba32.White, new Vector2(authorX, Y_TRANSLATE + (y++) * LINE_HEIGHT));
         }
 
     }

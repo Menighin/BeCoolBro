@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,31 +8,23 @@ using ZenSource.ViewModel;
 
 namespace ZenSource.Converters
 {
-    public class ZenQuoteConverter : ITypeConverter<IEnumerable<ZenQuote>, IEnumerable<ZenMessageViewModel>>
+    public class ZenQuoteConverter : ITypeConverter<IEnumerable<ZenQuote>, IEnumerable<ZenQuoteViewModel>>
     {
-        public IEnumerable<ZenMessageViewModel> Convert(IEnumerable<ZenQuote> source, IEnumerable<ZenMessageViewModel> destination, ResolutionContext context)
+        public IEnumerable<ZenQuoteViewModel> Convert(IEnumerable<ZenQuote> source, IEnumerable<ZenQuoteViewModel> destination, ResolutionContext context)
         {
             return source
-            .SelectMany(s => s.Messages
-              .Select(o => new ZenMessageViewModel
+            .SelectMany(s => s.ZenMessages
+              .Select(o => new ZenQuoteViewModel
               {
                   Message = o.Message,
                   Author = s.Author,
-                  Language = o.Language.Code
+                  Language = o.Language.Code,
+                  CreatedOn = s.CreatedOn,
+                  Likes = s.Likes,
+                  Dislikes = s.Dislikes,
+                  Tags = s.ZenQuoteTags.Select(t => t.Tag.Name).ToList()
               }))
               .ToList();
-        }
-
-        public static ZenMessageViewModel Convert(ZenQuote zenQuote, string language = "EN")
-        {
-            return zenQuote.Messages.Where(o => o.Language.Code.ToLower() == language.ToLower())
-                .Select(o => new ZenMessageViewModel
-                {
-                    Message = o.Message,
-                    Author = zenQuote.Author,
-                    Language = o.Language.Code
-                })
-                .FirstOrDefault();
         }
     }
 }

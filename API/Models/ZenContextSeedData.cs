@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -38,7 +38,7 @@ namespace ZenSource.Models
                 var quote1 = new ZenQuote()
                 {
                     Author = "Buddha",
-                    Messages = new List<ZenMessage>()
+                    ZenMessages = new List<ZenMessage>()
                     {
                         new ZenMessage()
                         {
@@ -59,7 +59,7 @@ namespace ZenSource.Models
                 var quote2 = new ZenQuote()
                 {
                     Author = "Nietzsche",
-                    Messages = new List<ZenMessage>()
+                    ZenMessages = new List<ZenMessage>()
                     {
                         new ZenMessage()
                         {
@@ -80,7 +80,7 @@ namespace ZenSource.Models
                 var quote3 = new ZenQuote()
                 {
                     Author = "Test",
-                    Messages = new List<ZenMessage>()
+                    ZenMessages = new List<ZenMessage>()
                     {
                         new ZenMessage()
                         {
@@ -99,9 +99,9 @@ namespace ZenSource.Models
                 };
 
                 _context.ZenQuotes.AddRange(quote1, quote2, quote3);
-                _context.ZenMessages.AddRange(quote1.Messages);
-                _context.ZenMessages.AddRange(quote2.Messages);
-                _context.ZenMessages.AddRange(quote3.Messages);
+                _context.ZenMessages.AddRange(quote1.ZenMessages);
+                _context.ZenMessages.AddRange(quote2.ZenMessages);
+                _context.ZenMessages.AddRange(quote3.ZenMessages);
 
                 _context.SaveChanges();
 

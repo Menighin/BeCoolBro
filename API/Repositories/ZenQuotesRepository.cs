@@ -21,7 +21,7 @@ namespace ZenSource.Repositories
 
         public IEnumerable<ZenQuote> GetAll(int? page = null)
         {
-            var query = _context.ZenQuotes.AsQueryable();
+            var query = _context.Set<ZenQuote>().AsQueryable();
 
             if (page != null)
             {
@@ -33,8 +33,10 @@ namespace ZenSource.Repositories
             }
 
             query = query
-                .Include(o => o.Messages)
-                .ThenInclude(o => o.Language);
+                .Include(o => o.ZenMessages)
+                .ThenInclude(o => o.Language)
+                .Include(o => o.ZenQuoteTags)
+                .ThenInclude(o => o.Tag);
 
             return query
                 .ToList();
@@ -44,7 +46,7 @@ namespace ZenSource.Repositories
         {
             return _context.ZenQuotes
                 .Where(o => o.Id == id)
-                .Include(o => o.Messages)
+                .Include(o => o.ZenMessages)
                 .ThenInclude(o => o.Language)
                 .FirstOrDefault();
         }

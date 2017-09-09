@@ -52,7 +52,7 @@ namespace ZenSource.Controllers
 
             if (l == null || l.Length == 0)
                 return Json(Mapper.Map<IEnumerable<ZenMessageViewModel>>(new List<ZenQuote>() { quote }));
-            return Json(ZenQuoteConverter.Convert(quote, l));
+            return Json(ZenMessageConverter.Convert(quote, l));
         }
 
         [HttpGet("image/{id}")]
@@ -62,7 +62,7 @@ namespace ZenSource.Controllers
 
             if (l == null || l.Length == 0) l = "EN";
 
-            var viewModel = ZenQuoteConverter.Convert(quote, l);
+            var viewModel = ZenMessageConverter.Convert(quote, l);
 
             var quoteImage = new ZenQuoteImage(viewModel, _hostingEnvironment);
 
@@ -71,25 +71,23 @@ namespace ZenSource.Controllers
         }
 
         [HttpGet("Test")]
-        public IActionResult Test(string l)
+        public IActionResult Test(int? page, string l)
         {
-            var quote1 = _repository.GetById(1);
-            var quote2 = _repository.GetById(2);
 
-            if (l == null || l.Length == 0) l = "EN";
+            var modelList = _repository.GetAll(page);
 
-            var viewModel1 = ZenQuoteConverter.Convert(quote1, l);
-            var viewModel2 = ZenQuoteConverter.Convert(quote2, l);
+            if (l == null)
+                l = "en";
 
-            var quoteImage1 = new ZenQuoteImage(viewModel1, _hostingEnvironment).GetImage();
-            var quoteImage2 = new ZenQuoteImage(viewModel2, _hostingEnvironment).GetImage();
+            var viewModelList = Mapper.Map<IEnumerable<ZenQuoteViewModel>>(modelList).Where(q => q.Language.Equals(l, StringComparison.OrdinalIgnoreCase)).ToList();
+            foreach (var v in viewModelList)
+            {
+                var img = new ZenQuoteImage(v, _hostingEnvironment).GetImage();
+                var base64 = Convert.ToBase64String(ReadStream(img));
+                v.Image64Encoded = base64;
+            }
 
-            var img1 = Convert.ToBase64String(ReadStream(quoteImage1));
-            var img2 = Convert.ToBase64String(ReadStream(quoteImage2));
-
-            var jsonResult = Json(new object[] { img1, img2 });
-
-            return jsonResult;
+            return Json(viewModelList);
 
         }
 

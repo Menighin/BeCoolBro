@@ -14,17 +14,16 @@ namespace ZenSource.Models
 
         public ZenContext(DbContextOptions<ZenContext> options) : base(options)
         {
-            Database.EnsureCreated();
         }
 
         public ZenContext()
         {
-            Database.EnsureCreated();
         }
 
         public DbSet<ZenQuote> ZenQuotes { get; set; }
         public DbSet<ZenMessage> ZenMessages { get; set; }
         public DbSet<Language> Languages { get; set; }
+        public DbSet<Tag> Tags { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -32,6 +31,22 @@ namespace ZenSource.Models
             optionsBuilder.UseNpgsql(connectionString);
                     
             base.OnConfiguring(optionsBuilder);
+        }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<ZenQuoteTag>()
+                .HasKey(t => new { t.ZenQuoteId, t.TagId });
+
+            modelBuilder.Entity<ZenQuoteTag>()
+                .HasOne(zqt => zqt.ZenQuote)
+                .WithMany(z => z.ZenQuoteTags)
+                .HasForeignKey(zqt => zqt.ZenQuoteId);
+
+            modelBuilder.Entity<ZenQuoteTag>()
+                .HasOne(zqt => zqt.Tag)
+                .WithMany(z => z.ZenQuoteTags)
+                .HasForeignKey(zqt => zqt.TagId);
         }
 
     }
