@@ -16,6 +16,7 @@ namespace ZenSource.Converters
             .SelectMany(s => s.ZenMessages
               .Select(o => new ZenQuoteViewModel
               {
+                  Id = o.Id,
                   Message = o.Message,
                   Author = s.Author,
                   Language = o.Language.Code,

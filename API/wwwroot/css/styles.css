@@ -3,7 +3,7 @@
     background-image: url(../img/header-bg.jpg);
   }
   
-  .portfolio-header .mdl-layout__header-row {
+.portfolio-header .mdl-layout__header-row {
     padding: 0;
     -webkit-justify-content: center;
         -ms-flex-pack: center;
@@ -144,16 +144,6 @@
     top: -4px;
   }
   
-  .demo-card-event > .mdl-card__actions {
-      -webkit-align-items: center;
-          -ms-flex-align: center;
-              align-items: center;
-      box-sizing: border-box;
-      display: -webkit-flex;
-      display: -ms-flexbox;
-      display: flex;
-  }
-  
   .portfolio-contact .mdl-textfield {
     width: 100%;
   }
@@ -167,16 +157,3 @@
     background-image: url(images/footer-background.png);
     background-size: cover;
   }
-
-.mdl-card__actions {
-	display: flex;
-	box-sizing:border-box;
-	align-items: center;
-}
-
-.mdl-card__actions > .mdl-button--icon {
-	margin-right: 3px;
-    margin-left: 3px;
-    color: #ff4081;
-}
-  

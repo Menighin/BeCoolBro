@@ -15,6 +15,10 @@ sync(store, router)
 
 Vue.use(VueResource);
 
+Vue.filter('tag', function(value) {
+    return '#' + value;
+});
+
 const app = new Vue({
     el: '#app',
     store,

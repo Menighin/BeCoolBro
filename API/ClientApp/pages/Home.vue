@@ -1,8 +1,6 @@
 <template>
         <div class="mdl-grid portfolio-max-width">
-            <zen-card v-for="q in quotes" :zenQuote="q">
-                This is a Zen Card. Use it wisely.
-            </zen-card>
+            <zen-card v-for="q in quotes" :zenQuote="q" :key="q.id"> </zen-card>
         </div>
 </template>
 
