@@ -19,6 +19,18 @@ Vue.filter('tag', function(value) {
     return '#' + value;
 });
 
+Vue.filter('zenLikes', function(value) {
+    var n = parseInt(value);
+    if (isNaN(n) || n <= 999) return value;
+
+    if (n >= 1000)
+        return (n / 1000).toFixed(2) + "K";
+    else if (n >= 1000000)
+        return (n / 1000000).toFixed(2) + "M";
+
+    return 'oops!';
+});
+
 const app = new Vue({
     el: '#app',
     store,

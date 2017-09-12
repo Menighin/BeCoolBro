@@ -16,12 +16,14 @@
             <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect mdl-button--accent" href="portfolio-example01.html">Compartilhar</a>
             <div class="mdl-layout-spacer"></div>
             <div class="zen-vote">
-    	        <button class="mdl-button mdl-button--icon mdl-button--colored"><i class="fa fa-thumbs-up"></i></button>
-                <span>1M</span>
+    	        <button class="mdl-button mdl-button--icon mdl-button--colored" :disabled="rate === 'like'" :class="{ rated: rate === 'like' }"
+                    @click="() => { rateCard('like') }"><i class="fa fa-thumbs-up"></i></button>
+                <span>{{ zenQuote.likes | zenLikes }}</span>
             </div>
             <div class="zen-vote">
-                <button class="mdl-button mdl-button--icon mdl-button--colored"><i class="fa fa-thumbs-down"></i></button>
-                <span>1.3K</span>
+                <button class="mdl-button mdl-button--icon mdl-button--colored" :disabled="rate === 'dislike'" :class="{ rated: rate === 'dislike' }"
+                    @click="() => { rateCard('dislike') }"><i class="fa fa-thumbs-down"></i></button>
+                <span>{{ zenQuote.dislikes | zenLikes }}</span>
             </div>
         </div>
     </div>
@@ -30,6 +32,31 @@
 <script>
 
     export default {
+        data() {
+            return {
+                rate: ''
+            };
+        },
+        methods: {
+            rateCard(action) {
+                var putAction = { id: this.zenQuote.id, dislike: 0, like: 0 };
+                // Decreasing in case it was already incresed
+                if (this.rate === 'like' && action != this.rate) {
+                    this.zenQuote.likes--;
+                    putAction.like = -1;
+                } else if (this.rate === 'dislike' && action != this.rate) {
+                    this.zenQuote.dislikes--;
+                    putAction.dislike = -1;
+                }
+
+                if (action === 'like') { this.zenQuote.likes++; putAction.like = 1; }
+                else if (action === 'dislike') { this.zenQuote.dislikes++; putAction.dislike = 1; }
+
+                this.rate = action;
+
+                this.$store.dispatch('rateQuote', putAction);
+            }
+        },
         computed: {
             imgData() {
                 return 'data:image/png;base64,' + this.zenQuote.image64Encoded;
@@ -104,8 +131,11 @@
     }
 
     .mdl-card__actions .mdl-button--icon {
+        margin: 0 auto;
+    }
+
+    .mdl-button--icon.rated {
         color: #ff4081;
-        margin-left: 2px;
     }
 
     .zen-vote {
@@ -113,6 +143,7 @@
         font-size: 11px;
         color: #aaa;
         position: relative;
+        margin: 0 3px;
     }
 
     .zen-vote > button, .zen-vote > span {

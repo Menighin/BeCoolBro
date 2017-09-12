@@ -16,6 +16,7 @@ using SixLabors.Shapes;
 using System.Numerics;
 using Newtonsoft.Json;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 
 namespace ZenSource.Controllers
 {
@@ -70,10 +71,9 @@ namespace ZenSource.Controllers
 
         }
 
-        [HttpGet("Test")]
-        public IActionResult Test(int? page, string l)
+        [HttpGet("images")]
+        public IActionResult Images(int? page, string l)
         {
-
             var modelList = _repository.GetAll(page);
 
             if (l == null)
@@ -89,6 +89,21 @@ namespace ZenSource.Controllers
 
             return Json(viewModelList);
 
+        }
+
+        [HttpPut("{id}/rate")]
+        public bool Rate(int id, [FromBody] Dictionary<string, int> data)
+        {
+            try
+            {
+                _repository.UpdateRate(data["id"], data["like"], data["dislike"]);
+            }
+            catch (Exception e)
+            {
+                return false;
+            }
+
+            return true;
         }
 
         private byte[] ReadStream(Stream stream, int initialLength = 0)

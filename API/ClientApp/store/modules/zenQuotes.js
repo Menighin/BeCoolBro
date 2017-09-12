@@ -15,7 +15,7 @@ const mutations = {
 
 const actions = {
     fetchQuotes({ commit }) {
-        Vue.http.get('/api/zen/Test')
+        Vue.http.get('/api/zen/images')
             .then((response) => {
                 return response.json();
             })
@@ -27,6 +27,9 @@ const actions = {
                 console.log('Error: ' + error.statusText);
                 console.log(error);
             }));
+    },
+    rateQuote({ commit }, rate ) {
+        Vue.http.put('/api/zen/' + rate.id + '/rate', rate );
     }
 };
 
