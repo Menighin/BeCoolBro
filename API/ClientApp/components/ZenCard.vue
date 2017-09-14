@@ -17,12 +17,12 @@
             <div class="mdl-layout-spacer"></div>
             <div class="zen-vote">
     	        <button class="mdl-button mdl-button--icon mdl-button--colored" :disabled="rate === 'like'" :class="{ rated: rate === 'like' }"
-                    @click="() => { rateCard('like') }"><i class="fa fa-thumbs-up"></i></button>
+                    @click="() => { rateCard('like') }"><i class="material-icons">thumb_up</i></button>
                 <span>{{ zenQuote.likes | zenLikes }}</span>
             </div>
             <div class="zen-vote">
                 <button class="mdl-button mdl-button--icon mdl-button--colored" :disabled="rate === 'dislike'" :class="{ rated: rate === 'dislike' }"
-                    @click="() => { rateCard('dislike') }"><i class="fa fa-thumbs-down"></i></button>
+                    @click="() => { rateCard('dislike') }"><i class="material-icons">thumb_down</i></button>
                 <span>{{ zenQuote.dislikes | zenLikes }}</span>
             </div>
         </div>

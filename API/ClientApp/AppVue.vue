@@ -6,36 +6,38 @@
         <main class="mdl-layout__content">
             <router-view></router-view>
 
-            <div class="mdl-sheet__container">
-                <div class="mdl-sheet mdl-shadow--2dp" :class="{ 'mdl-sheet--opened': fabOpened}" @click="fabOpened = !fabOpened">
+            <div class="mdl-sheet__container" :class="{ 'mdl-sheet-container--opened': fabOpened }">
+                <div class="mdl-sheet mdl-shadow--2dp" :class="{ 'mdl-sheet--opened': fabOpened}" @click="fabOpened = true">
                     <i class="material-icons mdl-sheet__icon">add</i>
                     
                     <div class="mdl-sheet__content">
-                        <div class="mdl-list">
-                        <div class="mdl-list__item">
-                            <span class="mdl-list__item-primary-content">
-                            <i class="material-icons mdl-list__item-avatar">person</i>
-                            <span>Bryan Cranston</span>
-                            </span>
-                            <a class="mdl-list__item-secondary-action" href="#"><i class="material-icons">add</i></a>
-                        </div>
-                        <div class="mdl-list__item">
-                            <span class="mdl-list__item-primary-content">
-                            <i class="material-icons mdl-list__item-avatar">person</i>
-                            <span>Aaron Paul</span>
-                            </span>
-                            <a class="mdl-list__item-secondary-action" href="#"><i class="material-icons">add</i></a>
-                        </div>
-                        <div class="mdl-list__item">
-                            <span class="mdl-list__item-primary-content">
-                            <i class="material-icons mdl-list__item-avatar">person</i>
-                            <span>Bob Odenkirk</span>
-                            </span>
-                            <span class="mdl-list__item-secondary-content">
-                            <a class="mdl-list__item-secondary-action" href="#"><i class="material-icons">star</i></a>
-                            </span>
-                        </div>
-                        </div>
+                        <div class="close-insert" @click="closeInsert"><i class="material-icons">close</i></div>
+                        <zen-insert></zen-insert>
+                        <!-- <div class="mdl-list">
+                            <div class="mdl-list__item">
+                                <span class="mdl-list__item-primary-content">
+                                <i class="material-icons mdl-list__item-avatar">person</i>
+                                <span>Bryan Cranston</span>
+                                </span>
+                                <a class="mdl-list__item-secondary-action" href="#"><i class="material-icons">add</i></a>
+                            </div>
+                            <div class="mdl-list__item">
+                                <span class="mdl-list__item-primary-content">
+                                <i class="material-icons mdl-list__item-avatar">person</i>
+                                <span>Aaron Paul</span>
+                                </span>
+                                <a class="mdl-list__item-secondary-action" href="#"><i class="material-icons">add</i></a>
+                            </div>
+                            <div class="mdl-list__item">
+                                <span class="mdl-list__item-primary-content">
+                                <i class="material-icons mdl-list__item-avatar">person</i>
+                                <span>Bob Odenkirk</span>
+                                </span>
+                                <span class="mdl-list__item-secondary-content">
+                                <a class="mdl-list__item-secondary-action" href="#"><i class="material-icons">star</i></a>
+                                </span>
+                            </div>
+                        </div> -->
                     </div>
                 </div>
             </div>
@@ -48,6 +50,7 @@
 <script>
 
 import Header from './components/Header';
+import InsertQuote from './components/InsertQuote';
 
 export default {
     data() {
@@ -55,10 +58,16 @@ export default {
             fabOpened: false
         };
     },
+    methods: {
+        closeInsert(event) {
+            event.stopPropagation();
+            this.fabOpened = false;
+        }
+    },
     components: {
-        zenHeader: Header
+        zenHeader: Header,
+        zenInsert: InsertQuote
     }
-    //https://codepen.io/anon/pen/VMwyay?editors=0010
 }
 </script>
 
@@ -81,17 +90,25 @@ export default {
                 transform: rotate(0deg);
     }
 
+    .mdl-sheet-container--opened {
+        position: absolute;
+        right: 0;
+        bottom: 0;
+        width: 100%;
+        height: 100%;
+    }
+    
     .mdl-sheet {
         position: absolute;
         right: 0;
         bottom: 0;
-        background: #FF5722;
+        background: #ff4081;
         width: 60px;
         height: 60px;
         border-radius: 50%;
         cursor: pointer;
-        -webkit-transition: all 600ms;
-        transition: all 600ms;
+        -webkit-transition: all 180ms;
+        transition: all 180ms;
     }
     .mdl-sheet .mdl-sheet__content {
         display: none;
@@ -111,20 +128,30 @@ export default {
     }
 
     .mdl-sheet--opened {
-        background: #fff;
+        background: #ff4081;
         color: #263238;
         border-radius: 2px;
         width: 250px;
         height: auto;
         min-height: 150px;
         overflow-y: auto;
-        transform: translate(-50%, -50%);
+        transform: translate(0%, 0%);
+        height: 100%;
+        width: 100%;
+        cursor: default;
     }
     .mdl-sheet--opened .mdl-sheet__icon {
         display: none;
     }
     .mdl-sheet--opened .mdl-sheet__content {
         display: block;
+    }
+
+    .close-insert {
+        color: white;
+        cursor: pointer;
+        float: right;
+        padding: 10px;
     }
 
 </style>
