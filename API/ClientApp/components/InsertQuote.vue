@@ -7,11 +7,43 @@
 				<label class="mdl-textfield__label" for="author">Author</label>
 				<span class="mdl-textfield__error">Only alphabet and no spaces, please!</span>
 			</div>
+            <input-combo 
+                textName="msg1" 
+                textLabel="Message" 
+                selectName="language1" 
+                selectLabel="Language"
+                :options="languages"></input-combo>
         </form>
     </div>
 </template>
 
-<style scoped>
+<script>
+
+    import InputCombo from './form/InputCombo';
+
+    export default {
+        components: {
+            inputCombo: InputCombo
+        },
+        created() {
+            this.$store.dispatch('fetchLanguages');
+        },
+        computed: {
+            languages() {
+                let l = this.$store.getters.languages;
+                let result = [{ label: null, value: null }];
+                l.forEach((v) => {
+                    result.push({ label: v.description, value: v.id });
+                });
+                console.log(result);
+                return result;
+            }
+        }
+    };
+
+</script>
+
+<style>
 
     .zen-insert {
         padding: 10px 30px;

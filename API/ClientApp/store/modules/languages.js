@@ -1,40 +1,37 @@
 import Vue from 'vue';
 
 const state = {
-    zenQuotes: []
+    languages: []
 };
 
 const mutations = {
-    setQuotes(state, quotes) {
-        state.zenQuotes = quotes;
+    setLanguages(state, languages) {
+        state.languages = languages;
     },
-    addQuotes(state, quotes) {
-        state.zenQuotes = state.zenQuotes.concat(quotes)
+    addLanguages(state, languages) {
+        state.languages = state.languages.concat(languages)
     }
 };
 
 const actions = {
-    fetchQuotes({ commit }) {
-        Vue.http.get('/api/zen/images')
+    fetchLanguages({ commit }) {
+        Vue.http.get('/api/zen/languages')
             .then((response) => {
                 return response.json();
             })
             .then(json => {
-                commit('setQuotes', json);
+                commit('setLanguages', json);
             })
             .catch((error => {
                 console.log('Error: ' + error.statusText);
                 console.log(error);
             }));
-    },
-    rateQuote({ commit }, rate ) {
-        Vue.http.put('/api/zen/' + rate.id + '/rate', rate );
     }
 };
 
 const getters = {
-    quotes() {
-        return state.zenQuotes;
+    languages() {
+        return state.languages;
     }
 };
 
