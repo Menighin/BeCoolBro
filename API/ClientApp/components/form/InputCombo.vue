@@ -1,10 +1,9 @@
 <template>
     <div class="mdl-grid mdl-grid--no-spacing">
-        <div class="mdl-cell mdl-cell--2-col" :class="{ 'mdl-selectfield mdl-js-selectfield mdl-selectfield--floating-label' : options.length > 0 }">
-            <select class="" :class="{ 'mdl-selectfield__select' : options.length > 0 }" :name="selectName">
-                <option v-for="o in options" :key="o.value" :value="o.value">{{ o.label }}</option>
+        <div class="mdl-cell mdl-cell--2-col">
+            <select :name="selectName" @change="changeLanguage">
+                <option v-for="o in validOptions" :key="o.value" :value="o.value">{{ o.label }}</option>
             </select>
-            <label class="mdl-selectfield__label">{{ selectLabel }}</label>
         </div>
         <div class="mdl-cell mdl-cell--10-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
             <input class="mdl-textfield__input" type="text" :name="textName" />
@@ -17,14 +16,34 @@
 
     export default {
         computed: {
+            validOptions() {
+                console.log(this.negativeOptions);
+                let r = [];
+                for (let i = 0; i < this.options.length; i++) {
+                    let v = this.options[i];
 
+                    console.log(this.negativeOptions);
+                    console.log('Contains ' + v.value);
+                    console.log('----------------------');
+                    if (this.negativeOptions.indexOf(v.value.toString()) == -1)
+                        r.push(v);
+                }
+                return r;
+            }
+        },
+        methods: {
+            changeLanguage(evt) {
+                this.$emit('changeLanguage', this.index, evt.target.value)
+            }
         },
         props: {
+            index: Number,
             textName: String,
             textLabel: String,
             selectName: String,
             selectLabel: String,
-            options: Array
+            options: Array,
+            negativeOptions: Array
         }
     };
 

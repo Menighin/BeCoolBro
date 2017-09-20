@@ -13,31 +13,6 @@
                     <div class="mdl-sheet__content">
                         <div class="close-insert" @click="closeInsert"><i class="material-icons">close</i></div>
                         <zen-insert></zen-insert>
-                        <!-- <div class="mdl-list">
-                            <div class="mdl-list__item">
-                                <span class="mdl-list__item-primary-content">
-                                <i class="material-icons mdl-list__item-avatar">person</i>
-                                <span>Bryan Cranston</span>
-                                </span>
-                                <a class="mdl-list__item-secondary-action" href="#"><i class="material-icons">add</i></a>
-                            </div>
-                            <div class="mdl-list__item">
-                                <span class="mdl-list__item-primary-content">
-                                <i class="material-icons mdl-list__item-avatar">person</i>
-                                <span>Aaron Paul</span>
-                                </span>
-                                <a class="mdl-list__item-secondary-action" href="#"><i class="material-icons">add</i></a>
-                            </div>
-                            <div class="mdl-list__item">
-                                <span class="mdl-list__item-primary-content">
-                                <i class="material-icons mdl-list__item-avatar">person</i>
-                                <span>Bob Odenkirk</span>
-                                </span>
-                                <span class="mdl-list__item-secondary-content">
-                                <a class="mdl-list__item-secondary-action" href="#"><i class="material-icons">star</i></a>
-                                </span>
-                            </div>
-                        </div> -->
                     </div>
                 </div>
             </div>
