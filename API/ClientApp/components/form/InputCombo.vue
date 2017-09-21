@@ -2,7 +2,7 @@
     <div class="mdl-grid mdl-grid--no-spacing">
         <div class="mdl-cell mdl-cell--2-col">
             <select :name="selectName" @change="changeLanguage">
-                <option v-for="o in validOptions" :key="o.value" :value="o.value">{{ o.label }}</option>
+                <option v-for="o in options" :key="o.value" :value="o.value">{{ o.label }}</option>
             </select>
         </div>
         <div class="mdl-cell mdl-cell--10-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
@@ -15,22 +15,6 @@
 <script>
 
     export default {
-        computed: {
-            validOptions() {
-                console.log(this.negativeOptions);
-                let r = [];
-                for (let i = 0; i < this.options.length; i++) {
-                    let v = this.options[i];
-
-                    console.log(this.negativeOptions);
-                    console.log('Contains ' + v.value);
-                    console.log('----------------------');
-                    if (this.negativeOptions.indexOf(v.value.toString()) == -1)
-                        r.push(v);
-                }
-                return r;
-            }
-        },
         methods: {
             changeLanguage(evt) {
                 this.$emit('changeLanguage', this.index, evt.target.value)

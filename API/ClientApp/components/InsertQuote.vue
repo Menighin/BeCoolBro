@@ -8,7 +8,7 @@
 				<span class="mdl-textfield__error">Only alphabet and no spaces, please!</span>
 			</div>
             <div class="mdl-grid mdl-grid--no-spacing" v-for="(m, i) in messages" :key="i">
-                <div class="mdl-cell mdl-cell--11-col">
+                <div class="mdl-cell" :class="{ 'mdl-cell--11-col':  i == messages.length - 1, 'mdl-cell--12-col': i != messages.length - 1 || messages.length >= languages.length}">
                     <input-combo 
                         :index="i"
                         textName="msg1" 
@@ -16,13 +16,17 @@
                         selectName="language1" 
                         selectLabel="Language"
                         :options="languages"
-                        :negativeOptions="messages"
                         @changeLanguage="updateLanguages"></input-combo>
                 </div>
-                <div class="mdl-cell mdl-cell--1-col">
-                    <button @click="messages.push(null)" class="mdl-button mdl-button--icon"><i class="material-icons">add</i></button>
+                <div class="mdl-cell mdl-cell--1-col" v-if="i == messages.length - 1 && messages.length < languages.length">
+                    <button @click="addMessage" class="mdl-button mdl-button--icon"><i class="material-icons">add</i></button>
                 </div>
             </div>
+
+            <div class="mdl-grid mdl-grid--no-spacing">
+                <tag-input class="mdl-cell mdl-cell--2-col" v-for="t in tags" :key="t.id">{{ t.label }}</tag-input>
+            </div>
+            
         </form>
     </div>
 </template>
@@ -30,6 +34,7 @@
 <script>
 
     import InputCombo from './form/InputCombo';
+    import TagInput from './form/TagInput';
 
     export default {
         data() {
@@ -40,13 +45,19 @@
         methods: {
             updateLanguages(i, language) {
                 this.messages[i] = language;
+            },
+            addMessage() {
+                if (this.messages.length < this.languages.length)
+                    this.messages.push(null);
             }
         },
         components: {
-            inputCombo: InputCombo
+            inputCombo: InputCombo,
+            tagInput: TagInput
         },
         created() {
             this.$store.dispatch('fetchLanguages');
+            this.$store.dispatch('fetchTags');
         },
         computed: {
             languages() {
@@ -54,6 +65,14 @@
                 let result = [];
                 l.forEach((v) => {
                     result.push({ label: v.description, value: v.id });
+                });
+                return result;
+            },
+            tags() {
+                let t = this.$store.getters.tags;
+                let result = [];
+                t.forEach((v) => {
+                    result.push({ label: v.name, value: v.id, color: v.color });
                 });
                 return result;
             }

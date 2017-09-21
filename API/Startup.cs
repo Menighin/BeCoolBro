@@ -49,6 +49,7 @@ namespace ZenSource
             services.AddTransient<ZenContextSeedData>();
             services.AddScoped<ZenQuotesRepository>();
             services.AddScoped<LanguagesRepository>();
+            services.AddScoped<TagsRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
