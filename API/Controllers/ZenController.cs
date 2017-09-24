@@ -37,9 +37,9 @@ namespace ZenSource.Controllers
         /// </summary>
         /// <returns>Array of ZenMessageViewModels</returns>
         [HttpGet]
-        public JsonResult Get(int? page)
+        public JsonResult Get(int? page, bool? valid)
         {
-            var modelList = _repository.GetAll(page);
+            var modelList = _repository.GetAll(page, valid);
 
             var viewModelList = Mapper.Map<IEnumerable<ZenMessageViewModel>>(modelList);
 
@@ -89,6 +89,14 @@ namespace ZenSource.Controllers
 
             return Json(viewModelList);
 
+        }
+
+        [HttpGet("invalid")]
+        public IActionResult GetInvalidQuotes()
+        {
+
+
+            return null;
         }
 
         [HttpPut("{id}/rate")]

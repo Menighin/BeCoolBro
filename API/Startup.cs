@@ -40,6 +40,13 @@ namespace ZenSource
             // Add framework services.
             services.AddMvc();
 
+            services.AddAuthentication("ZenCookieAuthenticationScheme")
+                .AddCookie("ZenCookieAuthenticationScheme", options =>
+                {
+                    options.AccessDeniedPath = "/Account/Forbidden/";
+                    options.LoginPath = "/Account/Unauthorized/";
+                });
+
             var connectionString = Configuration.GetValue<string>("ConnectionString");
             services.AddDbContext<ZenContext>(options =>
             {
@@ -59,6 +66,8 @@ namespace ZenSource
             loggerFactory.AddDebug();
 
             app.UseDeveloperExceptionPage();
+            app.UseAuthentication();
+
             seeder.Seed();
 
             Mapper.Initialize(config =>

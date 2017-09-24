@@ -1,12 +1,16 @@
 import Vue from 'vue';
 
 const state = {
-    zenQuotes: []
+    zenQuotes: [],
+    invalidZenQuotes: []
 };
 
 const mutations = {
     setQuotes(state, quotes) {
         state.zenQuotes = quotes;
+    },
+    setInvalidQuotes(state, quotes) {
+        state.invalidZenQuotes = quotes;
     },
     addQuotes(state, quotes) {
         state.zenQuotes = state.zenQuotes.concat(quotes)
@@ -21,6 +25,19 @@ const actions = {
             })
             .then(json => {
                 commit('setQuotes', json);
+            })
+            .catch((error => {
+                console.log('Error: ' + error.statusText);
+                console.log(error);
+            }));
+    },
+    fetchInvalidQuotes({ commit }) {
+        Vue.http.get('/api/zen/invalid')
+            .then((response) => {
+                return response.json();
+            })
+            .then(json => {
+                commit('setInvalidQuotes', json)
             })
             .catch((error => {
                 console.log('Error: ' + error.statusText);

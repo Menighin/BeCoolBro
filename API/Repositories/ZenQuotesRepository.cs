@@ -17,9 +17,14 @@ namespace ZenSource.Repositories
             _ctx = context;
         }
 
-        public IEnumerable<ZenQuote> GetAll(int? page = null)
+        public IEnumerable<ZenQuote> GetAll(int? page = null, bool? valid = null)
         {
             var query = _ctx.Set<ZenQuote>().AsQueryable();
+
+            if (valid != null)
+            {
+                query = query.Where(q => q.Valid == valid.Value);
+            }
 
             if (page != null)
             {
