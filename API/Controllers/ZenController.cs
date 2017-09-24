@@ -106,6 +106,44 @@ namespace ZenSource.Controllers
             return true;
         }
 
+        [HttpPost]
+        public void SaveZenQuote([FromBody] ZenQuotePostModel postData)
+        {
+
+            var zenMessages = new List<ZenMessage>();
+            foreach (var m in postData.Messages)
+            {
+                zenMessages.Add(new ZenMessage
+                {
+                    IdLanguage = Convert.ToInt32(m["language"]),
+                    Message = m["message"]
+                });
+            }
+
+            var tags = new List<ZenQuoteTag>();
+            foreach (var t in postData.Tags)
+            {
+                tags.Add(new ZenQuoteTag()
+                {
+                    TagId = t
+                });
+            }
+
+            var zenQuote = new ZenQuote()
+            {
+                Author = postData.Author,
+                CreatedOn = DateTime.Now,
+                Dislikes = 0,
+                Likes = 0,
+                User = postData.User,
+                Valid = false,
+                ZenMessages = zenMessages,
+                ZenQuoteTags = tags
+            };
+
+            _repository.Save(zenQuote);
+        }
+
         private byte[] ReadStream(Stream stream, int initialLength = 0)
         {
             if (initialLength < 1)
@@ -135,6 +173,14 @@ namespace ZenSource.Controllers
             byte[] bytes = new byte[read];
             Array.Copy(buffer, bytes, read);
             return bytes;
+        }
+
+        public class ZenQuotePostModel
+        {
+            public string User { get; set; }
+            public string Author { get; set; }
+            public List<int> Tags { get; set; }
+            public List<Dictionary<string, string>> Messages { get; set; }
         }
     }
 }

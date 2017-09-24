@@ -63,5 +63,11 @@ namespace ZenSource.Repositories
             return _ctx.SaveChanges();
 
         }
+
+        public void Save(ZenQuote zenQuote)
+        {
+            _ctx.ZenQuotes.Add(zenQuote);
+            _ctx.SaveChanges();
+        }
     }
 }

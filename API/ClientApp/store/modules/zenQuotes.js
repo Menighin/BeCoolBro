@@ -29,6 +29,9 @@ const actions = {
     },
     rateQuote({ commit }, rate ) {
         Vue.http.put('/api/zen/' + rate.id + '/rate', rate );
+    },
+    postQuote({ commit }, quote) {
+        Vue.http.post('/api/zen', quote);
     }
 };
 

@@ -11,8 +11,7 @@
                     <i class="material-icons mdl-sheet__icon">add</i>
                     
                     <div class="mdl-sheet__content">
-                        <div class="close-insert" @click="closeInsert"><i class="material-icons">close</i></div>
-                        <zen-insert></zen-insert>
+                        <zen-insert @close="closeInsert"></zen-insert>
                     </div>
                 </div>
             </div>
@@ -122,11 +121,6 @@ export default {
         display: block;
     }
 
-    .close-insert {
-        color: white;
-        cursor: pointer;
-        float: right;
-        padding: 10px;
-    }
+
 
 </style>

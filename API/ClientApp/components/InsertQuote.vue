@@ -1,10 +1,16 @@
 <template>
     <div class="zen-insert portfolio-max-width">
+        <div class="close-insert" @click="close"><i class="material-icons">close</i></div>
         <div class="insert-title"><h2>New Quote!</h2></div>
         <form action="#" onsubmit="return false">
             <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-				<input class="mdl-textfield__input" type="text" id="author" />
-				<label class="mdl-textfield__label" for="author">Author</label>
+				<input class="mdl-textfield__input" type="text" id="username" v-model="username" />
+				<label class="mdl-textfield__label" for="username">Your name</label>
+				<span class="mdl-textfield__error">Only alphabet and no spaces, please!</span>
+			</div>
+            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+				<input class="mdl-textfield__input" type="text" id="author" v-model="author" />
+				<label class="mdl-textfield__label" for="author">Quote author</label>
 				<span class="mdl-textfield__error">Only alphabet and no spaces, please!</span>
 			</div>
             <div class="mdl-grid mdl-grid--no-spacing" v-for="(m, i) in messages" :key="i">
@@ -16,17 +22,19 @@
                         selectName="language1" 
                         selectLabel="Language"
                         :options="languages"
-                        @changeLanguage="updateLanguages"></input-combo>
+                        @changeLanguage="updateLanguages"
+                        v-model="messages[i]"></input-combo>
                 </div>
                 <div class="mdl-cell mdl-cell--1-col" v-if="i == messages.length - 1 && messages.length < languages.length">
                     <button @click="addMessage" class="mdl-button mdl-button--icon"><i class="material-icons">add</i></button>
                 </div>
             </div>
 
-            <div class="mdl-grid mdl-grid--no-spacing">
-                <tag-input class="mdl-cell mdl-cell--2-col" v-for="t in tags" :key="t.id">{{ t.label }}</tag-input>
+            <div class="mdl-grid">
+                <tag-input class="mdl-cell mdl-cell--2-col" v-for="t in tags" :key="t.id" :tagId="t.id" :color="t.color" @change="checkTag">{{ t.label }}</tag-input>
             </div>
             
+            <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" @click="submit">Submit</button>
         </form>
     </div>
 </template>
@@ -39,17 +47,57 @@
     export default {
         data() {
             return {
-                messages: [null]
+                messages: [null],
+                author: '',
+                username: '',
+                tagsIds: new Set()
             }
         },
         methods: {
+            close(event) {
+                this.$emit('close', event);
+            },
             updateLanguages(i, language) {
                 this.messages[i] = language;
             },
             addMessage() {
                 if (this.messages.length < this.languages.length)
                     this.messages.push(null);
+            },
+            checkTag(id, value) {
+                if (value) {
+                    this.tagsIds.add(parseInt(id));
+                } else {
+                    this.tagsIds.delete(parseInt(id));
+                }
+            },
+            submit(event) {
+
+                let messages = [];
+
+                this.messages.forEach((v) => {
+                    messages.push({language: v.select, message: v.input});
+                });
+
+                var zenQuote = {
+                    author: this.author,
+                    messages: messages,
+                    tags: this.tagsIds,
+                    user: this.username
+                };
+
+                this.$store.dispatch('postQuote', zenQuote);
+                this.resetComponent();
+                this.close(event);
+
+            },
+            resetComponent() {
+                this.messages = [null];
+                this.author = '';
+                this.username = '';
+                this.tagsIds = new Set();
             }
+            
         },
         components: {
             inputCombo: InputCombo,
@@ -72,7 +120,7 @@
                 let t = this.$store.getters.tags;
                 let result = [];
                 t.forEach((v) => {
-                    result.push({ label: v.name, value: v.id, color: v.color });
+                    result.push({ label: v.name, id: v.id, color: v.color });
                 });
                 return result;
             }
@@ -114,6 +162,13 @@
 
     .mdl-textfield__label:after {
         background-color: white;
+    }
+
+    .close-insert {
+        color: white;
+        cursor: pointer;
+        float: right;
+        padding: 10px;
     }
 
 </style>
