@@ -22,7 +22,6 @@ namespace ZenSource
 
         public static IConfiguration Configuration;
 
-
         public Startup(IHostingEnvironment env)
         {
             var builder = new ConfigurationBuilder()
@@ -43,8 +42,12 @@ namespace ZenSource
             services.AddAuthentication("ZenCookieAuthenticationScheme")
                 .AddCookie("ZenCookieAuthenticationScheme", options =>
                 {
-                    options.AccessDeniedPath = "/Account/Forbidden/";
                     options.LoginPath = "/Account/Unauthorized/";
+                    options.Events.OnRedirectToLogin = (context) =>
+                    {
+                        context.Response.StatusCode = 401;
+                        return Task.CompletedTask;
+                    };
                 });
 
             var connectionString = Configuration.GetValue<string>("ConnectionString");
@@ -74,6 +77,7 @@ namespace ZenSource
             {
                 config.CreateMap<IEnumerable<ZenQuote>, IEnumerable<ZenMessageViewModel>>().ConvertUsing<ZenMessageConverter>();
                 config.CreateMap<IEnumerable<ZenQuote>, IEnumerable<ZenQuoteViewModel>>().ConvertUsing<ZenQuoteConverter>();
+                config.CreateMap<IEnumerable<ZenQuote>, IEnumerable<ZenQuoteFullViewModel>>().ConvertUsing<ZenQuoteFullConverter>();
             });
 
             if (env.IsDevelopment())

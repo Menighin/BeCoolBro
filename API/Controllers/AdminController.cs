@@ -6,10 +6,12 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication;
 using System.Security.Claims;
+using Microsoft.Extensions.Configuration;
+using System.Net;
 
 namespace ZenSource.Controllers
 {
-    [Route("api/admin")]
+    [Route("api")]
     public class AdminController : Controller
     {
         public IActionResult Index()
@@ -24,11 +26,28 @@ namespace ZenSource.Controllers
             return "You are logged";
         }
 
-        [Route("authorize")]
-        public async void AuthorizeAsync()
+        [Route("login")]
+        public async void Login([FromBody] Dictionary<string, string> data)
         {
-            var principal = new ClaimsPrincipal(new ClaimsIdentity(new Claim[] { new Claim("Permission", "CanViewPage") }, "Hu3"));
-            await HttpContext.SignInAsync("ZenCookieAuthenticationScheme", principal);
+
+            // If already logged in
+            if (HttpContext.User.Identity.AuthenticationType == "Hu3")
+            {
+                Response.StatusCode = (int)HttpStatusCode.OK;
+                return;
+            }
+
+            var admCred = Startup.Configuration.GetValue<string>("AdmAreaCredentials");
+            if (data["password"] == admCred)
+            {
+                var principal = new ClaimsPrincipal(new ClaimsIdentity(new Claim[] { new Claim("Permission", "CanViewPage") }, "Hu3"));
+                await HttpContext.SignInAsync("ZenCookieAuthenticationScheme", principal);
+                Response.StatusCode = (int) HttpStatusCode.OK;
+            }
+            else
+            {
+                Response.StatusCode = (int) HttpStatusCode.Unauthorized;
+            }
         }
 
     }

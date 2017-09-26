@@ -8,24 +8,30 @@ using ZenSource.ViewModel;
 
 namespace ZenSource.Converters
 {
-    public class ZenQuoteFullConverter : ITypeConverter<IEnumerable<ZenQuote>, IEnumerable<ZenQuoteViewModel>>
+    public class ZenQuoteFullConverter : ITypeConverter<IEnumerable<ZenQuote>, IEnumerable<ZenQuoteFullViewModel>>
     {
-        public IEnumerable<ZenQuoteViewModel> Convert(IEnumerable<ZenQuote> source, IEnumerable<ZenQuoteViewModel> destination, ResolutionContext context)
+        public IEnumerable<ZenQuoteFullViewModel> Convert(IEnumerable<ZenQuote> source, IEnumerable<ZenQuoteFullViewModel> destination, ResolutionContext context)
         {
-            return source
-            .SelectMany(s => s.ZenMessages
-              .Select(o => new ZenQuoteViewModel
-              {
-                  Id = s.Id,
-                  Message = o.Message,
-                  Author = s.Author,
-                  Language = o.Language.Code,
-                  CreatedOn = s.CreatedOn,
-                  Likes = s.Likes,
-                  Dislikes = s.Dislikes,
-                  Tags = s.ZenQuoteTags.Select(t => t.Tag.Name).ToList()
-              }))
-              .ToList();
+
+            return source.Select(q => new ZenQuoteFullViewModel()
+            {
+                Id = q.Id,
+                Author = q.Author,
+                CreatedOn = q.CreatedOn,
+                Dislikes = q.Dislikes,
+                Likes = q.Likes,
+                Messages = q.ZenMessages.Select(m => new MessageViewModel()
+                                            {
+                                                Id = m.Id,
+                                                Message = m.Message,
+                                                Language = new LanguageViewModel() { Id = m.Language.Id, Code = m.Language.Code }
+                                            }).ToList(),
+                Tags = q.ZenQuoteTags.Select(t => new ZenTagViewModel()
+                                            {
+                                                Id = t.TagId,
+                                                Name = t.Tag.Name
+                                            }).ToList()
+            }).ToList();
         }
     }
 }

@@ -94,9 +94,11 @@ namespace ZenSource.Controllers
         [HttpGet("invalid")]
         public IActionResult GetInvalidQuotes()
         {
+            var modelList = _repository.GetAll(null, false);
 
+            var viewModelList = Mapper.Map<IEnumerable<ZenQuoteFullViewModel>>(modelList);
 
-            return null;
+            return Json(viewModelList);
         }
 
         [HttpPut("{id}/rate")]

@@ -129,7 +129,7 @@
 
 </script>
 
-<style>
+<style scoped>
 
     .zen-insert {
         padding: 10px 30px;

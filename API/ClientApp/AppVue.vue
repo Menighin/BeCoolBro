@@ -41,6 +41,9 @@ export default {
     components: {
         zenHeader: Header,
         zenInsert: InsertQuote
+    },
+    created() {
+        this.$store.dispatch('login', { password: null });
     }
 }
 </script>
