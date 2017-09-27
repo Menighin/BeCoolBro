@@ -55,6 +55,9 @@ const actions = {
 const getters = {
     quotes() {
         return state.zenQuotes;
+    },
+    invalidQuotes() {
+        return state.invalidZenQuotes;
     }
 };
 
