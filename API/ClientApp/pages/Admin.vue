@@ -8,41 +8,16 @@
             <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" @click="submit">Submit</button>
         </div>
         <div v-else>
-            <h1>LOGGED!</h1>
-            <p>{{ invalidQuotes }}</p>
 
-            <div class="mdl-grid">
-                <div class="mdl-cell mdl-cell--3-col">
-                    <p>Author</p>
-                </div>
-                <div class="mdl-cell mdl-cell--4-col">
-                    <p>EN</p>
-                </div>
-                <div class="mdl-cell mdl-cell--4-col">
-                    <p>PT-BR</p>
-                </div>
+            <input-validate v-for="q in invalidQuotes" :quote="q" :key="q.id"></input-validate>
 
-                <template v-for="q in invalidQuotes">
-                    <div class="mdl-cell mdl-cell--3-col" :key="q.id">
-                        <p>{{ q.author }}</p>
-                    </div>
-                    <div class="mdl-cell mdl-cell--4-col" :key="q.id">
-                        <p v-if="typeof (q.messages.EN) !== 'undefined'">{{ q.messages.EN.message}}</p>
-                    </div>
-                    <div class="mdl-cell mdl-cell--4-col" :key="q.id">
-                        <p v-if="typeof (q.messages['PT-BR']) !== 'undefined'">{{ q.messages['PT-BR'].message }}</p>
-                    </div>
-                    <div class="mdl-cell mdl-cell--1-col" :key="q.id">
-                        <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect">Validate</button>
-                    </div>
-                </template>
-
-            </div>
         </div>
     </div>
 </template>
 
 <script>
+
+    import InputValidate from '../components/form/InputValidate';
 
     export default {
         created() {
@@ -73,6 +48,10 @@
 
                 });
 
+                setTimeout(() => {
+                    componentHandler.upgradeDom();
+                }, 100);
+
                 return quotes;
 
             }
@@ -81,6 +60,9 @@
             submit() {
                 this.$store.dispatch('login', { password: this.password });
             }
+        },
+        components: {
+            inputValidate: InputValidate
         }
     }
 

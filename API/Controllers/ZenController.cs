@@ -116,6 +116,12 @@ namespace ZenSource.Controllers
             return true;
         }
 
+        [HttpPut("{id}/validate")]
+        public bool Validate(int id, [FromBody] ZenQuoteValidateModel quote)
+        {
+            return true;
+        }
+
         [HttpPost]
         public void SaveZenQuote([FromBody] ZenQuotePostModel postData)
         {
@@ -191,6 +197,14 @@ namespace ZenSource.Controllers
             public string Author { get; set; }
             public List<int> Tags { get; set; }
             public List<Dictionary<string, string>> Messages { get; set; }
+        }
+
+        public class ZenQuoteValidateModel
+        {
+            public int Id { get; set; }
+            public string Author { get; set; }
+            public string En { get; set; }
+            public string PtBr { get; set; }
         }
     }
 }

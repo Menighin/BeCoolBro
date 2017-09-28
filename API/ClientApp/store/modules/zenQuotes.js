@@ -49,6 +49,12 @@ const actions = {
     },
     postQuote({ commit }, quote) {
         Vue.http.post('/api/zen', quote);
+    },
+    validateQuote({ commit }, { quote, callback }) {
+        Vue.http.put('/api/zen/' + quote.id + '/validate', quote)
+            .then(response => {
+                if (typeof(callback) !== 'undefined') callback();
+            });
     }
 };
 
