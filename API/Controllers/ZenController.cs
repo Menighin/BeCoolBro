@@ -74,7 +74,7 @@ namespace ZenSource.Controllers
         [HttpGet("images")]
         public IActionResult Images(int? page, string l)
         {
-            var modelList = _repository.GetAll(page);
+            var modelList = _repository.GetAll(page, true);
 
             if (l == null)
                 l = "en";
@@ -119,6 +119,15 @@ namespace ZenSource.Controllers
         [HttpPut("{id}/validate")]
         public bool Validate(int id, [FromBody] ZenQuoteValidateModel quote)
         {
+            try
+            {
+                _repository.ValidateQuote(quote);
+            }
+            catch (Exception e)
+            {
+                return false;
+            }
+
             return true;
         }
 

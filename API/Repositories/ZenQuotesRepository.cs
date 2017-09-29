@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using ZenSource.Models;
+using ZenSource.Controllers;
 
 namespace ZenSource.Repositories
 {
@@ -72,6 +73,46 @@ namespace ZenSource.Repositories
         public void Save(ZenQuote zenQuote)
         {
             _ctx.ZenQuotes.Add(zenQuote);
+            _ctx.SaveChanges();
+        }
+
+        internal void ValidateQuote(ZenController.ZenQuoteValidateModel quote)
+        {
+
+            var languages = _ctx.Languages.ToList();
+
+            if (_ctx.ZenMessages.Any(m => m.IdZenQuote == quote.Id && m.Language.Code == "EN"))
+            {
+                _ctx.ZenMessages.First(m => m.IdZenQuote == quote.Id && m.Language.Code == "EN").Message = quote.En;
+            }
+            else
+            {
+                _ctx.ZenMessages.Add(new ZenMessage
+                {
+                    IdZenQuote = quote.Id,
+                    IdLanguage = languages.First(l => l.Code == "En").Id,
+                    Message = quote.En
+                });
+            }
+
+            if (_ctx.ZenMessages.Any(m => m.IdZenQuote == quote.Id && m.Language.Code == "PT-BR"))
+            {
+                _ctx.ZenMessages.First(m => m.IdZenQuote == quote.Id && m.Language.Code == "PT-BR").Message = quote.En;
+            }
+            else
+            {
+                _ctx.ZenMessages.Add(new ZenMessage
+                {
+                    IdZenQuote = quote.Id,
+                    IdLanguage = languages.First(l => l.Code == "PT-BR").Id,
+                    Message = quote.En
+                });
+            }
+
+            var zenQuote = _ctx.ZenQuotes.First(z => z.Id == quote.Id);
+            zenQuote.Author = quote.Author;
+            zenQuote.Valid = true;
+
             _ctx.SaveChanges();
         }
     }
