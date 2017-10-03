@@ -34,7 +34,8 @@
                 <tag-input class="mdl-cell mdl-cell--2-col" v-for="t in tags" :key="t.id" :tagId="t.id" :color="t.color" @change="checkTag">{{ t.label }}</tag-input>
             </div>
             
-            <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" @click="submit">Submit</button>
+            <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" :disabled="submitting" @click="submit">Submit</button>
+            
         </form>
     </div>
 </template>
@@ -43,6 +44,7 @@
 
     import InputCombo from './form/InputCombo';
     import TagInput from './form/TagInput';
+    import { EventBus } from '../eventBus.js';
 
     export default {
         data() {
@@ -50,7 +52,8 @@
                 messages: [null],
                 author: '',
                 username: '',
-                tagsIds: new Set()
+                tagsIds: new Set(),
+                submitting: false
             }
         },
         methods: {
@@ -79,16 +82,25 @@
                     messages.push({language: v.select, message: v.input});
                 });
 
-                var zenQuote = {
+                let zenQuote = {
                     author: this.author,
                     messages: messages,
                     tags: this.tagsIds,
                     user: this.username
                 };
 
-                this.$store.dispatch('postQuote', zenQuote);
-                this.resetComponent();
-                this.close(event);
+                this.submitting = true;
+
+                EventBus.$emit('showLoading');
+
+                let self = this;
+                let success = function() {
+                    self.resetComponent();
+                    self.close(event);
+                    EventBus.$emit('hideLoading');
+                };
+
+                this.$store.dispatch('postQuote', { quote: zenQuote, callbackSuccess: success} );
 
             },
             resetComponent() {
@@ -96,6 +108,13 @@
                 this.author = '';
                 this.username = '';
                 this.tagsIds = new Set();
+                this.submitting = true;
+
+                if (typeof (componentHandler) !== 'undefined') {
+                    setTimeout(() => {
+                        componentHandler.upgradeDom();
+                    }, 100);
+                }
             }
             
         },

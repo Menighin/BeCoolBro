@@ -11,7 +11,7 @@ namespace ZenSource.Repositories
     {
         private ZenContext _ctx;
 
-        private readonly int PAGE_SIZE = 2;
+        private readonly int PAGE_SIZE = 6;
 
         public ZenQuotesRepository(ZenContext context)
         {

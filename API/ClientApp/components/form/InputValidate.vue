@@ -1,6 +1,6 @@
 <template>
     <div class="mdl-grid"> 
-        <div class="mdl-cell mdl-cell--3-col">
+        <div class="mdl-cell mdl-cell--2-col">
             <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
                 <input class="mdl-textfield__input" type="text" id="author" v-model="model.author" />
                 <label class="mdl-textfield__label" for="author">Author</label>
@@ -19,7 +19,10 @@
             </div>
         </div>
         <div class="mdl-cell mdl-cell--1-col">
-            <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" @click="validate">Validate</button>
+            <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" :disabled="loading" @click="validate">Validate</button>
+        </div>
+        <div class="mdl-cell mdl-cell--1-col" style="text-align: right" :style="{ 'display' : loading ? 'block' : 'none' }">
+            <div class="mdl-spinner mdl-js-spinner is-active"></div>
         </div>
     </div>
 </template>
@@ -29,18 +32,20 @@
     export default {
         data() {
             return {
-                model: {}
+                model: {},
+                loading: false
             }
         },
         methods: {
             validate() {
-
+                
+                this.loading = true;
                 let self = this;
                 let success = function() {
-                    self.model.author = "WORKED";
+                    self.$store.dispatch('fetchInvalidQuotes');
                 };
 
-                this.$store.dispatch('validateQuote', { quote: this.model, callback: success });
+                this.$store.dispatch('validateQuote', { quote: this.model, callbackSuccess: success });
             }
         },
         props: ['quote'],

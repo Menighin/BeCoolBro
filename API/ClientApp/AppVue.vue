@@ -2,8 +2,11 @@
     <div id="app" class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
 
         <zen-header></zen-header>
-        
+
+        <div id="zenLoading" class="mdl-progress mdl-js-progress mdl-progress__indeterminate" :style="{ 'display' : loading ? 'block' : 'none' }" ></div>
+
         <main class="mdl-layout__content">
+            
             <router-view></router-view>
 
             <div class="mdl-sheet__container" :class="{ 'mdl-sheet-container--opened': fabOpened }">
@@ -25,11 +28,13 @@
 
 import Header from './components/Header';
 import InsertQuote from './components/InsertQuote';
+import { EventBus } from './eventBus.js';
 
 export default {
     data() {
         return {
-            fabOpened: false
+            fabOpened: false,
+            loading: false
         };
     },
     methods: {
@@ -44,11 +49,25 @@ export default {
     },
     created() {
         this.$store.dispatch('login', { password: null });
+    },
+    mounted() {
+        let self = this;
+        EventBus.$on('showLoading', function () {
+            self.loading = true;
+        });
+
+        EventBus.$on('hideLoading', function () {
+            self.loading = false;
+        });
     }
 }
 </script>
 
 <style scoped>
+
+    #zenLoading {
+        width: 100%;
+    }
 
     .mdl-layout__content {
         padding: 24px 12px;

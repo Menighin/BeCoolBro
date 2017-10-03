@@ -9,6 +9,9 @@ const mutations = {
     setQuotes(state, quotes) {
         state.zenQuotes = quotes;
     },
+    pushQuotes(state, quotes) {
+        state.zenQuotes = state.zenQuotes.concat(quotes);
+    },
     setInvalidQuotes(state, quotes) {
         state.invalidZenQuotes = quotes;
     },
@@ -18,13 +21,14 @@ const mutations = {
 };
 
 const actions = {
-    fetchQuotes({ commit }) {
-        Vue.http.get('/api/zen/images')
+    fetchQuotes({ commit }, { page, successCallback }) {
+        Vue.http.get('/api/zen/images?page=' + page)
             .then((response) => {
                 return response.json();
             })
             .then(json => {
-                commit('setQuotes', json);
+                commit('pushQuotes', json);
+                if (typeof (successCallback) !== 'undefined') successCallback(json);
             })
             .catch((error => {
                 console.log('Error: ' + error.statusText);
@@ -47,14 +51,27 @@ const actions = {
     rateQuote({ commit }, rate ) {
         Vue.http.put('/api/zen/' + rate.id + '/rate', rate );
     },
-    postQuote({ commit }, quote) {
-        Vue.http.post('/api/zen', quote);
+    postQuote({ commit }, { quote, callbackSuccess, callbackFail }) {
+        Vue.http.post('/api/zen', quote)
+        .then(response => {
+            if (typeof(callbackSuccess) !== 'undefined') callbackSuccess();
+        })
+        .catch((error => {
+            console.log('Error: ' + error.statusText);
+            console.log(error);
+            if (typeof(callbackFail) !== 'undefined') callbackFail();
+        }));
     },
-    validateQuote({ commit }, { quote, callback }) {
+    validateQuote({ commit }, { quote, callbackSuccess, callbackFail }) {
         Vue.http.put('/api/zen/' + quote.id + '/validate', quote)
             .then(response => {
-                if (typeof(callback) !== 'undefined') callback();
-            });
+                if (typeof(callbackSuccess) !== 'undefined') callbackSuccess();
+            })
+            .catch((error => {
+                console.log('Error: ' + error.statusText);
+                console.log(error);
+                if (typeof(callbackFail) !== 'undefined') callbackFail();
+            }));;
     }
 };
 
