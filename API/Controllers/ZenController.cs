@@ -37,9 +37,9 @@ namespace ZenSource.Controllers
         /// </summary>
         /// <returns>Array of ZenMessageViewModels</returns>
         [HttpGet]
-        public JsonResult Get(int? page, bool? valid)
+        public JsonResult Get(int? page, bool? valid, string search)
         {
-            var modelList = _repository.GetAll(page, valid);
+            var modelList = _repository.GetAll(search, page, valid);
 
             var viewModelList = Mapper.Map<IEnumerable<ZenMessageViewModel>>(modelList);
 
@@ -72,9 +72,9 @@ namespace ZenSource.Controllers
         }
 
         [HttpGet("images")]
-        public IActionResult Images(int? page, string l)
+        public IActionResult Images(string search, int? page, string l)
         {
-            var modelList = _repository.GetAll(page, true);
+            var modelList = _repository.GetAll(search, page, true);
 
             if (l == null)
                 l = "en";
@@ -94,7 +94,7 @@ namespace ZenSource.Controllers
         [HttpGet("invalid")]
         public IActionResult GetInvalidQuotes()
         {
-            var modelList = _repository.GetAll(null, false);
+            var modelList = _repository.GetAll(null, null, false);
 
             var viewModelList = Mapper.Map<IEnumerable<ZenQuoteFullViewModel>>(modelList);
 

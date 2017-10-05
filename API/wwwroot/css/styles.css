@@ -41,11 +41,13 @@
     height: 150px;
     width: 150px;
     margin: auto auto 10px;
+    transition: all 300ms;
   }
   
   .is-compact .portfolio-logo {
-    height: 50px;
-    width: 50px;
+    /* height: 50px;
+    width: 50px; */
+    transform: scale(0.30);
     margin-top: 7px;
   }
   
