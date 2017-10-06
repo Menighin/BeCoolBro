@@ -17,12 +17,20 @@ const mutations = {
     },
     addQuotes(state, quotes) {
         state.zenQuotes = state.zenQuotes.concat(quotes)
+    },
+    clearQuotes(state) {
+        state.zenQuotes = [];
     }
 };
 
 const actions = {
-    fetchQuotes({ commit }, { page, successCallback }) {
-        Vue.http.get('/api/zen/images?page=' + page)
+    fetchQuotes({ commit }, { page, search, tags, successCallback }) {
+        var url = '/api/zen/images?';
+        if (typeof(page) !== 'undefined') url += '&page=' + page;
+        if (typeof(search) !== 'undefined') url += '&search=' + search;
+        if (typeof(tags) !== 'undefined' && tags.length > 0) url += '&tags=' + tags;        
+
+        Vue.http.get(url)
             .then((response) => {
                 return response.json();
             })
@@ -47,6 +55,9 @@ const actions = {
                 console.log('Error: ' + error.statusText);
                 console.log(error);
             }));
+    },
+    clearQuotes({ commit }) {
+        commit('clearQuotes');
     },
     rateQuote({ commit }, rate ) {
         Vue.http.put('/api/zen/' + rate.id + '/rate', rate );

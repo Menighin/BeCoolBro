@@ -7,18 +7,18 @@
                 </span>
             </div>
             <div class="mdl-layout__header-row top-search">
-                <form action="#">
+                <form action="#" v-on:submit="search">
                     <div class="mdl-textfield mdl-js-textfield">
-                        <input class="mdl-textfield__input" type="text" id="sample1">
-                        <label class="mdl-textfield__label" for="sample1">Text...</label>
+                        <input class="mdl-textfield__input" type="text" id="sample1" v-model="searchText">
+                        <label class="mdl-textfield__label" for="sample1">Search...</label>
                     </div>
                 </form>
             </div>
             <div class="mdl-layout__header-row portfolio-navigation-row mdl-layout--large-screen-only">
-                <form action="#">
+                <form action="#" v-on:submit="search">
                     <div class="mdl-textfield mdl-js-textfield">
-                        <input class="mdl-textfield__input" type="text" id="sample1">
-                        <label class="mdl-textfield__label" for="sample1">Text...</label>
+                        <input class="mdl-textfield__input" type="text" id="sample1" v-model="searchText">
+                        <label class="mdl-textfield__label" for="sample1">Search...</label>
                     </div>
                 </form>
             </div>
@@ -27,9 +27,21 @@
 
 <script>
 
+    import { EventBus } from '../eventBus.js';
+
     export default {
         created() {
             MaterialLayout.prototype.headerClickHandler_ = function () { };
+        },
+        data() {
+            return {
+                searchText: ''
+            }
+        },
+        methods: {
+            search() {
+                EventBus.$emit('searchQuotes', this.searchText);
+            }
         }
     }
 

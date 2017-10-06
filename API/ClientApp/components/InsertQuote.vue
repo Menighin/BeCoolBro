@@ -124,7 +124,6 @@
         },
         created() {
             this.$store.dispatch('fetchLanguages');
-            this.$store.dispatch('fetchTags');
         },
         computed: {
             languages() {

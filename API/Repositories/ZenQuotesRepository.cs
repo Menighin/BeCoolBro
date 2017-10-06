@@ -18,19 +18,25 @@ namespace ZenSource.Repositories
             _ctx = context;
         }
 
-        public IEnumerable<ZenQuote> GetAll(string search = null, int? page = null, bool? valid = null)
+        public IEnumerable<ZenQuote> GetAll(string search = null, List<int> tags = null, int? page = null, bool? valid = null)
         {
             var query = _ctx.Set<ZenQuote>().AsQueryable();
 
             if (search != null)
             {
-                var possibleQuotes = _ctx.Set<ZenMessage>().Where(m => m.Message.Contains(search)).Select(m => m.IdZenQuote).ToList();
-                query = query.Where(q => q.Author.Contains(search) || possibleQuotes.Contains(q.Id));
+                var possibleQuotesBySearch = _ctx.Set<ZenMessage>().Where(m => m.Message.Contains(search)).Select(m => m.IdZenQuote).ToList();
+                query = query.Where(q => q.Author.Contains(search) || possibleQuotesBySearch.Contains(q.Id));
             }
 
             if (valid != null)
             {
                 query = query.Where(q => q.Valid == valid.Value);
+            }
+
+            if (tags != null && tags.Count > 0)
+            {
+                var possibleQuotesByTag = _ctx.Set<ZenQuoteTag>().Where(t => tags.Contains(t.TagId)).Select(t => t.ZenQuoteId).ToList();
+                query = query.Where(q => possibleQuotesByTag.Contains(q.Id));
             }
 
             if (page != null)
