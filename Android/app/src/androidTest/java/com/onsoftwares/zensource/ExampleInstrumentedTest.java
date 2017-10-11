@@ -1,4 +1,4 @@
-package com.onsoftwares.becoolbro;
+package com.onsoftwares.zensource;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        assertEquals("com.onsoftwares.becoolbro", appContext.getPackageName());
+        assertEquals("com.onsoftwares.zensource", appContext.getPackageName());
     }
 }

@@ -1,4 +1,4 @@
-package com.onsoftwares.becoolbro;
+package com.onsoftwares.zensource;
 
 import org.junit.Test;
 
