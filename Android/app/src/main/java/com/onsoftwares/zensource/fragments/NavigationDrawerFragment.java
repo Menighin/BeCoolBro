@@ -1,4 +1,4 @@
-package com.onsoftwares.zensource;
+package com.onsoftwares.zensource.fragments;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -10,6 +10,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.onsoftwares.zensource.R;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -29,7 +31,6 @@ public class NavigationDrawerFragment extends Fragment {
         // Required empty public constructor
     }
 
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,27 +49,20 @@ public class NavigationDrawerFragment extends Fragment {
 
     public void setUp(DrawerLayout drawerLayout) {
         mDrawerLayout = drawerLayout;
+
         mDrawerToggle = new ActionBarDrawerToggle(getActivity(), drawerLayout, null, R.string.drawer_open, R.string.drawer_close) {
+            @Override
+            public void onDrawerClosed(View view) {
+                super.onDrawerClosed(view);
+                getActivity().invalidateOptionsMenu();
+            }
+
             @Override
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
-                if(!mUserLearnDrawer) {
-                    mUserLearnDrawer = true;
-                    saveToPreferences(getActivity(), KEY_USER_LEARN_DRAWER, mUserLearnDrawer + "");
-                }
-                getActivity().invalidateOptionsMenu();
-            }
-
-            @Override
-            public void onDrawerClosed(View drawerView) {
-                super.onDrawerClosed(drawerView);
                 getActivity().invalidateOptionsMenu();
             }
         };
-
-        if(!mUserLearnDrawer && !mFromSavedInstanceState) {
-            mDrawerLayout.openDrawer(1);
-        }
 
         mDrawerLayout.addDrawerListener(mDrawerToggle);
         mDrawerLayout.post(new Runnable() {
@@ -77,6 +71,7 @@ public class NavigationDrawerFragment extends Fragment {
                 mDrawerToggle.syncState();
             }
         });
+
     }
 
     public static void saveToPreferences(Context context, String preferenceName, String preferenceValue) {
@@ -89,5 +84,9 @@ public class NavigationDrawerFragment extends Fragment {
     public static String readFromPreferences(Context context, String preferenceName, String defaultValue) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(PREF_FILE_NAME, Context.MODE_PRIVATE);
         return sharedPreferences.getString(preferenceName, defaultValue);
+    }
+
+    public ActionBarDrawerToggle getDrawerToggle() {
+        return mDrawerToggle;
     }
 }
