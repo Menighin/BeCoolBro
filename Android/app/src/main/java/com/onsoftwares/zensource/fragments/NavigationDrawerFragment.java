@@ -10,8 +10,14 @@ import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ListView;
+import android.widget.Toast;
 
 import com.onsoftwares.zensource.R;
+import com.onsoftwares.zensource.adapters.IconListAdapter;
+
+import java.util.ArrayList;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -23,6 +29,8 @@ public class NavigationDrawerFragment extends Fragment {
 
     private ActionBarDrawerToggle mDrawerToggle;
     private DrawerLayout mDrawerLayout;
+    private ListView mListView;
+    private ArrayList<IconListAdapter.ItemModel> navigationItems;
 
     private boolean mUserLearnDrawer;
     private boolean mFromSavedInstanceState;
@@ -41,10 +49,30 @@ public class NavigationDrawerFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_navigation_drawer, container, false);
+        View v = inflater.inflate(R.layout.fragment_navigation_drawer, container, false);
+
+        mListView = (ListView) v.findViewById(R.id.navigation_drawer_list);
+
+        navigationItems = new ArrayList<>();
+        navigationItems.add(new IconListAdapter.ItemModel("Label 1", "Image 1"));
+        navigationItems.add(new IconListAdapter.ItemModel("Label 2", "Image 2"));
+        navigationItems.add(new IconListAdapter.ItemModel("Label 3", "Image 3"));
+
+        IconListAdapter adapter = new IconListAdapter(navigationItems, getContext());
+
+        mListView.setAdapter(adapter);
+
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                IconListAdapter.ItemModel m = (IconListAdapter.ItemModel) adapterView.getItemAtPosition(i);
+                Toast.makeText(getContext(), "Clicked on: " + m.getLabel(), Toast.LENGTH_LONG).show();
+            }
+        });
+
+        return v;
     }
 
     public void setUp(DrawerLayout drawerLayout) {
