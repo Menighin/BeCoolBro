@@ -4,6 +4,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
@@ -11,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -31,6 +33,7 @@ public class NavigationDrawerFragment extends Fragment {
     private DrawerLayout mDrawerLayout;
     private ListView mListView;
     private ArrayList<IconListAdapter.ItemModel> navigationItems;
+    private FrameLayout mMainFrame;
 
     private boolean mUserLearnDrawer;
     private boolean mFromSavedInstanceState;
@@ -64,19 +67,13 @@ public class NavigationDrawerFragment extends Fragment {
 
         mListView.setAdapter(adapter);
 
-        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                IconListAdapter.ItemModel m = (IconListAdapter.ItemModel) adapterView.getItemAtPosition(i);
-                Toast.makeText(getContext(), "Clicked on: " + m.getLabel(), Toast.LENGTH_LONG).show();
-            }
-        });
-
         return v;
     }
 
     public void setUp(DrawerLayout drawerLayout) {
         mDrawerLayout = drawerLayout;
+
+        mMainFrame = (FrameLayout) drawerLayout.findViewById(R.id.frame_content);
 
         mDrawerToggle = new ActionBarDrawerToggle(getActivity(), drawerLayout, null, R.string.drawer_open, R.string.drawer_close) {
             @Override
@@ -97,6 +94,25 @@ public class NavigationDrawerFragment extends Fragment {
             @Override
             public void run() {
                 mDrawerToggle.syncState();
+            }
+        });
+
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+            IconListAdapter.ItemModel m = (IconListAdapter.ItemModel) adapterView.getItemAtPosition(i);
+            Toast.makeText(getContext(), "Clicked on: " + m.getLabel(), Toast.LENGTH_LONG).show();
+
+            Fragment f;
+            if (m.getLabel().equals("Label 1")) {
+                f = new HomeFragment();
+            } else {
+                f = new ConfigurationFragment();
+            }
+
+            FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+            ft.replace(R.id.frame_content, f);
+            ft.commit();
             }
         });
 
