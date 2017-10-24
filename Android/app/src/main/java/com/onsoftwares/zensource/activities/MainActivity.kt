@@ -30,14 +30,13 @@ class MainActivity : AppCompatActivity() {
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
-        mDrawerFragment!!.drawerToggle.onConfigurationChanged(newConfig)
+        mDrawerFragment!!.drawerToggle!!.onConfigurationChanged(newConfig)
     }
-
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         // Pass the event to ActionBarDrawerToggle, if it returns
         // true, then it has handled the app icon touch event
-        return if (mDrawerFragment!!.drawerToggle.onOptionsItemSelected(item)) {
+        return if (mDrawerFragment!!.drawerToggle!!.onOptionsItemSelected(item)) {
             true
         } else super.onOptionsItemSelected(item)
         // Handle your other action bar items...

@@ -2,13 +2,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#555"
+    android:background="#333"
     tools:context="com.onsoftwares.zensource.fragments.NavigationDrawerFragment">
 
     <ListView
         android:id="@+id/navigation_drawer_list"
         android:layout_width="match_parent"
         android:divider="@null"
+        android:background="@drawable/navigation_background"
         android:layout_height="wrap_content" />
 
 </LinearLayout>

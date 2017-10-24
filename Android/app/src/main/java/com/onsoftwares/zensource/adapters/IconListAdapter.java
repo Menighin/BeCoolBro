@@ -1,6 +1,7 @@
 package com.onsoftwares.zensource.adapters;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,6 +27,9 @@ public class IconListAdapter extends ArrayAdapter<IconListAdapter.ItemModel> {
         this.mContext=context;
     }
 
+    
+
+    @NonNull
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         // Get the data item for this position
@@ -56,7 +60,11 @@ public class IconListAdapter extends ArrayAdapter<IconListAdapter.ItemModel> {
 //        result.startAnimation(animation);
         lastPosition = position;
 
-        viewHolder.label.setText(dataModel.getLabel());
+        assert dataModel != null;
+        viewHolder.label.setText(dataModel.label);
+        viewHolder.icon.setImageResource(dataModel.icon);
+
+            convertView.setSelected(true);
 
         // Return the completed view to render on screen
         return convertView;
@@ -69,12 +77,23 @@ public class IconListAdapter extends ArrayAdapter<IconListAdapter.ItemModel> {
     }
 
     public static class ItemModel {
+        private int id;
         private String label;
-        private String icon;
+        private int icon;
+        private boolean selected;
 
-        public ItemModel(String label, String icon) {
+        public ItemModel(int id, String label, int icon) {
+            this.id = id;
             this.label = label;
             this.icon = icon;
+            this.selected = false;
+        }
+
+        public ItemModel(int id, String label, int icon, boolean selected) {
+            this.id = id;
+            this.label = label;
+            this.icon = icon;
+            this.selected = selected;
         }
 
         public String getLabel() {
@@ -83,6 +102,30 @@ public class IconListAdapter extends ArrayAdapter<IconListAdapter.ItemModel> {
 
         public void setLabel(String label) {
             this.label = label;
+        }
+
+        public int getId() {
+            return id;
+        }
+
+        public void setId(int id) {
+            this.id = id;
+        }
+
+        public int getIcon() {
+            return icon;
+        }
+
+        public void setIcon(int icon) {
+            this.icon = icon;
+        }
+
+        public boolean isSelected() {
+            return selected;
+        }
+
+        public void setSelected(boolean selected) {
+            this.selected = selected;
         }
     }
 
