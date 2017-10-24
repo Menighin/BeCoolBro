@@ -1,23 +1,21 @@
 package com.onsoftwares.zensource.fragments
 
 import android.content.Context
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentTransaction
 import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.ActionBarDrawerToggle
+import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
 import android.widget.FrameLayout
-import android.widget.ListView
 import android.widget.Toast
 
 import com.onsoftwares.zensource.R
-import com.onsoftwares.zensource.adapters.IconListAdapter
+import com.onsoftwares.zensource.adapters.IconListRecyclerAdapter
 
 import java.util.ArrayList
 
@@ -29,8 +27,8 @@ class NavigationDrawerFragment : Fragment() {
     var drawerToggle: ActionBarDrawerToggle? = null
         private set
     private var mDrawerLayout: DrawerLayout? = null
-    private var mListView: ListView? = null
-    private var navigationItems: ArrayList<IconListAdapter.ItemModel>? = null
+    private var mRecyclerView: RecyclerView? = null
+    private var navigationItems: ArrayList<IconListRecyclerAdapter.ItemModel>? = null
     private var mFrameContent: FrameLayout? = null
 
     private var mUserLearnDrawer: Boolean = false
@@ -48,16 +46,37 @@ class NavigationDrawerFragment : Fragment() {
         // Inflate the layout for this fragment
         val v = inflater!!.inflate(R.layout.fragment_navigation_drawer, container, false)
 
-        mListView = v.findViewById(R.id.navigation_drawer_list) as ListView
+        mRecyclerView = v.findViewById(R.id.navigation_drawer_list) as RecyclerView
+        val layoutManager = LinearLayoutManager(context);
+        mRecyclerView!!.layoutManager = layoutManager
 
-        navigationItems = ArrayList<IconListAdapter.ItemModel>()
-        navigationItems!!.add(IconListAdapter.ItemModel(1, "Home", R.mipmap.ic_home_white_24dp))
-        navigationItems!!.add(IconListAdapter.ItemModel(2, "Configuration", R.mipmap.ic_tune_white_24dp, true))
-        navigationItems!!.add(IconListAdapter.ItemModel(3, "Label 3", R.mipmap.ic_home_white_24dp))
 
-        val adapter = IconListAdapter(navigationItems, context)
+        navigationItems = ArrayList()
+        navigationItems!!.add(IconListRecyclerAdapter.ItemModel(1, "Home", R.mipmap.ic_home_white_24dp))
+        navigationItems!!.add(IconListRecyclerAdapter.ItemModel(2, "Configuration", R.mipmap.ic_tune_white_24dp, true))
+        navigationItems!!.add(IconListRecyclerAdapter.ItemModel(3, "Label 3", R.mipmap.ic_home_white_24dp))
 
-        mListView!!.adapter = adapter
+        val adapter = IconListRecyclerAdapter(navigationItems, IconListRecyclerAdapter.OnItemClickListener {
+            item ->
+            run {
+                Toast.makeText(context, item.label, Toast.LENGTH_LONG).show()
+
+                val f: Fragment = when {
+                    item.id == 1 -> HomeFragment()
+                    item.id == 2 -> ConfigurationFragment()
+                    else -> HomeFragment()
+                }
+
+                val ft = activity.supportFragmentManager.beginTransaction()
+                ft.replace(R.id.frame_content, f)
+                ft.commit()
+                mDrawerLayout!!.closeDrawer(Gravity.START)
+
+                item.isSelected = true
+            }
+        })
+
+        mRecyclerView!!.adapter = adapter
 
         return v
     }
@@ -81,26 +100,6 @@ class NavigationDrawerFragment : Fragment() {
 
         mDrawerLayout!!.addDrawerListener(drawerToggle!!)
         mDrawerLayout!!.post { drawerToggle!!.syncState() }
-
-        mListView!!.onItemClickListener = AdapterView.OnItemClickListener { adapterView, view, i, l ->
-            val m = adapterView.getItemAtPosition(i) as IconListAdapter.ItemModel
-            Toast.makeText(context, "Clicked on: " + m.label, Toast.LENGTH_LONG).show()
-
-            val f: Fragment
-            f = when {
-                m.id == 1 -> HomeFragment()
-                m.id == 2 -> ConfigurationFragment()
-                else -> HomeFragment()
-            }
-
-            val ft = activity.supportFragmentManager.beginTransaction()
-            ft.replace(R.id.frame_content, f)
-            ft.commit()
-            mDrawerLayout!!.closeDrawer(Gravity.START)
-
-            m.isSelected = true
-
-        }
 
     }
 
