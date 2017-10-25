@@ -1,5 +1,6 @@
 package com.onsoftwares.zensource.adapters;
 
+import android.content.Context;
 import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -14,11 +15,13 @@ import java.util.List;
 
 public class IconListRecyclerAdapter extends RecyclerView.Adapter<IconListRecyclerAdapter.IconListViewHolder> {
 
+    private final Context mContext;
     private final List<ItemModel> dataList;
     private final OnItemClickListener listener;
     private int selectedItem = 0;
 
-    public IconListRecyclerAdapter(List<ItemModel> dataList, OnItemClickListener listener) {
+    public IconListRecyclerAdapter(Context mContext, List<ItemModel> dataList, OnItemClickListener listener) {
+        this.mContext = mContext;
         this.dataList = dataList;
         this.listener = listener;
     }
@@ -36,7 +39,7 @@ public class IconListRecyclerAdapter extends RecyclerView.Adapter<IconListRecycl
         holder.getIcon().setImageResource(itemModel.getIcon());
         holder.setSelected(selectedItem == position);
         holder.bind(itemModel, listener, position, this);
-        holder.itemView.setBackgroundColor(selectedItem == position ? Color.GREEN : Color.TRANSPARENT);
+        holder.itemView.setBackgroundColor(selectedItem == position ? mContext.getResources().getColor(R.color.navBackgroundHighlight) : mContext.getResources().getColor(R.color.navBackground));
     }
 
     @Override
@@ -132,6 +135,7 @@ public class IconListRecyclerAdapter extends RecyclerView.Adapter<IconListRecycl
         }
 
         public void bind(final ItemModel item, final OnItemClickListener listener, final int selectedPos, final IconListRecyclerAdapter adapter) {
+
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

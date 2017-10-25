@@ -56,7 +56,7 @@ class NavigationDrawerFragment : Fragment() {
         navigationItems!!.add(IconListRecyclerAdapter.ItemModel(2, "Configuration", R.mipmap.ic_tune_white_24dp, true))
         navigationItems!!.add(IconListRecyclerAdapter.ItemModel(3, "Label 3", R.mipmap.ic_home_white_24dp))
 
-        val adapter = IconListRecyclerAdapter(navigationItems, IconListRecyclerAdapter.OnItemClickListener {
+        val adapter = IconListRecyclerAdapter(context, navigationItems, IconListRecyclerAdapter.OnItemClickListener {
             item ->
             run {
                 Toast.makeText(context, item.label, Toast.LENGTH_LONG).show()
