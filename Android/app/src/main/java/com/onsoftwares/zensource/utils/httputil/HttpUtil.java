@@ -1,11 +1,13 @@
-package com.onsoftwares.zensource.utils;
+package com.onsoftwares.zensource.utils.httputil;
 
 import android.util.Log;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 
 import okhttp3.Call;
 import okhttp3.Headers;
@@ -21,6 +23,7 @@ public class HttpUtil {
     private Callback failCallback;
     private HttpUrl.Builder url;
     private Headers.Builder headers;
+    private IHttpResponseConverter<?> converter;
 
     private HttpUtil() {
         this.client = new OkHttpClient();
@@ -51,6 +54,10 @@ public class HttpUtil {
         this.failCallback = failCallback;
     }
 
+    private void setConverter(IHttpResponseConverter<?> converter) {
+        this.converter = converter;
+    }
+
     public void makeGet() {
         Request request = new Request.Builder()
             .url(this.url.build())
@@ -68,16 +75,22 @@ public class HttpUtil {
             public void onResponse(Call call, final Response response) throws IOException {
                 if (response.isSuccessful()) {
                     String responseStr = response.body().string();
-
-                    if (successCallback != null && successCallback instanceof CallbackString)
-                        ((CallbackString) successCallback).callback(responseStr);
-                    else if (successCallback != null && successCallback instanceof CallbackJson) {
-                        try {
+                    try {
+                        if (successCallback != null && successCallback instanceof CallbackString)
+                            ((CallbackString) successCallback).callback(responseStr);
+                        else if (successCallback != null && successCallback instanceof CallbackJsonObject) {
                             JSONObject json = new JSONObject(responseStr);
-                            ((CallbackJson) successCallback).callback(json);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
+                            ((CallbackJsonObject) successCallback).callback(json);
                         }
+                        else if (successCallback != null && successCallback instanceof CallbackJsonArray) {
+                            JSONArray json = new JSONArray(responseStr);
+                            ((CallbackJsonArray) successCallback).callback(json);
+                        }
+                        else if (successCallback != null && successCallback instanceof CallbackConverted<?> && converter != null) {
+                            ((CallbackConverted) successCallback).callback(converter.convertHttpResponse(responseStr));
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
                 } else {
                     Log.e("WHAT", response.message());
@@ -101,6 +114,11 @@ public class HttpUtil {
         @SuppressWarnings("ConstantConditions")
         public Builder withUrl(String url) {
             this.httpUtil.setUrl(HttpUrl.parse(url).newBuilder());
+            return this;
+        }
+
+        public Builder withConverter(IHttpResponseConverter converter) {
+            this.httpUtil.setConverter(converter);
             return this;
         }
 
@@ -141,7 +159,15 @@ public class HttpUtil {
         void callback(String response);
     }
 
-    public interface CallbackJson extends Callback {
+    public interface CallbackJsonObject extends Callback {
         void callback(JSONObject json);
+    }
+
+    public interface CallbackJsonArray extends Callback {
+        void callback(JSONArray json);
+    }
+
+    public interface CallbackConverted<T> extends Callback {
+        void callback(T response);
     }
 }
