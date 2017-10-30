@@ -2,12 +2,14 @@ package com.onsoftwares.zensource.activities
 
 import android.content.res.Configuration
 import android.os.Bundle
+import android.support.v4.app.Fragment
 import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.view.MenuItem
 import com.onsoftwares.zensource.fragments.NavigationDrawerFragment
 import com.onsoftwares.zensource.R
+import com.onsoftwares.zensource.fragments.HomeFragment
 
 class MainActivity : AppCompatActivity() {
 
@@ -18,14 +20,19 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        toolbar = findViewById(R.id.toolbar_main) as Toolbar;
-        setSupportActionBar(toolbar);
+        toolbar = findViewById(R.id.toolbar_main) as Toolbar
+        setSupportActionBar(toolbar)
 
-        mDrawerFragment  = supportFragmentManager.findFragmentById(R.id.fragment_navigation_drawer) as NavigationDrawerFragment;
-        mDrawerFragment!!.setUp(findViewById(R.id.drawer_layout) as DrawerLayout);
+        mDrawerFragment  = supportFragmentManager.findFragmentById(R.id.fragment_navigation_drawer) as NavigationDrawerFragment
+        mDrawerFragment!!.setUp(findViewById(R.id.drawer_layout) as DrawerLayout)
 
-        supportActionBar!!.setDisplayHomeAsUpEnabled(true);
-        supportActionBar!!.setHomeButtonEnabled(true);
+        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+        supportActionBar!!.setHomeButtonEnabled(true)
+
+        val f: Fragment = HomeFragment()
+        val ft = supportFragmentManager.beginTransaction()
+        ft.replace(R.id.frame_content, f)
+        ft.commit()
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {

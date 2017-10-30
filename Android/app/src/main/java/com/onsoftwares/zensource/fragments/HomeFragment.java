@@ -5,6 +5,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,11 +15,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.onsoftwares.zensource.R;
+import com.onsoftwares.zensource.adapters.HomeCardRecyclerAdapter;
 import com.onsoftwares.zensource.models.ZenCardModel;
 import com.onsoftwares.zensource.utils.httputil.HttpUtil;
 
 import org.json.JSONArray;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -25,10 +29,13 @@ import java.util.List;
  */
 public class HomeFragment extends Fragment {
 
-    private TextView textView;
+    private RecyclerView homeCardRecyclerView;
+    private List<ZenCardModel> homeCardsList;
+    private HomeCardRecyclerAdapter recyclerAdapter;
 
     public HomeFragment() {
         // Required empty public constructor
+        homeCardsList = new ArrayList<>();
     }
 
     @Override
@@ -36,8 +43,15 @@ public class HomeFragment extends Fragment {
         // Inflate the layout for this fragment
         final View view = inflater.inflate(R.layout.fragment_home, container, false);
 
-        textView = (TextView) view.findViewById(R.id.home_text);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
 
+        homeCardRecyclerView = (RecyclerView) view.findViewById(R.id.home_recycler_view);
+        homeCardRecyclerView.setLayoutManager(layoutManager);
+
+        recyclerAdapter = new HomeCardRecyclerAdapter(getContext(), homeCardsList);
+        homeCardRecyclerView.setAdapter(recyclerAdapter);
+
+        // Request for the data of the recycler view
         HttpUtil.Builder()
             .withUrl("http://zensource-dev.sa-east-1.elasticbeanstalk.com/api/zen/images?page=1")
             .withConverter(new ZenCardModel())
@@ -47,16 +61,8 @@ public class HomeFragment extends Fragment {
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            if (list.size() > 0) {
-                                textView.setText(list.get(0).getAuthor());
-
-                                ImageView image = (ImageView) view.findViewById(R.id.home_image);
-
-                                byte[] decodedString = Base64.decode(list.get(0).getImage64encoded(), Base64.DEFAULT);
-                                Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-
-                                image.setImageBitmap(decodedByte);
-                            }
+                            homeCardsList.addAll(list);
+                            homeCardRecyclerView.getAdapter().notifyDataSetChanged();
                         }
                     });
                 }
