@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 
 import com.onsoftwares.zensource.R;
+import com.onsoftwares.zensource.interfaces.OnLoadMoreListener;
 import com.onsoftwares.zensource.models.ZenCardModel;
 
 import java.util.ArrayList;
@@ -21,10 +22,24 @@ public class HomeCardRecyclerAdapter extends RecyclerView.Adapter<HomeCardRecycl
 
     private final Context mContext;
     private List<ZenCardModel> dataList;
+    private OnLoadMoreListener onLoadMore;
+    private RecyclerView recyclerView;
 
-    public HomeCardRecyclerAdapter(Context mContext, List<ZenCardModel> dataList) {
+    public HomeCardRecyclerAdapter(Context mContext, List<ZenCardModel> dataList, RecyclerView recyclerView) {
         this.mContext = mContext;
         this.dataList = dataList;
+        this.recyclerView = recyclerView;
+
+        this.recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+
+                if (dy > 0)
+                    onLoadMore.onLoadMore();
+            }
+        });
+
     }
 
     @Override
@@ -60,6 +75,10 @@ public class HomeCardRecyclerAdapter extends RecyclerView.Adapter<HomeCardRecycl
 
     public void setDataList(List<ZenCardModel> dataList) {
         this.dataList = dataList;
+    }
+
+    public void setOnLoadMore(OnLoadMoreListener onLoadMore) {
+        this.onLoadMore = onLoadMore;
     }
 
     static class HomeCardViewHolder extends RecyclerView.ViewHolder {
