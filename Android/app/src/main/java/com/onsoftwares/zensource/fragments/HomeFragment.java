@@ -36,7 +36,7 @@ public class HomeFragment extends Fragment implements OnLoadMoreListener{
     private List<ZenCardModel> homeCardsList;
     private HomeCardRecyclerAdapter recyclerAdapter;
     private ProgressBar progressBar;
-    private int page = 1;
+    private int page = 2;
 
     private boolean loading = false;
 
@@ -63,6 +63,7 @@ public class HomeFragment extends Fragment implements OnLoadMoreListener{
 
         // Request for the data of the recycler view
         loading = true;
+        recyclerAdapter.setLoading(true);
         HttpUtil.Builder()
             .withUrl("http://zensource-dev.sa-east-1.elasticbeanstalk.com/api/zen/images?page=1")
             .withConverter(new ZenCardModel())
@@ -76,6 +77,8 @@ public class HomeFragment extends Fragment implements OnLoadMoreListener{
                             homeCardRecyclerView.getAdapter().notifyDataSetChanged();
                             progressBar.setVisibility(View.INVISIBLE);
                             loading = false;
+                            recyclerAdapter.setLoading(false);
+
                         }
                     });
                 }
@@ -87,28 +90,40 @@ public class HomeFragment extends Fragment implements OnLoadMoreListener{
 
     @Override
     public void onLoadMore() {
-        // Toast.makeText(getContext(), "Load more", Toast.LENGTH_LONG).show();
+        if (page != 0) {
 
-        if (loading) return;
+            homeCardsList.add(null);
 
-        loading = true;
-        HttpUtil.Builder()
-                .withUrl("http://zensource-dev.sa-east-1.elasticbeanstalk.com/api/zen/images?page=2")
-                .withConverter(new ZenCardModel())
-                .ifSuccess(new HttpUtil.CallbackConverted<List<ZenCardModel>>() {
-                    @Override
-                    public void callback(final List<ZenCardModel> list) {
-                        getActivity().runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                homeCardsList.addAll(list);
-                                homeCardRecyclerView.getAdapter().notifyDataSetChanged();
-                                progressBar.setVisibility(View.INVISIBLE);
-                                loading = false;
-                            }
-                        });
-                    }
-                })
-                .makeGet();
+            recyclerAdapter.notifyItemInserted(homeCardsList.size() - 1);
+
+            HttpUtil.Builder()
+                    .withUrl("http://zensource-dev.sa-east-1.elasticbeanstalk.com/api/zen/images")
+                    .addQueryParameter("page", (page++) + "")
+                    .withConverter(new ZenCardModel())
+                    .ifSuccess(new HttpUtil.CallbackConverted<List<ZenCardModel>>() {
+                        @Override
+                        public void callback(final List<ZenCardModel> list) {
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+
+                                    //Remove loading item
+                                    homeCardsList.remove(homeCardsList.size() - 1);
+                                    recyclerAdapter.notifyItemRemoved(homeCardsList.size());
+
+                                    recyclerAdapter.setLoading(false);
+
+                                    homeCardsList.addAll(list);
+                                    homeCardRecyclerView.getAdapter().notifyDataSetChanged();
+                                    progressBar.setVisibility(View.INVISIBLE);
+                                    loading = false;
+
+                                    if (list.size() == 0) page = 0;
+                                }
+                            });
+                        }
+                    })
+                    .makeGet();
+        }
     }
 }

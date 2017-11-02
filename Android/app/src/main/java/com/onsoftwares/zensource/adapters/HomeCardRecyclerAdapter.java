@@ -3,6 +3,7 @@ package com.onsoftwares.zensource.adapters;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Base64;
 import android.view.LayoutInflater;
@@ -10,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 
 import com.onsoftwares.zensource.R;
 import com.onsoftwares.zensource.interfaces.OnLoadMoreListener;
@@ -18,46 +20,80 @@ import com.onsoftwares.zensource.models.ZenCardModel;
 import java.util.ArrayList;
 import java.util.List;
 
-public class HomeCardRecyclerAdapter extends RecyclerView.Adapter<HomeCardRecyclerAdapter.HomeCardViewHolder>{
+public class HomeCardRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
 
     private final Context mContext;
     private List<ZenCardModel> dataList;
     private OnLoadMoreListener onLoadMore;
     private RecyclerView recyclerView;
+    private final int VIEW_TYPE_ITEM = 0;
+    private final int VIEW_TYPE_LOADING = 1;
+
+    private boolean isLoading;
+    private int visibleThreshold = 1;
+    private int lastVisibleItem, totalItemCount;
 
     public HomeCardRecyclerAdapter(Context mContext, List<ZenCardModel> dataList, RecyclerView recyclerView) {
         this.mContext = mContext;
         this.dataList = dataList;
         this.recyclerView = recyclerView;
 
+        final LinearLayoutManager linearLayoutManager = (LinearLayoutManager) this.recyclerView.getLayoutManager();
+
         this.recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
 
-                if (dy > 0)
-                    onLoadMore.onLoadMore();
+                totalItemCount = linearLayoutManager.getItemCount();
+                lastVisibleItem = linearLayoutManager.findLastVisibleItemPosition();
+
+                if (!isLoading && totalItemCount <= (lastVisibleItem + visibleThreshold)) {
+                    if (onLoadMore != null) {
+                        onLoadMore.onLoadMore();
+                    }
+                    isLoading = true;
+                }
             }
         });
 
     }
 
     @Override
-    public HomeCardViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new HomeCardViewHolder(LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.home_card, parent, false));
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        if (viewType == VIEW_TYPE_ITEM) {
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.home_card, parent, false);
+            return new HomeCardViewHolder(view);
+        } else if (viewType == VIEW_TYPE_LOADING) {
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_loading_item, parent, false);
+            return new LoadingViewHolder(view);
+        }
+        return null;
     }
 
     @Override
-    public void onBindViewHolder(HomeCardViewHolder holder, int position) {
-        ZenCardModel zenCard = dataList.get(position);
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
 
-        if (zenCard.getImage64encoded() != null && zenCard.getImage64encoded().length() > 0) {
-            byte[] decodedString = Base64.decode(zenCard.getImage64encoded(), Base64.DEFAULT);
-            Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+        if (holder instanceof HomeCardViewHolder) {
+            ZenCardModel zenCard = dataList.get(position);
 
-            holder.getImageView().setImageBitmap(decodedByte);
+            HomeCardViewHolder homeCardViewHolder = (HomeCardViewHolder) holder;
+
+            if (zenCard.getImage64encoded() != null && zenCard.getImage64encoded().length() > 0) {
+                byte[] decodedString = Base64.decode(zenCard.getImage64encoded(), Base64.DEFAULT);
+                Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+
+                homeCardViewHolder.getImageView().setImageBitmap(decodedByte);
+            }
+        } else if (holder instanceof LoadingViewHolder) {
+            LoadingViewHolder loadingViewHolder = (LoadingViewHolder) holder;
+            loadingViewHolder.progressBar.setIndeterminate(true);
         }
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return dataList.get(position) == null ? VIEW_TYPE_LOADING : VIEW_TYPE_ITEM;
     }
 
     @Override
@@ -79,6 +115,10 @@ public class HomeCardRecyclerAdapter extends RecyclerView.Adapter<HomeCardRecycl
 
     public void setOnLoadMore(OnLoadMoreListener onLoadMore) {
         this.onLoadMore = onLoadMore;
+    }
+
+    public void setLoading(boolean loading) {
+        isLoading = loading;
     }
 
     static class HomeCardViewHolder extends RecyclerView.ViewHolder {
@@ -116,6 +156,15 @@ public class HomeCardRecyclerAdapter extends RecyclerView.Adapter<HomeCardRecycl
 
         public void setButtonShare(Button buttonShare) {
             this.buttonShare = buttonShare;
+        }
+    }
+
+    static class LoadingViewHolder extends RecyclerView.ViewHolder {
+        public ProgressBar progressBar;
+
+        public LoadingViewHolder(View itemView) {
+            super(itemView);
+            progressBar = (ProgressBar) itemView.findViewById(R.id.loading_item_progress_bar);
         }
     }
 
