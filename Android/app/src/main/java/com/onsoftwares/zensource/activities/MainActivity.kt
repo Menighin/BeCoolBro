@@ -12,7 +12,7 @@ import com.onsoftwares.zensource.R
 import com.onsoftwares.zensource.fragments.HomeFragment
 
 class MainActivity : AppCompatActivity() {
-
+    // Test
     private var toolbar: Toolbar? = null;
     private var mDrawerFragment: NavigationDrawerFragment? = null;
 
