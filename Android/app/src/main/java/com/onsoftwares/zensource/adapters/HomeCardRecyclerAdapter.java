@@ -1,8 +1,12 @@
 package com.onsoftwares.zensource.adapters;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Base64;
@@ -12,8 +16,10 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.onsoftwares.zensource.R;
+import com.onsoftwares.zensource.activities.ZenCardZoomActivity;
 import com.onsoftwares.zensource.interfaces.OnLoadMoreListener;
 import com.onsoftwares.zensource.models.ZenCardModel;
 
@@ -75,7 +81,7 @@ public class HomeCardRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.V
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
 
         if (holder instanceof HomeCardViewHolder) {
-            ZenCardModel zenCard = dataList.get(position);
+            final ZenCardModel zenCard = dataList.get(position);
 
             HomeCardViewHolder homeCardViewHolder = (HomeCardViewHolder) holder;
 
@@ -85,6 +91,29 @@ public class HomeCardRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.V
 
                 homeCardViewHolder.getImageView().setImageBitmap(decodedByte);
             }
+
+
+            homeCardViewHolder.getImageView().setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(mContext, zenCard.getAuthor(), Toast.LENGTH_LONG).show();
+
+                    Intent intent = new Intent(mContext, ZenCardZoomActivity.class);
+
+                    intent.putExtra("image64encoded", zenCard.getImage64encoded());
+
+                    String transitionName = mContext.getString(R.string.transition_zoom_card);
+
+                    ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) mContext,
+                                    v,   // Starting view
+                                    transitionName    // The String
+                            );
+                    //Start the Intent
+                    ActivityCompat.startActivity(mContext, intent, options.toBundle());
+
+                }
+            });
+
         } else if (holder instanceof LoadingViewHolder) {
             LoadingViewHolder loadingViewHolder = (LoadingViewHolder) holder;
             loadingViewHolder.progressBar.setIndeterminate(true);
