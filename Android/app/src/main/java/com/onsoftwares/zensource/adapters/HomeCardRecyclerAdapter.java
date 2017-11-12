@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -93,10 +94,9 @@ public class HomeCardRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.V
             }
 
 
-            homeCardViewHolder.getImageView().setOnClickListener(new View.OnClickListener() {
+            homeCardViewHolder.getContentView().setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(mContext, zenCard.getAuthor(), Toast.LENGTH_LONG).show();
 
                     Intent intent = new Intent(mContext, ZenCardZoomActivity.class);
 
@@ -104,8 +104,10 @@ public class HomeCardRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.V
 
                     String transitionName = mContext.getString(R.string.transition_zoom_card);
 
+                    ImageView startView = (ImageView) v.findViewById(R.id.home_card_image);
+
                     ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) mContext,
-                                    v,   // Starting view
+                                    startView,   // Starting view
                                     transitionName    // The String
                             );
                     //Start the Intent
@@ -153,6 +155,7 @@ public class HomeCardRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.V
     static class HomeCardViewHolder extends RecyclerView.ViewHolder {
 
         private View itemView;
+        private LinearLayout contentView;
         private ImageView imageView;
         private Button buttonShare;
 
@@ -161,6 +164,7 @@ public class HomeCardRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.V
             this.itemView = itemView;
             this.imageView = (ImageView) itemView.findViewById(R.id.home_card_image);
             this.buttonShare = (Button) itemView.findViewById(R.id.home_card_share_btn);
+            this.contentView = (LinearLayout) itemView.findViewById(R.id.home_card_content);
         }
 
         public View getItemView() {
@@ -186,6 +190,15 @@ public class HomeCardRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.V
         public void setButtonShare(Button buttonShare) {
             this.buttonShare = buttonShare;
         }
+
+        public LinearLayout getContentView() {
+            return contentView;
+        }
+
+        public void setContentView(LinearLayout contentView) {
+            this.contentView = contentView;
+        }
+
     }
 
     static class LoadingViewHolder extends RecyclerView.ViewHolder {

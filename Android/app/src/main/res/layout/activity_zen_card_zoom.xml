@@ -6,6 +6,11 @@
     android:layout_height="match_parent"
     tools:context="com.onsoftwares.zensource.activities.ZenCardZoomActivity">
 
+    <include
+        layout="@layout/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
     <ImageView
         android:id="@+id/zen_card_zoom_img"
         android:transitionName="@string/transition_zoom_card"
