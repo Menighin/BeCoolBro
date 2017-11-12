@@ -4,12 +4,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.onsoftwares.zensource.activities.ZenCardZoomActivity">
+    android:id="@+id/zen_card_zoom_root"
+    android:fitsSystemWindows="true"
+    tools:context="com.onsoftwares.zensource.activities.ZenCardZoomActivity"
+    android:onClick="fullView">
 
     <include
         layout="@layout/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"/>
 
     <ImageView
         android:id="@+id/zen_card_zoom_img"

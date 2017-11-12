@@ -17,12 +17,16 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.onsoftwares.zensource.R;
 import com.onsoftwares.zensource.activities.ZenCardZoomActivity;
 import com.onsoftwares.zensource.interfaces.OnLoadMoreListener;
 import com.onsoftwares.zensource.models.ZenCardModel;
+import com.onsoftwares.zensource.utils.ZenSourceUtils;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -88,11 +92,14 @@ public class HomeCardRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.V
 
             if (zenCard.getImage64encoded() != null && zenCard.getImage64encoded().length() > 0) {
                 byte[] decodedString = Base64.decode(zenCard.getImage64encoded(), Base64.DEFAULT);
-                Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+                Bitmap bitmap = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+                Bitmap circleBitmap = ZenSourceUtils.getCroppedBitmap(bitmap, bitmap.getWidth() / 2, bitmap.getHeight() / 2, 100);
 
-                homeCardViewHolder.getImageView().setImageBitmap(decodedByte);
+                homeCardViewHolder.getImageView().setImageBitmap(circleBitmap);
             }
 
+            homeCardViewHolder.getQuote().setText(zenCard.getMessage());
+            homeCardViewHolder.getAuthor().setText(zenCard.getAuthor());
 
             homeCardViewHolder.getContentView().setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -157,6 +164,8 @@ public class HomeCardRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.V
         private View itemView;
         private LinearLayout contentView;
         private ImageView imageView;
+        private TextView quote;
+        private TextView author;
         private Button buttonShare;
 
         public HomeCardViewHolder(View itemView) {
@@ -165,6 +174,8 @@ public class HomeCardRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.V
             this.imageView = (ImageView) itemView.findViewById(R.id.home_card_image);
             this.buttonShare = (Button) itemView.findViewById(R.id.home_card_share_btn);
             this.contentView = (LinearLayout) itemView.findViewById(R.id.home_card_content);
+            this.quote = (TextView) itemView.findViewById(R.id.home_card_quote);
+            this.author = (TextView) itemView.findViewById(R.id.home_card_author);
         }
 
         public View getItemView() {
@@ -197,6 +208,22 @@ public class HomeCardRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.V
 
         public void setContentView(LinearLayout contentView) {
             this.contentView = contentView;
+        }
+
+        public TextView getQuote() {
+            return quote;
+        }
+
+        public void setQuote(TextView quote) {
+            this.quote = quote;
+        }
+
+        public TextView getAuthor() {
+            return author;
+        }
+
+        public void setAuthor(TextView author) {
+            this.author = author;
         }
 
     }
