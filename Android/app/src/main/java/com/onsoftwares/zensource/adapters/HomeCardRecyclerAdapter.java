@@ -17,6 +17,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -162,7 +163,7 @@ public class HomeCardRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.V
     static class HomeCardViewHolder extends RecyclerView.ViewHolder {
 
         private View itemView;
-        private LinearLayout contentView;
+        private RelativeLayout contentView;
         private ImageView imageView;
         private TextView quote;
         private TextView author;
@@ -173,7 +174,7 @@ public class HomeCardRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.V
             this.itemView = itemView;
             this.imageView = (ImageView) itemView.findViewById(R.id.home_card_image);
             this.buttonShare = (Button) itemView.findViewById(R.id.home_card_share_btn);
-            this.contentView = (LinearLayout) itemView.findViewById(R.id.home_card_content);
+            this.contentView = (RelativeLayout) itemView.findViewById(R.id.home_card_content);
             this.quote = (TextView) itemView.findViewById(R.id.home_card_quote);
             this.author = (TextView) itemView.findViewById(R.id.home_card_author);
         }
@@ -202,11 +203,11 @@ public class HomeCardRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.V
             this.buttonShare = buttonShare;
         }
 
-        public LinearLayout getContentView() {
+        public RelativeLayout getContentView() {
             return contentView;
         }
 
-        public void setContentView(LinearLayout contentView) {
+        public void setContentView(RelativeLayout contentView) {
             this.contentView = contentView;
         }
 
