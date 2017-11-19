@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Base64;
@@ -14,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -24,6 +26,7 @@ import android.widget.Toast;
 import com.onsoftwares.zensource.R;
 import com.onsoftwares.zensource.activities.ZenCardZoomActivity;
 import com.onsoftwares.zensource.interfaces.OnLoadMoreListener;
+import com.onsoftwares.zensource.interfaces.OnZenCardAction;
 import com.onsoftwares.zensource.models.ZenCardModel;
 import com.onsoftwares.zensource.utils.ZenSourceUtils;
 
@@ -37,6 +40,7 @@ public class HomeCardRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.V
     private final Context mContext;
     private List<ZenCardModel> dataList;
     private OnLoadMoreListener onLoadMore;
+    private OnZenCardAction onZenCardAction;
     private RecyclerView recyclerView;
     private final int VIEW_TYPE_ITEM = 0;
     private final int VIEW_TYPE_LOADING = 1;
@@ -89,9 +93,9 @@ public class HomeCardRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.V
         if (holder instanceof HomeCardViewHolder) {
             final ZenCardModel zenCard = dataList.get(position);
 
-            HomeCardViewHolder homeCardViewHolder = (HomeCardViewHolder) holder;
+            final HomeCardViewHolder homeCardViewHolder = (HomeCardViewHolder) holder;
 
-            if (zenCard.getImage64encoded() != null && zenCard.getImage64encoded().length() > 0) {
+            if (zenCard.getImage64encoded() != null && zenCard.getImage64encoded().length() > 0 && position != 0) {
                 byte[] decodedString = Base64.decode(zenCard.getImage64encoded(), Base64.DEFAULT);
                 Bitmap bitmap = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
                 Bitmap circleBitmap = ZenSourceUtils.getCroppedBitmap(bitmap, bitmap.getWidth() / 2, bitmap.getHeight() / 2, 100);
@@ -101,26 +105,36 @@ public class HomeCardRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.V
 
             homeCardViewHolder.getQuote().setText(zenCard.getMessage());
             homeCardViewHolder.getAuthor().setText(zenCard.getAuthor());
+            homeCardViewHolder.getTextLike().setText(zenCard.getLikes() + "");
+            homeCardViewHolder.getTextDislike().setText(zenCard.getDislikes() + "");
 
+            // Setting image click
             homeCardViewHolder.getContentView().setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                onZenCardAction.onCardClick(zenCard, v);
+                }
+            });
 
-                    Intent intent = new Intent(mContext, ZenCardZoomActivity.class);
+            // Setting like and dislike click
+            homeCardViewHolder.getButtonLike().setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    boolean likeOn = onZenCardAction.onLike(zenCard);
 
-                    intent.putExtra("image64encoded", zenCard.getImage64encoded());
+                    if(likeOn)
+                        homeCardViewHolder.getButtonLike().setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_thumb_up));
+                    else
+                        homeCardViewHolder.getButtonLike().setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_thumb_up_grey));
 
-                    String transitionName = mContext.getString(R.string.transition_zoom_card);
+                }
+            });
 
-                    ImageView startView = (ImageView) v.findViewById(R.id.home_card_image);
-
-                    ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) mContext,
-                                    startView,   // Starting view
-                                    transitionName    // The String
-                            );
-                    //Start the Intent
-                    ActivityCompat.startActivity(mContext, intent, options.toBundle());
-
+            // Setting share click
+            homeCardViewHolder.getButtonShare().setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onZenCardAction.onShare(homeCardViewHolder.getImageView());
                 }
             });
 
@@ -156,6 +170,10 @@ public class HomeCardRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.V
         this.onLoadMore = onLoadMore;
     }
 
+    public void setOnZenCardAction(OnZenCardAction onZenCardAction) {
+        this.onZenCardAction = onZenCardAction;
+    }
+
     public void setLoading(boolean loading) {
         isLoading = loading;
     }
@@ -168,15 +186,23 @@ public class HomeCardRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.V
         private TextView quote;
         private TextView author;
         private Button buttonShare;
+        private ImageButton buttonLike;
+        private TextView textLike;
+        private ImageButton buttonDislike;
+        private TextView textDislike;
 
         public HomeCardViewHolder(View itemView) {
             super(itemView);
             this.itemView = itemView;
             this.imageView = (ImageView) itemView.findViewById(R.id.home_card_image);
             this.buttonShare = (Button) itemView.findViewById(R.id.home_card_share_btn);
+            this.buttonLike = (ImageButton) itemView.findViewById(R.id.home_card_like_btn);
+            this.buttonDislike = (ImageButton) itemView.findViewById(R.id.home_card_dislike_btn);
             this.contentView = (RelativeLayout) itemView.findViewById(R.id.home_card_content);
             this.quote = (TextView) itemView.findViewById(R.id.home_card_quote);
             this.author = (TextView) itemView.findViewById(R.id.home_card_author);
+            this.textLike = (TextView) itemView.findViewById(R.id.home_card_like_text);
+            this.textDislike = (TextView) itemView.findViewById(R.id.home_card_dislike_text);
         }
 
         public View getItemView() {
@@ -227,6 +253,37 @@ public class HomeCardRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.V
             this.author = author;
         }
 
+        public ImageButton getButtonLike() {
+            return buttonLike;
+        }
+
+        public void setButtonLike(ImageButton buttonLike) {
+            this.buttonLike = buttonLike;
+        }
+
+        public ImageButton getButtonDislike() {
+            return buttonDislike;
+        }
+
+        public void setButtonDislike(ImageButton buttonDislike) {
+            this.buttonDislike = buttonDislike;
+        }
+
+        public TextView getTextLike() {
+            return textLike;
+        }
+
+        public void setTextLike(TextView textLike) {
+            this.textLike = textLike;
+        }
+
+        public TextView getTextDislike() {
+            return textDislike;
+        }
+
+        public void setTextDislike(TextView textDislike) {
+            this.textDislike = textDislike;
+        }
     }
 
     static class LoadingViewHolder extends RecyclerView.ViewHolder {

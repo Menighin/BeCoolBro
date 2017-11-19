@@ -3,6 +3,7 @@ package com.onsoftwares.zensource.utils;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -10,10 +11,37 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.view.View;
 
+import com.onsoftwares.zensource.R;
+
 public class ZenSourceUtils {
 
     public static final String PACKKAGE_NAME = "com.onsoftwares.zensource";
     public static final String IMAGE_NAME_ON_CACHE = "zen_quote";
+
+    public static <T> T getSharedPreferencesValue(Context c, String key, Class<T> returnType) {
+        SharedPreferences sharedPref = c.getSharedPreferences(c.getString(R.string.shared_preferences), Context.MODE_PRIVATE);
+
+        if (returnType.equals(String.class)) {
+            return (T) sharedPref.getString(key, null);
+        } else if (returnType.equals(Integer.class)) {
+            return (T) new Integer(sharedPref.getInt(key, -1));
+        } else {
+            return (T) sharedPref.getString(key, "");
+        }
+    }
+
+    public static <T> void setSharedPreferenceValue(Context c, String key, T value, Class<T> classToWrite) {
+        SharedPreferences sharedPref = c.getSharedPreferences(c.getString(R.string.shared_preferences), Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+
+        if (classToWrite.equals(String.class)) {
+            editor.putString(key, value.toString());
+        } else if (classToWrite.equals(Integer.class)) {
+            editor.putInt(key, (Integer) value);
+        }
+
+        editor.commit();
+    }
 
     public static void goFullScreen(Activity act) {
         act.getWindow().getDecorView().setSystemUiVisibility(
