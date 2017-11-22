@@ -8,6 +8,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 
 public class ZenCardModel implements IHttpResponseConverter<List<ZenCardModel>> {
@@ -21,6 +22,8 @@ public class ZenCardModel implements IHttpResponseConverter<List<ZenCardModel>> 
     private int likes;
     private int dislikes;
     private List<String> tags;
+    private boolean liked;
+    private boolean disliked;
 
     public ZenCardModel() {
         tags = new ArrayList<String>();
@@ -36,6 +39,8 @@ public class ZenCardModel implements IHttpResponseConverter<List<ZenCardModel>> 
         this.likes = likes;
         this.dislikes = dislikes;
         this.tags = tags;
+        this.liked = false;
+        this.disliked = false;
     }
 
     public ZenCardModel(int id, String message, String author, String language, String image64encoded, int likes, int dislikes) {
@@ -46,6 +51,8 @@ public class ZenCardModel implements IHttpResponseConverter<List<ZenCardModel>> 
         this.image64encoded = image64encoded;
         this.likes = likes;
         this.dislikes = dislikes;
+        this.disliked = false;
+        this.liked = false;
     }
 
     public int getId() {
@@ -118,6 +125,28 @@ public class ZenCardModel implements IHttpResponseConverter<List<ZenCardModel>> 
 
     public void setTags(List<String> tags) {
         this.tags = tags;
+    }
+
+    public boolean isLiked() {
+        return liked;
+    }
+
+    public void setLiked(boolean liked) {
+        this.liked = liked;
+    }
+
+    public boolean isDisliked() {
+        return disliked;
+    }
+
+    public void setDisliked(boolean disliked) {
+        this.disliked = disliked;
+    }
+
+    public void setLikedState(HashSet<String> likedIds, HashSet<String> dislikedIds) {
+        String idStr = this.id + "";
+        if (likedIds.contains(idStr) && !dislikedIds.contains(idStr)) this.liked    = true;
+        if (dislikedIds.contains(idStr) && !likedIds.contains(idStr)) this.disliked = true;
     }
 
     @Override

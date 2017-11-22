@@ -88,7 +88,7 @@ public class HomeCardRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.V
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
 
         if (holder instanceof HomeCardViewHolder) {
             final ZenCardModel zenCard = dataList.get(position);
@@ -108,11 +108,21 @@ public class HomeCardRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.V
             homeCardViewHolder.getTextLike().setText(zenCard.getLikes() + "");
             homeCardViewHolder.getTextDislike().setText(zenCard.getDislikes() + "");
 
+            if (zenCard.isLiked())
+                homeCardViewHolder.getButtonLike().setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_thumb_up));
+            else
+                homeCardViewHolder.getButtonLike().setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_thumb_up_grey));
+
+            if (zenCard.isDisliked())
+                homeCardViewHolder.getButtonDislike().setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_thumb_down));
+            else
+                homeCardViewHolder.getButtonDislike().setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_thumb_down_grey));
+
             // Setting image click
             homeCardViewHolder.getContentView().setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                onZenCardAction.onCardClick(zenCard, v);
+                    onZenCardAction.onCardClick(zenCard, v);
                 }
             });
 
@@ -120,12 +130,41 @@ public class HomeCardRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.V
             homeCardViewHolder.getButtonLike().setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    boolean likeOn = onZenCardAction.onLike(zenCard);
 
-                    if(likeOn)
-                        homeCardViewHolder.getButtonLike().setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_thumb_up));
-                    else
+                    if (zenCard.isLiked()) return;
+
+                    onZenCardAction.onLike(zenCard);
+
+                    homeCardViewHolder.getButtonLike().setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_thumb_up));
+                    zenCard.setLiked(true);
+                    zenCard.setLikes(zenCard.getLikes() + 1);
+
+                    if (zenCard.isDisliked()) {
+                        homeCardViewHolder.getButtonDislike().setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_thumb_down_grey));
+                        zenCard.setDisliked(false);
+                        zenCard.setDislikes(zenCard.getDislikes() - 1);
+                    }
+
+                }
+            });
+
+            homeCardViewHolder.getButtonDislike().setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    if (zenCard.isDisliked()) return;
+
+                    onZenCardAction.onDislike(zenCard);
+
+                    homeCardViewHolder.getButtonDislike().setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_thumb_down));
+                    zenCard.setDisliked(true);
+                    zenCard.setDislikes(zenCard.getDislikes() + 1);
+
+                    if (zenCard.isLiked()) {
                         homeCardViewHolder.getButtonLike().setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_thumb_up_grey));
+                        zenCard.setLiked(false);
+                        zenCard.setLikes(zenCard.getLikes() - 1);
+                    }
 
                 }
             });
