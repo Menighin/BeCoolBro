@@ -10,10 +10,12 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 
 import okhttp3.Call;
+import okhttp3.FormBody;
 import okhttp3.Headers;
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class HttpUtil {
@@ -24,10 +26,12 @@ public class HttpUtil {
     private HttpUrl.Builder url;
     private Headers.Builder headers;
     private IHttpResponseConverter<?> converter;
+    private FormBody.Builder requestBody;
 
     private HttpUtil() {
         this.client = new OkHttpClient();
         this.headers = new Headers.Builder();
+        this.requestBody = new FormBody.Builder();
     }
 
     public OkHttpClient getClient() {
@@ -41,6 +45,8 @@ public class HttpUtil {
     private HttpUrl.Builder getUrl() {
         return url;
     }
+
+    private FormBody.Builder getRequestBody() {return this.requestBody; }
 
     private void setUrl(HttpUrl.Builder url) {
         this.url = url;
@@ -64,6 +70,20 @@ public class HttpUtil {
             .headers(this.headers.build())
             .build();
 
+        handleCall(request);
+    }
+
+    public void makePost() {
+        Request request = new Request.Builder()
+                .url(this.url.build())
+                .post(this.requestBody.build())
+                .headers(this.headers.build())
+                .build();
+
+        handleCall(request);
+    }
+
+    private void handleCall(Request request) {
         client.newCall(request).enqueue(new okhttp3.Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
@@ -88,6 +108,8 @@ public class HttpUtil {
                         }
                         else if (successCallback != null && successCallback instanceof CallbackConverted<?> && converter != null) {
                             ((CallbackConverted) successCallback).callback(converter.convertHttpResponse(responseStr));
+                        } else if (successCallback != null && successCallback instanceof CallbackVoid) {
+                            ((CallbackVoid) successCallback).callback();
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -124,6 +146,11 @@ public class HttpUtil {
 
         public Builder addQueryParameter(String name, String value) {
             this.httpUtil.getUrl().addQueryParameter(name, value);
+            return this;
+        }
+
+        public Builder addRequestBody(String name, String value) {
+            this.httpUtil.getRequestBody().add(name, value);
             return this;
         }
 
@@ -169,5 +196,9 @@ public class HttpUtil {
 
     public interface CallbackConverted<T> extends Callback {
         void callback(T response);
+    }
+
+    public interface CallbackVoid extends Callback {
+        void callback();
     }
 }

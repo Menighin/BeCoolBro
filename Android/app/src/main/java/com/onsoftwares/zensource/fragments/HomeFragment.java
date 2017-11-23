@@ -206,6 +206,43 @@ public class HomeFragment extends Fragment implements OnLoadMoreListener, OnZenC
         ZenSourceUtils.setSharedPreferenceValue(getActivity(), getString(R.string.shared_preferences_disliked), TextUtils.join(";", dislikedQuotes), String.class);
     }
 
+//    private void callLikeDislikeAction(ZenCardModel z, boolean liked) {
+//        HttpUtil.Builder builder = HttpUtil.Builder()
+//                .withUrl("http://zensource-dev.sa-east-1.elasticbeanstalk.com/api/zen/" + z.getId() + "/rate");
+//
+//
+//        if (z.isLiked())
+//
+//
+//                .ifSuccess(new HttpUtil.CallbackConverted<List<ZenCardModel>>() {
+//                    @Override
+//                    public void callback(final List<ZenCardModel> list) {
+//                        getActivity().runOnUiThread(new Runnable() {
+//                            @Override
+//                            public void run() {
+//
+//                                String likedQuotesStr = ZenSourceUtils.getSharedPreferencesValue(getActivity(), getString(R.string.shared_preferences_liked), String.class);
+//                                HashSet<String> likedQuotes = likedQuotesStr == null ? new HashSet<String>() : new HashSet<String>(Arrays.asList(likedQuotesStr.split(";")));
+//
+//                                String dislikedQuotesStr = ZenSourceUtils.getSharedPreferencesValue(getActivity(), getString(R.string.shared_preferences_disliked), String.class);
+//                                HashSet<String> dislikedQuotes = likedQuotesStr == null ? new HashSet<String>() : new HashSet<String>(Arrays.asList(dislikedQuotesStr.split(";")));
+//
+//                                for (int i = 0; i < list.size(); i++) {
+//                                    list.get(i).setLikedState(likedQuotes, dislikedQuotes);
+//                                }
+//
+//                                homeCardsList.addAll(list);
+//                                homeCardRecyclerView.getAdapter().notifyDataSetChanged();
+//                                progressBar.setVisibility(View.INVISIBLE);
+//                                loading = false;
+//                                recyclerAdapter.setLoading(false);
+//
+//                            }
+//                        });
+//                    }
+//                });
+//    }
+
     @Override
     public void onShare(ImageView imageView) {
         // Saving image on Cache

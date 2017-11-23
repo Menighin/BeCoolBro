@@ -138,11 +138,14 @@ public class HomeCardRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.V
                     homeCardViewHolder.getButtonLike().setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_thumb_up));
                     zenCard.setLiked(true);
                     zenCard.setLikes(zenCard.getLikes() + 1);
+                    homeCardViewHolder.getTextLike().setText(zenCard.getLikes() + "");
 
                     if (zenCard.isDisliked()) {
                         homeCardViewHolder.getButtonDislike().setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_thumb_down_grey));
                         zenCard.setDisliked(false);
                         zenCard.setDislikes(zenCard.getDislikes() - 1);
+                        homeCardViewHolder.getTextDislike().setText(zenCard.getDislikes() + "");
+
                     }
 
                 }
@@ -159,11 +162,13 @@ public class HomeCardRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.V
                     homeCardViewHolder.getButtonDislike().setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_thumb_down));
                     zenCard.setDisliked(true);
                     zenCard.setDislikes(zenCard.getDislikes() + 1);
+                    homeCardViewHolder.getTextDislike().setText(zenCard.getDislikes() + "");
 
                     if (zenCard.isLiked()) {
                         homeCardViewHolder.getButtonLike().setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_thumb_up_grey));
                         zenCard.setLiked(false);
                         zenCard.setLikes(zenCard.getLikes() - 1);
+                        homeCardViewHolder.getTextLike().setText(zenCard.getLikes() + "");
                     }
 
                 }
