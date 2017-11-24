@@ -95,28 +95,7 @@ public class HomeCardRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.V
 
             final HomeCardViewHolder homeCardViewHolder = (HomeCardViewHolder) holder;
 
-            if (zenCard.getImage64encoded() != null && zenCard.getImage64encoded().length() > 0 && position != 0) {
-                byte[] decodedString = Base64.decode(zenCard.getImage64encoded(), Base64.DEFAULT);
-                Bitmap bitmap = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-                Bitmap circleBitmap = ZenSourceUtils.getCroppedBitmap(bitmap, bitmap.getWidth() / 2, bitmap.getHeight() / 2, 100);
-
-                homeCardViewHolder.getImageView().setImageBitmap(circleBitmap);
-            }
-
-            homeCardViewHolder.getQuote().setText(zenCard.getMessage());
-            homeCardViewHolder.getAuthor().setText(zenCard.getAuthor());
-            homeCardViewHolder.getTextLike().setText(zenCard.getLikes() + "");
-            homeCardViewHolder.getTextDislike().setText(zenCard.getDislikes() + "");
-
-            if (zenCard.isLiked())
-                homeCardViewHolder.getButtonLike().setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_thumb_up));
-            else
-                homeCardViewHolder.getButtonLike().setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_thumb_up_grey));
-
-            if (zenCard.isDisliked())
-                homeCardViewHolder.getButtonDislike().setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_thumb_down));
-            else
-                homeCardViewHolder.getButtonDislike().setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_thumb_down_grey));
+            refreshComponents(homeCardViewHolder, zenCard);
 
             // Setting image click
             homeCardViewHolder.getContentView().setOnClickListener(new View.OnClickListener() {
@@ -136,17 +115,15 @@ public class HomeCardRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.V
                     onZenCardAction.onLike(zenCard);
 
                     homeCardViewHolder.getButtonLike().setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_thumb_up));
-                    zenCard.setLiked(true);
-                    zenCard.setLikes(zenCard.getLikes() + 1);
+
                     homeCardViewHolder.getTextLike().setText(zenCard.getLikes() + "");
 
                     if (zenCard.isDisliked()) {
                         homeCardViewHolder.getButtonDislike().setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_thumb_down_grey));
-                        zenCard.setDisliked(false);
-                        zenCard.setDislikes(zenCard.getDislikes() - 1);
                         homeCardViewHolder.getTextDislike().setText(zenCard.getDislikes() + "");
-
                     }
+
+                    refreshComponents(homeCardViewHolder, zenCard);
 
                 }
             });
@@ -160,16 +137,14 @@ public class HomeCardRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.V
                     onZenCardAction.onDislike(zenCard);
 
                     homeCardViewHolder.getButtonDislike().setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_thumb_down));
-                    zenCard.setDisliked(true);
-                    zenCard.setDislikes(zenCard.getDislikes() + 1);
                     homeCardViewHolder.getTextDislike().setText(zenCard.getDislikes() + "");
 
                     if (zenCard.isLiked()) {
                         homeCardViewHolder.getButtonLike().setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_thumb_up_grey));
-                        zenCard.setLiked(false);
-                        zenCard.setLikes(zenCard.getLikes() - 1);
                         homeCardViewHolder.getTextLike().setText(zenCard.getLikes() + "");
                     }
+
+                    refreshComponents(homeCardViewHolder, zenCard);
 
                 }
             });
@@ -208,6 +183,32 @@ public class HomeCardRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.V
 
     public void setDataList(List<ZenCardModel> dataList) {
         this.dataList = dataList;
+    }
+
+    private void refreshComponents(HomeCardViewHolder viewHolder, ZenCardModel z) {
+
+        if (z.getImage64encoded() != null && z.getImage64encoded().length() > 0) {
+            byte[] decodedString = Base64.decode(z.getImage64encoded(), Base64.DEFAULT);
+            Bitmap bitmap = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+            Bitmap circleBitmap = ZenSourceUtils.getCroppedBitmap(bitmap, bitmap.getWidth() / 2, bitmap.getHeight() / 2, 100);
+
+            viewHolder.getImageView().setImageBitmap(circleBitmap);
+        }
+
+        viewHolder.getQuote().setText(z.getMessage());
+        viewHolder.getAuthor().setText(z.getAuthor());
+        viewHolder.getTextLike().setText(z.getLikes() + "");
+        viewHolder.getTextDislike().setText(z.getDislikes() + "");
+
+        if (z.isLiked())
+            viewHolder.getButtonLike().setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_thumb_up));
+        else
+            viewHolder.getButtonLike().setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_thumb_up_grey));
+
+        if (z.isDisliked())
+            viewHolder.getButtonDislike().setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_thumb_down));
+        else
+            viewHolder.getButtonDislike().setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_thumb_down_grey));
     }
 
     public void setOnLoadMore(OnLoadMoreListener onLoadMore) {

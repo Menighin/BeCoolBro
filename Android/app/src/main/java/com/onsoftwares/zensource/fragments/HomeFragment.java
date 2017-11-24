@@ -160,6 +160,18 @@ public class HomeFragment extends Fragment implements OnLoadMoreListener, OnZenC
 
     @Override
     public void onLike(ZenCardModel z) {
+
+        callLikeDislikeAction(z, true);
+
+        // Update the model
+        z.setLiked(true);
+        z.setLikes(z.getLikes() + 1);
+
+        if (z.isDisliked()) {
+            z.setDisliked(false);
+            z.setDislikes(z.getDislikes() - 1);
+        }
+
         String likedQuotesStr = ZenSourceUtils.getSharedPreferencesValue(getActivity(), getString(R.string.shared_preferences_liked), String.class);
         HashSet<String> likedQuotes = likedQuotesStr == null ? new HashSet<String>() : new HashSet<String>(Arrays.asList(likedQuotesStr.split(";")));
 
@@ -168,7 +180,6 @@ public class HomeFragment extends Fragment implements OnLoadMoreListener, OnZenC
 
         // If it was liked, it is being disliked now and vice-versa
         String id = z.getId() + "";
-        boolean valueToReturn = !likedQuotes.contains(id);
 
         if (dislikedQuotes.contains(id))
             dislikedQuotes.remove(id);
@@ -184,6 +195,18 @@ public class HomeFragment extends Fragment implements OnLoadMoreListener, OnZenC
 
     @Override
     public void onDislike(ZenCardModel z) {
+
+        callLikeDislikeAction(z, false);
+
+        // Update the model
+        z.setDisliked(true);
+        z.setDislikes(z.getDislikes() + 1);
+
+        if (z.isLiked()) {
+            z.setLiked(false);
+            z.setLikes(z.getLikes() - 1);
+        }
+
         String likedQuotesStr = ZenSourceUtils.getSharedPreferencesValue(getActivity(), getString(R.string.shared_preferences_liked), String.class);
         HashSet<String> likedQuotes = likedQuotesStr == null ? new HashSet<String>() : new HashSet<String>(Arrays.asList(likedQuotesStr.split(";")));
 
@@ -206,42 +229,45 @@ public class HomeFragment extends Fragment implements OnLoadMoreListener, OnZenC
         ZenSourceUtils.setSharedPreferenceValue(getActivity(), getString(R.string.shared_preferences_disliked), TextUtils.join(";", dislikedQuotes), String.class);
     }
 
-//    private void callLikeDislikeAction(ZenCardModel z, boolean liked) {
-//        HttpUtil.Builder builder = HttpUtil.Builder()
-//                .withUrl("http://zensource-dev.sa-east-1.elasticbeanstalk.com/api/zen/" + z.getId() + "/rate");
-//
-//
-//        if (z.isLiked())
-//
-//
-//                .ifSuccess(new HttpUtil.CallbackConverted<List<ZenCardModel>>() {
-//                    @Override
-//                    public void callback(final List<ZenCardModel> list) {
-//                        getActivity().runOnUiThread(new Runnable() {
-//                            @Override
-//                            public void run() {
-//
-//                                String likedQuotesStr = ZenSourceUtils.getSharedPreferencesValue(getActivity(), getString(R.string.shared_preferences_liked), String.class);
-//                                HashSet<String> likedQuotes = likedQuotesStr == null ? new HashSet<String>() : new HashSet<String>(Arrays.asList(likedQuotesStr.split(";")));
-//
-//                                String dislikedQuotesStr = ZenSourceUtils.getSharedPreferencesValue(getActivity(), getString(R.string.shared_preferences_disliked), String.class);
-//                                HashSet<String> dislikedQuotes = likedQuotesStr == null ? new HashSet<String>() : new HashSet<String>(Arrays.asList(dislikedQuotesStr.split(";")));
-//
-//                                for (int i = 0; i < list.size(); i++) {
-//                                    list.get(i).setLikedState(likedQuotes, dislikedQuotes);
-//                                }
-//
-//                                homeCardsList.addAll(list);
-//                                homeCardRecyclerView.getAdapter().notifyDataSetChanged();
-//                                progressBar.setVisibility(View.INVISIBLE);
-//                                loading = false;
-//                                recyclerAdapter.setLoading(false);
-//
-//                            }
-//                        });
-//                    }
-//                });
-//    }
+    private void callLikeDislikeAction(ZenCardModel z, boolean liked) {
+        HttpUtil.Builder builder = HttpUtil.Builder()
+                .withUrl("http://zensource-dev.sa-east-1.elasticbeanstalk.com/api/zen/" + z.getId() + "/rate")
+                .addRequestBody("id", z.getId() + "");
+
+
+        if ((z.isLiked() && liked) || (z.isDisliked() && !liked)) return;
+
+        if (liked) {
+            builder.addRequestBody("like", "1");
+
+            if(z.isDisliked())
+                builder.addRequestBody("dislike", "-1");
+            else
+                builder.addRequestBody("dislike", "0");
+        } else {
+            builder.addRequestBody("dislike", "1");
+
+            if(z.isLiked())
+                builder.addRequestBody("like", "-1");
+            else
+                builder.addRequestBody("like", "0");
+        }
+
+
+        builder.ifSuccess(new HttpUtil.CallbackVoid() {
+            @Override
+            public void callback() {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+
+                       Toast.makeText(getActivity(), "Done!", Toast.LENGTH_SHORT).show();
+
+                    }
+                });
+            }
+        }).makePut();
+    }
 
     @Override
     public void onShare(ImageView imageView) {

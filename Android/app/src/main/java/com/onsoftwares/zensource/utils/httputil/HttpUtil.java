@@ -13,6 +13,8 @@ import okhttp3.Call;
 import okhttp3.FormBody;
 import okhttp3.Headers;
 import okhttp3.HttpUrl;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -26,12 +28,12 @@ public class HttpUtil {
     private HttpUrl.Builder url;
     private Headers.Builder headers;
     private IHttpResponseConverter<?> converter;
-    private FormBody.Builder requestBody;
+    private JSONObject requestBody;
 
     private HttpUtil() {
         this.client = new OkHttpClient();
         this.headers = new Headers.Builder();
-        this.requestBody = new FormBody.Builder();
+        this.requestBody = new JSONObject();
     }
 
     public OkHttpClient getClient() {
@@ -46,7 +48,7 @@ public class HttpUtil {
         return url;
     }
 
-    private FormBody.Builder getRequestBody() {return this.requestBody; }
+    private JSONObject getRequestBody() {return this.requestBody; }
 
     private void setUrl(HttpUrl.Builder url) {
         this.url = url;
@@ -76,10 +78,19 @@ public class HttpUtil {
     public void makePost() {
         Request request = new Request.Builder()
                 .url(this.url.build())
-                .post(this.requestBody.build())
-                .headers(this.headers.build())
+                .post(RequestBody.create(MediaType.parse("application/json; charset=utf-8"), this.requestBody.toString()))
+                .addHeader("Content-Type", "application/json;charset=UTF-8")
+                .method("POST", RequestBody.create(null, new byte[0]))
                 .build();
+        handleCall(request);
+    }
 
+    public void makePut() {
+        Request request = new Request.Builder()
+                .url(this.url.build())
+                .put(RequestBody.create(MediaType.parse("application/json; charset=utf-8"), this.requestBody.toString()))
+                .addHeader("Content-Type", "application/json;charset=UTF-8")
+                .build();
         handleCall(request);
     }
 
@@ -150,7 +161,11 @@ public class HttpUtil {
         }
 
         public Builder addRequestBody(String name, String value) {
-            this.httpUtil.getRequestBody().add(name, value);
+            try {
+                this.httpUtil.getRequestBody().put(name, value);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
             return this;
         }
 
@@ -175,6 +190,14 @@ public class HttpUtil {
 
         public void makeGet() {
             this.httpUtil.makeGet();
+        }
+
+        public void makePost() {
+            this.httpUtil.makePost();
+        }
+
+        public void makePut() {
+            this.httpUtil.makePut();
         }
 
     }
