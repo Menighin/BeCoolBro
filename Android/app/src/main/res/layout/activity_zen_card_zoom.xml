@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     android:id="@+id/zen_card_zoom_root"
     android:fitsSystemWindows="true"
+    android:background="@color/grey3"
     tools:context="com.onsoftwares.zensource.activities.ZenCardZoomActivity"
     android:onClick="fullView">
 

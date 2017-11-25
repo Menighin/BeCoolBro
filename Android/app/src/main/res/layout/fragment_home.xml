@@ -13,12 +13,19 @@
         />
 
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/home_recycler_view"
+    <android.support.v4.widget.SwipeRefreshLayout
         android:layout_width="match_parent"
-        android:divider="@null"
-        android:layout_height="wrap_content"
-        tools:listitem="@layout/home_card"
-        android:layoutAnimation="@anim/layout_animation_fall_down"/>
+        android:layout_height="match_parent"
+        android:id="@+id/home_swipe_refresh">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/home_recycler_view"
+            android:layout_width="match_parent"
+            android:divider="@null"
+            android:layout_height="match_parent"
+            tools:listitem="@layout/home_card"
+            android:layoutAnimation="@anim/layout_animation_fall_down"/>
+
+    </android.support.v4.widget.SwipeRefreshLayout>
 
 </FrameLayout>

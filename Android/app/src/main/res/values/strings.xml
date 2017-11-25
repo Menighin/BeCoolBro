@@ -13,4 +13,6 @@
     <string name="home_card_share">SHARE</string>
     <string name="transition_zoom_card">transition_zoom_card</string>
     <string name="share_button">Share button</string>
+    <string name="like_success">Quote marked as liked</string>
+    <string name="dislike_success">Quote marked as disliked</string>
 </resources>

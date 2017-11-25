@@ -10,10 +10,12 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.FileProvider;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -45,6 +47,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.concurrent.Callable;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -52,6 +55,7 @@ import java.util.List;
 public class HomeFragment extends Fragment implements OnLoadMoreListener, OnZenCardAction{
 
     private RecyclerView homeCardRecyclerView;
+    private SwipeRefreshLayout homeCardSwipeRefreshLayout;
     private List<ZenCardModel> homeCardsList;
     private HomeCardRecyclerAdapter recyclerAdapter;
     private ProgressBar progressBar;
@@ -73,6 +77,8 @@ public class HomeFragment extends Fragment implements OnLoadMoreListener, OnZenC
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
 
+        homeCardSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.home_swipe_refresh);
+
         homeCardRecyclerView = (RecyclerView) view.findViewById(R.id.home_recycler_view);
         homeCardRecyclerView.setLayoutManager(layoutManager);
 
@@ -81,40 +87,21 @@ public class HomeFragment extends Fragment implements OnLoadMoreListener, OnZenC
         recyclerAdapter.setOnZenCardAction(this);
         homeCardRecyclerView.setAdapter(recyclerAdapter);
 
-        // Request for the data of the recycler view
-        loading = true;
-        recyclerAdapter.setLoading(true);
-        HttpUtil.Builder()
-            .withUrl("http://zensource-dev.sa-east-1.elasticbeanstalk.com/api/zen/images?page=1")
-            .withConverter(new ZenCardModel())
-            .ifSuccess(new HttpUtil.CallbackConverted<List<ZenCardModel>>() {
-                @Override
-                public void callback(final List<ZenCardModel> list) {
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
+        // First populate the view
+        refreshHomeView(null);
 
-                        String likedQuotesStr = ZenSourceUtils.getSharedPreferencesValue(getActivity(), getString(R.string.shared_preferences_liked), String.class);
-                        HashSet<String> likedQuotes = likedQuotesStr == null ? new HashSet<String>() : new HashSet<String>(Arrays.asList(likedQuotesStr.split(";")));
-
-                        String dislikedQuotesStr = ZenSourceUtils.getSharedPreferencesValue(getActivity(), getString(R.string.shared_preferences_disliked), String.class);
-                        HashSet<String> dislikedQuotes = likedQuotesStr == null ? new HashSet<String>() : new HashSet<String>(Arrays.asList(dislikedQuotesStr.split(";")));
-
-                        for (int i = 0; i < list.size(); i++) {
-                            list.get(i).setLikedState(likedQuotes, dislikedQuotes);
-                        }
-
-                        homeCardsList.addAll(list);
-                        homeCardRecyclerView.getAdapter().notifyDataSetChanged();
-                        progressBar.setVisibility(View.INVISIBLE);
-                        loading = false;
-                        recyclerAdapter.setLoading(false);
-
-                        }
-                    });
-                }
-            })
-            .makeGet();
+        homeCardSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                refreshHomeView(new Callable() {
+                    @Override
+                    public Object call() throws Exception {
+                        homeCardSwipeRefreshLayout.setRefreshing(false);
+                        return null;
+                    }
+                });
+            }
+        });
 
         return view;
     }
@@ -229,7 +216,7 @@ public class HomeFragment extends Fragment implements OnLoadMoreListener, OnZenC
         ZenSourceUtils.setSharedPreferenceValue(getActivity(), getString(R.string.shared_preferences_disliked), TextUtils.join(";", dislikedQuotes), String.class);
     }
 
-    private void callLikeDislikeAction(ZenCardModel z, boolean liked) {
+    private void callLikeDislikeAction(ZenCardModel z, final boolean liked) {
         HttpUtil.Builder builder = HttpUtil.Builder()
                 .withUrl("http://zensource-dev.sa-east-1.elasticbeanstalk.com/api/zen/" + z.getId() + "/rate")
                 .addRequestBody("id", z.getId() + "");
@@ -261,8 +248,10 @@ public class HomeFragment extends Fragment implements OnLoadMoreListener, OnZenC
                     @Override
                     public void run() {
 
-                       Toast.makeText(getActivity(), "Done!", Toast.LENGTH_SHORT).show();
-
+                        if (liked)
+                            Snackbar.make(homeCardRecyclerView, getResources().getString(R.string.like_success), Snackbar.LENGTH_SHORT).show();
+                        else
+                            Snackbar.make(homeCardRecyclerView, getResources().getString(R.string.dislike_success), Snackbar.LENGTH_SHORT).show();
                     }
                 });
             }
@@ -318,5 +307,53 @@ public class HomeFragment extends Fragment implements OnLoadMoreListener, OnZenC
         );
         //Start the Intent
         ActivityCompat.startActivity(getActivity(), intent, options.toBundle());
+    }
+
+    private void refreshHomeView(final Callable callback) {
+
+        // Request for the data of the recycler view
+        loading = true;
+        recyclerAdapter.setLoading(true);
+        HttpUtil.Builder()
+            .withUrl("http://zensource-dev.sa-east-1.elasticbeanstalk.com/api/zen/images?page=1")
+            .withConverter(new ZenCardModel())
+            .ifSuccess(new HttpUtil.CallbackConverted<List<ZenCardModel>>() {
+                @Override
+                public void callback(final List<ZenCardModel> list) {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+
+                            String likedQuotesStr = ZenSourceUtils.getSharedPreferencesValue(getActivity(), getString(R.string.shared_preferences_liked), String.class);
+                            HashSet<String> likedQuotes = likedQuotesStr == null ? new HashSet<String>() : new HashSet<String>(Arrays.asList(likedQuotesStr.split(";")));
+
+                            String dislikedQuotesStr = ZenSourceUtils.getSharedPreferencesValue(getActivity(), getString(R.string.shared_preferences_disliked), String.class);
+                            HashSet<String> dislikedQuotes = likedQuotesStr == null ? new HashSet<String>() : new HashSet<String>(Arrays.asList(dislikedQuotesStr.split(";")));
+
+                            for (int i = 0; i < list.size(); i++) {
+                                list.get(i).setLikedState(likedQuotes, dislikedQuotes);
+                            }
+
+                            homeCardsList.clear();
+                            page = 2;
+
+                            homeCardsList.addAll(list);
+                            homeCardRecyclerView.getAdapter().notifyDataSetChanged();
+                            progressBar.setVisibility(View.INVISIBLE);
+                            loading = false;
+                            recyclerAdapter.setLoading(false);
+
+                            if (callback != null)
+                                try {
+                                    callback.call();
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+
+                        }
+                    });
+                }
+            })
+            .makeGet();
     }
 }
