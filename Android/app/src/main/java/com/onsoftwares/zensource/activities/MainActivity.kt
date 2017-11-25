@@ -1,11 +1,15 @@
 package com.onsoftwares.zensource.activities
 
+import android.app.SearchManager
+import android.content.Context
 import android.content.res.Configuration
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.SearchView
 import android.support.v7.widget.Toolbar
+import android.view.Menu
 import android.view.MenuItem
 import com.onsoftwares.zensource.fragments.NavigationDrawerFragment
 import com.onsoftwares.zensource.R
@@ -38,6 +42,12 @@ class MainActivity : AppCompatActivity() {
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
         mDrawerFragment!!.drawerToggle!!.onConfigurationChanged(newConfig)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.main_menu, menu)
+
+        return super.onCreateOptionsMenu(menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

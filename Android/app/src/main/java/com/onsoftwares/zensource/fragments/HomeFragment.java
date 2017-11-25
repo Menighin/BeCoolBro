@@ -10,6 +10,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
@@ -18,9 +19,13 @@ import android.support.v4.content.FileProvider;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
 import android.util.Base64;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -59,7 +64,9 @@ public class HomeFragment extends Fragment implements OnLoadMoreListener, OnZenC
     private List<ZenCardModel> homeCardsList;
     private HomeCardRecyclerAdapter recyclerAdapter;
     private ProgressBar progressBar;
-    private int page = 2;
+    private TextView homeNoResultsFound;
+    private int page = 1;
+    private String search = null;
 
     private boolean loading = false;
 
@@ -69,11 +76,19 @@ public class HomeFragment extends Fragment implements OnLoadMoreListener, OnZenC
     }
 
     @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         final View view = inflater.inflate(R.layout.fragment_home, container, false);
 
         progressBar = (ProgressBar) view.findViewById(R.id.home_progress_bar);
+
+        homeNoResultsFound = (TextView) view.findViewById(R.id.home_text_no_results);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
 
@@ -107,6 +122,45 @@ public class HomeFragment extends Fragment implements OnLoadMoreListener, OnZenC
     }
 
     @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+
+        MenuItem mSearchMenuItem = menu.findItem(R.id.menu_search);
+        SearchView searchView = (SearchView) mSearchMenuItem.getActionView();
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                search = query;
+                progressBar.setVisibility(View.VISIBLE);
+                homeCardRecyclerView.setVisibility(View.INVISIBLE);
+                homeNoResultsFound.setVisibility(View.INVISIBLE);
+                refreshHomeView(null);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
+
+        searchView.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!hasFocus) {
+                    search = null;
+                    progressBar.setVisibility(View.VISIBLE);
+                    homeNoResultsFound.setVisibility(View.INVISIBLE);
+                    homeCardRecyclerView.setVisibility(View.INVISIBLE);
+                    refreshHomeView(null);
+                }
+            }
+        });
+
+    }
+
+    @Override
     public void onLoadMore() {
         if (page != 0) {
 
@@ -114,9 +168,14 @@ public class HomeFragment extends Fragment implements OnLoadMoreListener, OnZenC
 
             recyclerAdapter.notifyItemInserted(homeCardsList.size() - 1);
 
-            HttpUtil.Builder()
+            HttpUtil.Builder httpBuilder = HttpUtil.Builder()
                     .withUrl("http://zensource-dev.sa-east-1.elasticbeanstalk.com/api/zen/images")
-                    .addQueryParameter("page", (page++) + "")
+                    .addQueryParameter("page", (page++) + "");
+
+            if (this.search != null)
+                httpBuilder.addQueryParameter("search", search);
+
+            httpBuilder
                     .withConverter(new ZenCardModel())
                     .ifSuccess(new HttpUtil.CallbackConverted<List<ZenCardModel>>() {
                         @Override
@@ -130,6 +189,8 @@ public class HomeFragment extends Fragment implements OnLoadMoreListener, OnZenC
                                     recyclerAdapter.notifyItemRemoved(homeCardsList.size());
 
                                     recyclerAdapter.setLoading(false);
+
+                                    setZenCardLikedState(list);
 
                                     homeCardsList.addAll(list);
                                     homeCardRecyclerView.getAdapter().notifyDataSetChanged();
@@ -311,12 +372,19 @@ public class HomeFragment extends Fragment implements OnLoadMoreListener, OnZenC
 
     private void refreshHomeView(final Callable callback) {
 
+        page = 1;
+
         // Request for the data of the recycler view
         loading = true;
         recyclerAdapter.setLoading(true);
-        HttpUtil.Builder()
-            .withUrl("http://zensource-dev.sa-east-1.elasticbeanstalk.com/api/zen/images?page=1")
-            .withConverter(new ZenCardModel())
+        HttpUtil.Builder httpBuilder = HttpUtil.Builder()
+            .withUrl("http://zensource-dev.sa-east-1.elasticbeanstalk.com/api/zen/images")
+            .addQueryParameter("page", page + "");
+
+            if (this.search != null)
+                httpBuilder.addQueryParameter("search", search);
+
+            httpBuilder.withConverter(new ZenCardModel())
             .ifSuccess(new HttpUtil.CallbackConverted<List<ZenCardModel>>() {
                 @Override
                 public void callback(final List<ZenCardModel> list) {
@@ -324,36 +392,51 @@ public class HomeFragment extends Fragment implements OnLoadMoreListener, OnZenC
                         @Override
                         public void run() {
 
-                            String likedQuotesStr = ZenSourceUtils.getSharedPreferencesValue(getActivity(), getString(R.string.shared_preferences_liked), String.class);
-                            HashSet<String> likedQuotes = likedQuotesStr == null ? new HashSet<String>() : new HashSet<String>(Arrays.asList(likedQuotesStr.split(";")));
-
-                            String dislikedQuotesStr = ZenSourceUtils.getSharedPreferencesValue(getActivity(), getString(R.string.shared_preferences_disliked), String.class);
-                            HashSet<String> dislikedQuotes = likedQuotesStr == null ? new HashSet<String>() : new HashSet<String>(Arrays.asList(dislikedQuotesStr.split(";")));
-
-                            for (int i = 0; i < list.size(); i++) {
-                                list.get(i).setLikedState(likedQuotes, dislikedQuotes);
-                            }
+                            setZenCardLikedState(list);
 
                             homeCardsList.clear();
-                            page = 2;
+                            page++;
 
                             homeCardsList.addAll(list);
-                            homeCardRecyclerView.getAdapter().notifyDataSetChanged();
                             progressBar.setVisibility(View.INVISIBLE);
+                            homeCardRecyclerView.setVisibility(View.VISIBLE);
                             loading = false;
                             recyclerAdapter.setLoading(false);
 
-                            if (callback != null)
+                            if (callback != null) {
                                 try {
                                     callback.call();
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
+                            }
 
+                            if(homeCardsList.size() == 0) {
+                                homeCardRecyclerView.setVisibility(View.INVISIBLE);
+                                homeNoResultsFound.setVisibility(View.VISIBLE);
+                            } else {
+                                homeNoResultsFound.setVisibility(View.INVISIBLE);
+                            }
+
+                            homeCardRecyclerView.getAdapter().notifyDataSetChanged();
+
+                            homeCardRecyclerView.getLayoutManager().scrollToPosition(0);
                         }
                     });
                 }
             })
             .makeGet();
+    }
+
+    private void setZenCardLikedState(List<ZenCardModel> list) {
+        String likedQuotesStr = ZenSourceUtils.getSharedPreferencesValue(getActivity(), getString(R.string.shared_preferences_liked), String.class);
+        HashSet<String> likedQuotes = likedQuotesStr == null ? new HashSet<String>() : new HashSet<String>(Arrays.asList(likedQuotesStr.split(";")));
+
+        String dislikedQuotesStr = ZenSourceUtils.getSharedPreferencesValue(getActivity(), getString(R.string.shared_preferences_disliked), String.class);
+        HashSet<String> dislikedQuotes = likedQuotesStr == null ? new HashSet<String>() : new HashSet<String>(Arrays.asList(dislikedQuotesStr.split(";")));
+
+        for (int i = 0; i < list.size(); i++) {
+            list.get(i).setLikedState(likedQuotes, dislikedQuotes);
+        }
     }
 }

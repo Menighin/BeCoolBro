@@ -15,4 +15,7 @@
     <string name="share_button">Share button</string>
     <string name="like_success">Quote marked as liked</string>
     <string name="dislike_success">Quote marked as disliked</string>
+    <string name="search_title">Search</string>
+    <string name="search_hint">Search quotes</string>
+    <string name="no_results_found">No results found</string>
 </resources>
