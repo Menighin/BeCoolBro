@@ -52,18 +52,18 @@ class NavigationDrawerFragment : Fragment() {
 
 
         navigationItems = ArrayList()
-        navigationItems!!.add(IconListRecyclerAdapter.ItemModel(1, "Home", R.mipmap.ic_home_white_24dp))
-        navigationItems!!.add(IconListRecyclerAdapter.ItemModel(2, "Configuration", R.mipmap.ic_tune_white_24dp, true))
-        navigationItems!!.add(IconListRecyclerAdapter.ItemModel(3, "Label 3", R.mipmap.ic_home_white_24dp))
+        navigationItems!!.add(IconListRecyclerAdapter.ItemModel(1, resources.getString(R.string.menu_home), R.mipmap.ic_home_white_24dp, true))
+        navigationItems!!.add(IconListRecyclerAdapter.ItemModel(2, resources.getString(R.string.menu_liked), R.drawable.ic_thumb_up_white_24dp))
+        navigationItems!!.add(IconListRecyclerAdapter.ItemModel(3, resources.getString(R.string.menu_configurations), R.mipmap.ic_tune_white_24dp))
 
         val adapter = IconListRecyclerAdapter(context, navigationItems, IconListRecyclerAdapter.OnItemClickListener {
             item ->
             run {
-                Toast.makeText(context, item.label, Toast.LENGTH_LONG).show()
 
                 val f: Fragment = when {
                     item.id == 1 -> HomeFragment()
-                    item.id == 2 -> ConfigurationFragment()
+                    item.id == 2 -> LikedQuotesFragment()
+                    item.id == 3 -> ConfigurationFragment()
                     else -> HomeFragment()
                 }
 

@@ -190,13 +190,13 @@ public class HomeCardRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.V
         if (z.getImage64encoded() != null && z.getImage64encoded().length() > 0) {
             byte[] decodedString = Base64.decode(z.getImage64encoded(), Base64.DEFAULT);
             Bitmap bitmap = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-            Bitmap circleBitmap = ZenSourceUtils.getCroppedBitmap(bitmap, bitmap.getWidth() / 2, bitmap.getHeight() / 2, 100);
+//            Bitmap circleBitmap = ZenSourceUtils.getCroppedBitmap(bitmap, bitmap.getWidth() / 2, bitmap.getHeight() / 2, 100);
 
-            viewHolder.getImageView().setImageBitmap(circleBitmap);
+            viewHolder.getImageView().setImageBitmap(bitmap);
         }
 
-        viewHolder.getQuote().setText(z.getMessage());
-        viewHolder.getAuthor().setText(z.getAuthor());
+        if (z.getMessage() != null) viewHolder.getQuote().setText(z.getMessage());
+        if (z.getAuthor() != null) viewHolder.getAuthor().setText(z.getAuthor());
         viewHolder.getTextLike().setText(z.getLikes() + "");
         viewHolder.getTextDislike().setText(z.getDislikes() + "");
 
