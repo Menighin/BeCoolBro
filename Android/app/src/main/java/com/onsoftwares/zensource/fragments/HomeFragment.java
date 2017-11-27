@@ -39,6 +39,7 @@ import com.onsoftwares.zensource.adapters.HomeCardRecyclerAdapter;
 import com.onsoftwares.zensource.interfaces.OnLoadMoreListener;
 import com.onsoftwares.zensource.interfaces.OnZenCardAction;
 import com.onsoftwares.zensource.models.ZenCardModel;
+import com.onsoftwares.zensource.utils.ZenCardUtils;
 import com.onsoftwares.zensource.utils.ZenSourceUtils;
 import com.onsoftwares.zensource.utils.httputil.HttpUtil;
 
@@ -209,7 +210,18 @@ public class HomeFragment extends Fragment implements OnLoadMoreListener, OnZenC
     @Override
     public void onLike(ZenCardModel z) {
 
-        callLikeDislikeAction(z, true);
+        // Http Put to like the post
+        ZenCardUtils.likeZenQuote(z, new HttpUtil.CallbackVoid() {
+            @Override
+            public void callback() {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Snackbar.make(homeCardRecyclerView, getResources().getString(R.string.like_success), Snackbar.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        });
 
         // Update the model
         z.setLiked(true);
@@ -244,7 +256,18 @@ public class HomeFragment extends Fragment implements OnLoadMoreListener, OnZenC
     @Override
     public void onDislike(ZenCardModel z) {
 
-        callLikeDislikeAction(z, false);
+        // Http Put to like the post
+        ZenCardUtils.dislikeZenQuote(z, new HttpUtil.CallbackVoid() {
+            @Override
+            public void callback() {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Snackbar.make(homeCardRecyclerView, getResources().getString(R.string.dislike_success), Snackbar.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        });
 
         // Update the model
         z.setDisliked(true);
@@ -263,7 +286,6 @@ public class HomeFragment extends Fragment implements OnLoadMoreListener, OnZenC
 
         // If it was liked, it is being disliked now and vice-versa
         String id = z.getId() + "";
-        boolean valueToReturn = !likedQuotes.contains(id);
 
         if (likedQuotes.contains(id))
             likedQuotes.remove(id);
@@ -275,48 +297,6 @@ public class HomeFragment extends Fragment implements OnLoadMoreListener, OnZenC
 
         ZenSourceUtils.setSharedPreferenceValue(getActivity(), getString(R.string.shared_preferences_liked), TextUtils.join(";", likedQuotes), String.class);
         ZenSourceUtils.setSharedPreferenceValue(getActivity(), getString(R.string.shared_preferences_disliked), TextUtils.join(";", dislikedQuotes), String.class);
-    }
-
-    private void callLikeDislikeAction(ZenCardModel z, final boolean liked) {
-        HttpUtil.Builder builder = HttpUtil.Builder()
-                .withUrl("http://zensource-dev.sa-east-1.elasticbeanstalk.com/api/zen/" + z.getId() + "/rate")
-                .addRequestBody("id", z.getId() + "");
-
-
-        if ((z.isLiked() && liked) || (z.isDisliked() && !liked)) return;
-
-        if (liked) {
-            builder.addRequestBody("like", "1");
-
-            if(z.isDisliked())
-                builder.addRequestBody("dislike", "-1");
-            else
-                builder.addRequestBody("dislike", "0");
-        } else {
-            builder.addRequestBody("dislike", "1");
-
-            if(z.isLiked())
-                builder.addRequestBody("like", "-1");
-            else
-                builder.addRequestBody("like", "0");
-        }
-
-
-        builder.ifSuccess(new HttpUtil.CallbackVoid() {
-            @Override
-            public void callback() {
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-
-                        if (liked)
-                            Snackbar.make(homeCardRecyclerView, getResources().getString(R.string.like_success), Snackbar.LENGTH_SHORT).show();
-                        else
-                            Snackbar.make(homeCardRecyclerView, getResources().getString(R.string.dislike_success), Snackbar.LENGTH_SHORT).show();
-                    }
-                });
-            }
-        }).makePut();
     }
 
     @Override
