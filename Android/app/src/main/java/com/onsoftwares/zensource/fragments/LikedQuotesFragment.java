@@ -2,9 +2,11 @@ package com.onsoftwares.zensource.fragments;
 
 
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,12 +19,15 @@ import com.onsoftwares.zensource.adapters.HomeCardRecyclerAdapter;
 import com.onsoftwares.zensource.interfaces.OnLoadMoreListener;
 import com.onsoftwares.zensource.interfaces.OnZenCardAction;
 import com.onsoftwares.zensource.models.ZenCardModel;
+import com.onsoftwares.zensource.utils.ZenCardUtils;
 import com.onsoftwares.zensource.utils.ZenSourceUtils;
+import com.onsoftwares.zensource.utils.httputil.HttpUtil;
 
 import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 
 public class LikedQuotesFragment extends Fragment implements OnLoadMoreListener, OnZenCardAction {
@@ -82,8 +87,50 @@ public class LikedQuotesFragment extends Fragment implements OnLoadMoreListener,
     }
 
     @Override
-    public void onLike(ZenCardModel z) {
+    public void onLike(final ZenCardModel z) {
+        // Http Put to like the post
+        ZenCardUtils.dislikeZenQuote(z, new HttpUtil.CallbackVoid() {
+            @Override
+            public void callback() {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Snackbar.make(recyclerView, getResources().getString(R.string.dislike_success), Snackbar.LENGTH_SHORT).show();
+                        likedList.remove(z);
+                        recyclerAdapter.notifyDataSetChanged();
+                    }
+                });
+            }
+        });
 
+        // Update the model
+        z.setDisliked(true);
+        z.setDislikes(z.getDislikes() + 1);
+
+        if (z.isLiked()) {
+            z.setLiked(false);
+            z.setLikes(z.getLikes() - 1);
+        }
+
+        String likedQuotesStr = ZenSourceUtils.getSharedPreferencesValue(getActivity(), getString(R.string.shared_preferences_liked), String.class);
+        HashSet<String> likedQuotes = likedQuotesStr == null ? new HashSet<String>() : new HashSet<String>(Arrays.asList(likedQuotesStr.split(";")));
+
+        String dislikedQuotesStr = ZenSourceUtils.getSharedPreferencesValue(getActivity(), getString(R.string.shared_preferences_disliked), String.class);
+        HashSet<String> dislikedQuotes = likedQuotesStr == null ? new HashSet<String>() : new HashSet<String>(Arrays.asList(dislikedQuotesStr.split(";")));
+
+        // If it was liked, it is being disliked now and vice-versa
+        String id = z.getId() + "";
+
+        if (likedQuotes.contains(id))
+            likedQuotes.remove(id);
+
+        if (dislikedQuotes.contains(id))
+            dislikedQuotes.remove(id);
+        else
+            dislikedQuotes.add(id);
+
+        ZenSourceUtils.setSharedPreferenceValue(getActivity(), getString(R.string.shared_preferences_liked), TextUtils.join(";", likedQuotes), String.class);
+        ZenSourceUtils.setSharedPreferenceValue(getActivity(), getString(R.string.shared_preferences_disliked), TextUtils.join(";", dislikedQuotes), String.class);
     }
 
     @Override
