@@ -83,7 +83,16 @@ public class LikedQuotesFragment extends Fragment implements OnLoadMoreListener,
 
     @Override
     public void onLoadMore() {
-
+		// TODO: Implement this right
+		if (page * perPage < likedIds.size()) {
+			
+			for (int i = page * perPage; i < (page + 1) * perPage; i++) {
+				likedList.add(new ZenCardModel());
+			}
+			recyclerAdapter.notifyDataSetChanged();
+			page++;
+			
+		}
     }
 
     @Override
