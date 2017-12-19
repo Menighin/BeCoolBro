@@ -21,6 +21,8 @@ namespace ZenSource.Models
         private FontFamily _font;
         private Font _fontAuthor;
 
+        private static int BACK_NUM = 16;
+
         private List<Tuple<int, int>> _fontMaps = new List<Tuple<int, int>>()
         {
             new Tuple<int, int>(56, 34),
@@ -32,7 +34,11 @@ namespace ZenSource.Models
         
         public ZenQuoteImage(IZenDrawable drawable, IHostingEnvironment _hostingEnvironment)
         {
-            _image = Image.Load($"{_hostingEnvironment.ContentRootPath}\\wwwroot\\img\\quote_background.png");
+
+            Random rdn = new Random();
+            var quoteBackground = rdn.Next(1, BACK_NUM + 1);
+
+            _image = Image.Load($"{_hostingEnvironment.ContentRootPath}\\wwwroot\\img\\back{quoteBackground}.jpg");
 
             _fonts = new FontCollection();
             _font = _fonts.Install($"{_hostingEnvironment.ContentRootPath}\\wwwroot\\fonts\\Cousine-Italic.ttf");
@@ -55,7 +61,7 @@ namespace ZenSource.Models
             var FONT_WIDTH = _fontMaps[0].Item2;
             var FONT_SIZE = _fontMaps[0].Item1;
             var X_TRANSLATE = 50;
-            var Y_TRANSLATE = 90;
+            var Y_TRANSLATE = 40;
             var LINE_HEIGHT = _fontMaps[0].Item1 - 2;
             var MAX_WIDTH = 1050;
             var MAX_HEIGHT = 590;
