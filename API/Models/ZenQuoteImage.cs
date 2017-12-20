@@ -1,5 +1,7 @@
 using ImageSharp;
 using ImageSharp.Drawing;
+using ImageSharp.Drawing.Brushes;
+using ImageSharp.Drawing.Pens;
 using ImageSharp.Formats;
 using Microsoft.AspNetCore.Hosting;
 using SixLabors.Fonts;
@@ -71,8 +73,8 @@ namespace ZenSource.Models
 
             var quote = $" {drawable.Message}";
 
-            var textOptions = new TextGraphicsOptions() { WrapTextWidth = MAX_WIDTH, VerticalAlignment = VerticalAlignment.Center };
-            var font = new Font(_font, FONT_SIZE);
+            var textOptions = new TextGraphicsOptions() { WrapTextWidth = MAX_WIDTH, VerticalAlignment = VerticalAlignment.Center};
+            var font = new Font(_font, FONT_SIZE, FontStyle.Bold);
             var currentHeight = 0f;
             var currentWidth = 0f;
 
@@ -86,14 +88,14 @@ namespace ZenSource.Models
                 if (currentHeight >= MAX_HEIGHT)
                 {
                     FONT_SIZE -= 8;
-                    font = new Font(_font, FONT_SIZE);
+                    font = new Font(_font, FONT_SIZE, FontStyle.Bold);
                 }
                 else
                     break;
             }
 
             var yDraw = (MAX_HEIGHT - currentHeight) > Y_TRANSLATE * 2 ? IMAGE_HEIGHT / 2 - Y_TRANSLATE * 2 : IMAGE_HEIGHT / 2;
-            _image.DrawText(quote, font, Rgba32.White, new Vector2(X_TRANSLATE, yDraw), textOptions);
+            _image.DrawText(quote, font, Brushes.Solid(Rgba32.White), Pens.Solid(Rgba32.DimGray, 1), new Vector2(X_TRANSLATE, yDraw), textOptions);
 
             // Drawing Author name
             textOptions = new TextGraphicsOptions() { HorizontalAlignment = HorizontalAlignment.Right, VerticalAlignment = VerticalAlignment.Top };
