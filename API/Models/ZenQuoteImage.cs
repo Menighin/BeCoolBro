@@ -1,4 +1,5 @@
 using ImageSharp;
+using ImageSharp.Drawing;
 using ImageSharp.Formats;
 using Microsoft.AspNetCore.Hosting;
 using SixLabors.Fonts;
@@ -21,7 +22,9 @@ namespace ZenSource.Models
         private FontFamily _font;
         private Font _fontAuthor;
 
-        private static int BACK_NUM = 16;
+        public static int BACK_NUM = 16;
+        public static int IMAGE_WIDTH = 1024;
+        public static int IMAGE_HEIGHT = 576;
 
         private List<Tuple<int, int>> _fontMaps = new List<Tuple<int, int>>()
         {
@@ -60,76 +63,41 @@ namespace ZenSource.Models
         {
             var FONT_WIDTH = _fontMaps[0].Item2;
             var FONT_SIZE = _fontMaps[0].Item1;
-            var X_TRANSLATE = 50;
+            var X_TRANSLATE = 40;
             var Y_TRANSLATE = 40;
             var LINE_HEIGHT = _fontMaps[0].Item1 - 2;
-            var MAX_WIDTH = 1050;
-            var MAX_HEIGHT = 590;
+            var MAX_WIDTH = 940;
+            var MAX_HEIGHT = 492 - 30; // 30 is for Author name
 
-            var words = drawable.Message.Split(' ');
+            var quote = $" {drawable.Message}";
 
-            // Find the right font size so it can fit on the specs above
-            var fit = false;
-            var fontConfigCount = 1;
-            var text = new List<String>() { "\"" };
-            while (!fit && fontConfigCount < _fontMaps.Count + 1)
+            var textOptions = new TextGraphicsOptions() { WrapTextWidth = MAX_WIDTH, VerticalAlignment = VerticalAlignment.Center };
+            var font = new Font(_font, FONT_SIZE);
+            var currentHeight = 0f;
+            var currentWidth = 0f;
+
+            while(true)
             {
-                var lineNumber = 0;
-                foreach (var w in words)
-                {
-                    if ((text[lineNumber].Length + w.Length) * FONT_WIDTH + X_TRANSLATE < MAX_WIDTH - X_TRANSLATE)
-                    {
-                        text[lineNumber] += w + " ";
-                    }
-                    else
-                    {
-                        text.Add(" " + w + " ");
-                        lineNumber++;
-                    }
-                }
+                var renderOptions = new RendererOptions(font, 72) {WrappingWidth = textOptions.WrapTextWidth };
+                var textMeasure = TextMeasurer.Measure(quote, renderOptions);
+                currentHeight = textMeasure.Height;
+                currentWidth = textMeasure.Width;
 
-                // Remove last space
-                text[lineNumber] = text[lineNumber].Remove(text[lineNumber].Length - 1);
-                text[lineNumber] += "\"";
-
-                if (text.Count * LINE_HEIGHT + Y_TRANSLATE < MAX_HEIGHT || fontConfigCount == _fontMaps.Count)
+                if (currentHeight >= MAX_HEIGHT)
                 {
-                    fit = true;
+                    FONT_SIZE -= 8;
+                    font = new Font(_font, FONT_SIZE);
                 }
                 else
-                {
-                    FONT_SIZE = _fontMaps[fontConfigCount].Item1;
-                    FONT_WIDTH = _fontMaps[fontConfigCount].Item2;
-                    LINE_HEIGHT = _fontMaps[fontConfigCount].Item1 - 2;
-                    fontConfigCount++;
-                    text = new List<String>() { "\"" };
-                }
-
+                    break;
             }
 
-            // Draw the text
-            var font = new Font(_font, FONT_SIZE);
-            var y = 1;
-            var maxX = 0;
-            foreach (var l in text)
-            {
-                _image.DrawText(l, font, Rgba32.White, new Vector2(X_TRANSLATE, Y_TRANSLATE + (y++) * LINE_HEIGHT));
-                if (l.Length * FONT_WIDTH + X_TRANSLATE > maxX)
-                    maxX = l.Length * FONT_WIDTH + X_TRANSLATE;
-            }
+            var yDraw = (MAX_HEIGHT - currentHeight) > Y_TRANSLATE * 2 ? IMAGE_HEIGHT / 2 - Y_TRANSLATE * 2 : IMAGE_HEIGHT / 2;
+            _image.DrawText(quote, font, Rgba32.White, new Vector2(X_TRANSLATE, yDraw), textOptions);
 
             // Drawing Author name
-
-            // Finding the position
-            var authorFontWidth = 19;
-            var authorX = maxX - drawable.Author.Length * authorFontWidth;
-
-            while (authorX + drawable.Author.Length * authorFontWidth > MAX_WIDTH - X_TRANSLATE)
-                authorX -= 10;
-
-            // Defining the Font
-
-            _image.DrawText(drawable.Author, _fontAuthor, Rgba32.White, new Vector2(authorX, Y_TRANSLATE + (y++) * LINE_HEIGHT));
+            textOptions = new TextGraphicsOptions() { HorizontalAlignment = HorizontalAlignment.Right, VerticalAlignment = VerticalAlignment.Top };
+            _image.DrawText(drawable.Author, _fontAuthor, Rgba32.White, new Vector2(currentWidth + X_TRANSLATE, yDraw + currentHeight/2 + 10), textOptions);
         }
 
     }
