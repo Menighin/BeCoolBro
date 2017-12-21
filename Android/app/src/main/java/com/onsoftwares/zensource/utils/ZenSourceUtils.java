@@ -12,6 +12,8 @@ import android.graphics.PorterDuffXfermode;
 import android.view.View;
 
 import com.onsoftwares.zensource.R;
+import com.onsoftwares.zensource.enums.LanguagesEnum;
+import com.onsoftwares.zensource.enums.SharedPreferencesEnum;
 
 public class ZenSourceUtils {
 
@@ -70,7 +72,17 @@ public class ZenSourceUtils {
         paint.setColor(color);
         canvas.drawCircle(radius, radius, radius, paint);
         paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
-        canvas.drawBitmap(bitmap, -cx+radius, -cy+radius, paint);
+        canvas.drawBitmap(bitmap, -cx + radius, -cy + radius, paint);
         return targetBitmap;
+    }
+
+    public static String getLanguageAPICode(Context c) {
+        String language = ZenSourceUtils.getSharedPreferencesValue(c, SharedPreferencesEnum.LANGUAGE.value(), String.class);
+
+        if (language.equals(LanguagesEnum.PORTUGUESE.value())) {
+            return "pt-br";
+        } else {
+            return "en";
+        }
     }
 }

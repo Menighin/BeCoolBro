@@ -171,7 +171,8 @@ public class HomeFragment extends Fragment implements OnLoadMoreListener, OnZenC
 
             HttpUtil.Builder httpBuilder = HttpUtil.Builder()
                     .withUrl("http://zensource-dev.sa-east-1.elasticbeanstalk.com/api/zen/images")
-                    .addQueryParameter("page", (page++) + "");
+                    .addQueryParameter("page", (page++) + "")
+                    .addQueryParameter("l", ZenSourceUtils.getLanguageAPICode(getContext()));
 
             if (this.search != null)
                 httpBuilder.addQueryParameter("search", search);
@@ -359,7 +360,8 @@ public class HomeFragment extends Fragment implements OnLoadMoreListener, OnZenC
         recyclerAdapter.setLoading(true);
         HttpUtil.Builder httpBuilder = HttpUtil.Builder()
             .withUrl("http://zensource-dev.sa-east-1.elasticbeanstalk.com/api/zen/images")
-            .addQueryParameter("page", page + "");
+            .addQueryParameter("page", page + "")
+            .addQueryParameter("l", ZenSourceUtils.getLanguageAPICode(getContext()));
 
             if (this.search != null)
                 httpBuilder.addQueryParameter("search", search);

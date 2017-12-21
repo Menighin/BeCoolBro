@@ -1,13 +1,13 @@
 package com.onsoftwares.zensource.enums;
 
-public enum Languages {
+public enum LanguagesEnum {
     
     ENGLISH("en"),
-    PORTUGUESE("pt-br");
+    PORTUGUESE("pt");
 
     private String value;
 
-    Languages(String s) {
+    LanguagesEnum(String s) {
         this.value = s;
     }
 
