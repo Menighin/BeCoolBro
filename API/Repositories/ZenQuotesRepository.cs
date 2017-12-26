@@ -18,7 +18,7 @@ namespace ZenSource.Repositories
             _ctx = context;
         }
 
-        public IEnumerable<ZenQuote> GetAll(string search = null, List<int> tags = null, int? page = null, bool? valid = null)
+        public IEnumerable<ZenQuote> GetAll(string search = null, List<int> tags = null, int? page = null, string language = null, bool? valid = null)
         {
             var query = _ctx.Set<ZenQuote>().AsQueryable();
 
@@ -26,6 +26,12 @@ namespace ZenSource.Repositories
             {
                 var possibleQuotesBySearch = _ctx.Set<ZenMessage>().Where(m => m.Message.Contains(search)).Select(m => m.IdZenQuote).ToList();
                 query = query.Where(q => q.Author.Contains(search) || possibleQuotesBySearch.Contains(q.Id));
+            }
+
+            if (language != null)
+            {
+                var possibleQuotesByLanguage = _ctx.Set<ZenMessage>().Where(m => m.Language.Code.Equals(language, StringComparison.OrdinalIgnoreCase)).Select(m => m.IdZenQuote).ToList();
+                query = query.Where(q => possibleQuotesByLanguage.Contains(q.Id));
             }
 
             if (valid != null)

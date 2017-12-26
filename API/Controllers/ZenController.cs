@@ -42,7 +42,7 @@ namespace ZenSource.Controllers
             var tagsIds = new List<int>();
             if (tags != null) tagsIds = tags.Split(',').Select(t => Convert.ToInt32(t)).ToList();
 
-            var modelList = _repository.GetAll(search, tagsIds, page, valid);
+            var modelList = _repository.GetAll(search, tagsIds, page, null, valid);
 
             var viewModelList = Mapper.Map<IEnumerable<ZenMessageViewModel>>(modelList);
 
@@ -79,7 +79,7 @@ namespace ZenSource.Controllers
         {
             var tagsIds = new List<int>();
             if (tags != null) tagsIds = tags.Split(',').Select(t => Convert.ToInt32(t)).ToList();
-            var modelList = _repository.GetAll(search, tagsIds, page, true);
+            var modelList = _repository.GetAll(search, tagsIds, page, l, true);
 
             if (l == null)
                 l = "en";
@@ -99,7 +99,7 @@ namespace ZenSource.Controllers
         [HttpGet("invalid")]
         public IActionResult GetInvalidQuotes()
         {
-            var modelList = _repository.GetAll(null, null, null, false);
+            var modelList = _repository.GetAll(null, null, null, null, false);
 
             var viewModelList = Mapper.Map<IEnumerable<ZenQuoteFullViewModel>>(modelList);
 
