@@ -45,6 +45,7 @@ public class LikedQuotesFragment extends Fragment implements OnLoadMoreListener,
     public LikedQuotesFragment() {
         // Required empty public constructor
         likedList = new ArrayList<ZenCardModel>();
+        likedIds = new ArrayList<>();
     }
 
     @Override
@@ -52,7 +53,10 @@ public class LikedQuotesFragment extends Fragment implements OnLoadMoreListener,
         // Inflate the layout for this fragment
         final View view = inflater.inflate(R.layout.fragment_liked_quotes, container, false);
 
-        likedIds = Arrays.asList(ZenSourceUtils.getSharedPreferencesValue(getActivity(), getString(R.string.shared_preferences_liked), String.class).split(";"));
+        String likedQuotes = ZenSourceUtils.getSharedPreferencesValue(getActivity(), getString(R.string.shared_preferences_liked), String.class);
+
+        if (likedQuotes != null)
+            likedIds = Arrays.asList(likedQuotes.split(";"));
 
         progressBar = (ProgressBar) view.findViewById(R.id.progress_bar);
         recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
@@ -67,18 +71,7 @@ public class LikedQuotesFragment extends Fragment implements OnLoadMoreListener,
 
         recyclerView.setAdapter(recyclerAdapter);
 
-        initList();
-
         return view;
-    }
-
-    private void initList() {
-        // TODO: Implement this right
-        for (int i = 0; i < perPage; i++) {
-            likedList.add(new ZenCardModel());
-        }
-        recyclerAdapter.notifyDataSetChanged();
-        page++;
     }
 
     @Override
