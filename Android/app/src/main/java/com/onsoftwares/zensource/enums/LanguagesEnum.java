@@ -15,4 +15,15 @@ public enum LanguagesEnum {
         return value;
     }
 
+    public static LanguagesEnum fromStr(String s) {
+        switch(s) {
+            case "en":
+                return LanguagesEnum.ENGLISH;
+            case "pt":
+                return LanguagesEnum.PORTUGUESE;
+            default:
+                return LanguagesEnum.ENGLISH;
+        }
+    }
+
 }

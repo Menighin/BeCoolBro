@@ -3,17 +3,23 @@ package com.onsoftwares.zensource.utils;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
+import android.util.DisplayMetrics;
 import android.view.View;
 
 import com.onsoftwares.zensource.R;
 import com.onsoftwares.zensource.enums.LanguagesEnum;
 import com.onsoftwares.zensource.enums.SharedPreferencesEnum;
+
+import java.util.Locale;
 
 public class ZenSourceUtils {
 
@@ -84,5 +90,17 @@ public class ZenSourceUtils {
         } else {
             return "en";
         }
+    }
+
+    public static void setLocale(String lang, Activity a, Class activityClass) {
+        Locale myLocale = new Locale(lang);
+        Resources res = a.getResources();
+        DisplayMetrics dm = res.getDisplayMetrics();
+        Configuration conf = res.getConfiguration();
+        conf.locale = myLocale;
+        res.updateConfiguration(conf, dm);
+        Intent refresh = new Intent(a, activityClass);
+        a.startActivity(refresh);
+        a.finish();
     }
 }
