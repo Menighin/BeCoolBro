@@ -101,7 +101,8 @@ public class HomeCardRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.V
             homeCardViewHolder.getContentView().setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    onZenCardAction.onCardClick(zenCard, v);
+                    if (onZenCardAction != null)
+                        onZenCardAction.onCardClick(zenCard, v);
                 }
             });
 

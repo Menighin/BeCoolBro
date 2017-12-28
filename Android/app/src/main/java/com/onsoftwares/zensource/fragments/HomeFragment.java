@@ -329,7 +329,6 @@ public class HomeFragment extends Fragment implements OnLoadMoreListener, OnZenC
             shareIntent.setDataAndType(contentUri, getActivity().getContentResolver().getType(contentUri));
             shareIntent.putExtra(Intent.EXTRA_STREAM, contentUri);
             startActivity(Intent.createChooser(shareIntent, "Choose an app"));
-
         }
     }
 
