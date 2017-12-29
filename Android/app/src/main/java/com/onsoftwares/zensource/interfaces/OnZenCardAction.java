@@ -10,8 +10,8 @@ import com.onsoftwares.zensource.models.ZenCardModel;
  */
 
 public interface OnZenCardAction {
-    void onLike(ZenCardModel z);
-    void onDislike(ZenCardModel z);
+    void onLike(ZenCardModel z, int pos);
+    void onDislike(ZenCardModel z, int pos);
     void onCardClick(ZenCardModel z, View v);
     void onShare(ImageView imageView);
 }

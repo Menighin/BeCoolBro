@@ -209,7 +209,7 @@ public class HomeFragment extends Fragment implements OnLoadMoreListener, OnZenC
     }
 
     @Override
-    public void onLike(ZenCardModel z) {
+    public void onLike(ZenCardModel z, int pos) {
 
         // Http Put to like the post
         ZenCardUtils.likeZenQuote(z, new HttpUtil.CallbackVoid() {
@@ -255,7 +255,7 @@ public class HomeFragment extends Fragment implements OnLoadMoreListener, OnZenC
     }
 
     @Override
-    public void onDislike(ZenCardModel z) {
+    public void onDislike(ZenCardModel z, int pos) {
 
         // Http Put to like the post
         ZenCardUtils.dislikeZenQuote(z, new HttpUtil.CallbackVoid() {

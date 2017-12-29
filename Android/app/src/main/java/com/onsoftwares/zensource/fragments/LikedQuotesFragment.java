@@ -48,7 +48,6 @@ import java.util.concurrent.Callable;
 
 public class LikedQuotesFragment extends Fragment implements OnLoadMoreListener, OnZenCardAction {
 
-
     private ProgressBar progressBar;
     private RecyclerView recyclerView;
     private TextView numberLikedQuotes;
@@ -70,11 +69,7 @@ public class LikedQuotesFragment extends Fragment implements OnLoadMoreListener,
 
         numberLikedQuotes = (TextView) view.findViewById(R.id.number_liked_quotes);
 
-        likedQuoteIds = ZenSourceUtils.getSharedPreferencesValue(getActivity(), getString(R.string.shared_preferences_liked), String.class);
-        if (likedQuoteIds != null) {
-            likedQuoteIds = likedQuoteIds.replace(';', ',');
-            numberLikedQuotes.setText(likedQuoteIds.split(",").length + " " + getResources().getString(R.string.liked_number));
-        }
+        refreshNumberLiked();
 
         progressBar = (ProgressBar) view.findViewById(R.id.progress_bar);
         recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
@@ -97,54 +92,56 @@ public class LikedQuotesFragment extends Fragment implements OnLoadMoreListener,
 
     private void refreshData() {
 
-        likedQuoteIds = ZenSourceUtils.getSharedPreferencesValue(getActivity(), getString(R.string.shared_preferences_liked), String.class);
-        if (likedQuoteIds != null) {
-            likedQuoteIds = likedQuoteIds.replace(';', ',');
-            numberLikedQuotes.setText(likedQuoteIds.split(",").length + " " + getResources().getString(R.string.liked_number));
-        }
+        refreshNumberLiked();
 
         page = 1;
-        // Request for the data of the recycler view
-        progressBar.setVisibility(View.VISIBLE);
-        recyclerAdapter.setLoading(true);
-        HttpUtil.Builder httpBuilder = HttpUtil.Builder()
-                .withUrl("http://zensource-dev.sa-east-1.elasticbeanstalk.com/api/zen/images")
-                .addQueryParameter("page", page + "")
-                .addQueryParameter("ids", likedQuoteIds)
-                .addQueryParameter("l", ZenSourceUtils.getLanguageAPICode(getContext()));
 
-        httpBuilder.withConverter(new ZenCardModel())
-                .ifSuccess(new HttpUtil.CallbackConverted<List<ZenCardModel>>() {
-                    @Override
-                    public void callback(final List<ZenCardModel> list) {
-                        getActivity().runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
+        if (likedQuoteIds != null && likedQuoteIds.length() > 0) {
 
-                                // Setting all as liked
-                                for (int i = 0; i < list.size(); i++) {
-                                    list.get(i).setLiked(true);
+            // Request for the data of the recycler view
+            progressBar.setVisibility(View.VISIBLE);
+            recyclerAdapter.setLoading(true);
+            HttpUtil.Builder httpBuilder = HttpUtil.Builder()
+                    .withUrl("http://zensource-dev.sa-east-1.elasticbeanstalk.com/api/zen/images")
+                    .addQueryParameter("page", page + "")
+                    .addQueryParameter("ids", likedQuoteIds)
+                    .addQueryParameter("l", ZenSourceUtils.getLanguageAPICode(getContext()));
+
+            httpBuilder.withConverter(new ZenCardModel())
+                    .ifSuccess(new HttpUtil.CallbackConverted<List<ZenCardModel>>() {
+                        @Override
+                        public void callback(final List<ZenCardModel> list) {
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+
+                                    // Setting all as liked
+                                    for (int i = 0; i < list.size(); i++) {
+                                        list.get(i).setLiked(true);
+                                    }
+
+                                    likedList.clear();
+                                    page++;
+
+                                    likedList.addAll(list);
+                                    progressBar.setVisibility(View.INVISIBLE);
+                                    recyclerView.setVisibility(View.VISIBLE);
+                                    recyclerAdapter.setLoading(false);
+
+                                    if (likedList.size() == 0) {
+                                        recyclerView.setVisibility(View.INVISIBLE);
+                                    }
+
+                                    recyclerView.getAdapter().notifyDataSetChanged();
+                                    recyclerView.getLayoutManager().scrollToPosition(0);
                                 }
-
-                                likedList.clear();
-                                page++;
-
-                                likedList.addAll(list);
-                                progressBar.setVisibility(View.INVISIBLE);
-                                recyclerView.setVisibility(View.VISIBLE);
-                                recyclerAdapter.setLoading(false);
-
-                                if(likedList.size() == 0) {
-                                    recyclerView.setVisibility(View.INVISIBLE);
-                                }
-
-                                recyclerView.getAdapter().notifyDataSetChanged();
-                                recyclerView.getLayoutManager().scrollToPosition(0);
-                            }
-                        });
-                    }
-                })
-                .makeGet();
+                            });
+                        }
+                    })
+                    .makeGet();
+        } else {
+            progressBar.setVisibility(View.INVISIBLE);
+        }
     }
 
     @Override
@@ -195,7 +192,12 @@ public class LikedQuotesFragment extends Fragment implements OnLoadMoreListener,
     }
 
     @Override
-    public void onLike(final ZenCardModel z) {
+    public void onLike(final ZenCardModel z, int pos) {
+       // Do nothing
+    }
+
+    @Override
+    public void onDislike(ZenCardModel z, final int pos) {
         // Http Put to like the post
         ZenCardUtils.dislikeZenQuote(z, new HttpUtil.CallbackVoid() {
             @Override
@@ -204,8 +206,8 @@ public class LikedQuotesFragment extends Fragment implements OnLoadMoreListener,
                     @Override
                     public void run() {
                         Snackbar.make(recyclerView, getResources().getString(R.string.dislike_success), Snackbar.LENGTH_SHORT).show();
-                        likedList.remove(z);
-                        recyclerAdapter.notifyDataSetChanged();
+                        recyclerAdapter.deleteItem(pos);
+                        refreshNumberLiked();
                     }
                 });
             }
@@ -239,11 +241,6 @@ public class LikedQuotesFragment extends Fragment implements OnLoadMoreListener,
 
         ZenSourceUtils.setSharedPreferenceValue(getActivity(), getString(R.string.shared_preferences_liked), TextUtils.join(";", likedQuotes), String.class);
         ZenSourceUtils.setSharedPreferenceValue(getActivity(), getString(R.string.shared_preferences_disliked), TextUtils.join(";", dislikedQuotes), String.class);
-    }
-
-    @Override
-    public void onDislike(ZenCardModel z) {
-
     }
 
     @Override
@@ -293,6 +290,17 @@ public class LikedQuotesFragment extends Fragment implements OnLoadMoreListener,
             shareIntent.setDataAndType(contentUri, getActivity().getContentResolver().getType(contentUri));
             shareIntent.putExtra(Intent.EXTRA_STREAM, contentUri);
             startActivity(Intent.createChooser(shareIntent, "Choose an app"));
+        }
+    }
+
+    private void refreshNumberLiked() {
+        likedQuoteIds = ZenSourceUtils.getSharedPreferencesValue(getActivity(), getString(R.string.shared_preferences_liked), String.class);
+        if (likedQuoteIds != null) {
+            likedQuoteIds = likedQuoteIds.replace(';', ',');
+            int quotesNumber = 0;
+            Toast.makeText(getContext(), likedQuoteIds, Toast.LENGTH_SHORT).show();
+            if (likedQuoteIds.length() > 0) quotesNumber = likedQuoteIds.split(",").length;
+            numberLikedQuotes.setText( quotesNumber + " " + getResources().getString(R.string.liked_number));
         }
     }
 }

@@ -88,7 +88,7 @@ public class HomeCardRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.V
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
+    public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
 
         if (holder instanceof HomeCardViewHolder) {
             final ZenCardModel zenCard = dataList.get(position);
@@ -113,7 +113,7 @@ public class HomeCardRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.V
 
                     if (zenCard.isLiked()) return;
 
-                    onZenCardAction.onLike(zenCard);
+                    onZenCardAction.onLike(zenCard, holder.getAdapterPosition());
 
                     homeCardViewHolder.getButtonLike().setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_thumb_up));
 
@@ -135,7 +135,7 @@ public class HomeCardRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.V
 
                     if (zenCard.isDisliked()) return;
 
-                    onZenCardAction.onDislike(zenCard);
+                    onZenCardAction.onDislike(zenCard, holder.getAdapterPosition());
 
                     homeCardViewHolder.getButtonDislike().setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_thumb_down));
                     homeCardViewHolder.getTextDislike().setText(zenCard.getDislikes() + "");
@@ -167,6 +167,11 @@ public class HomeCardRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.V
     @Override
     public int getItemViewType(int position) {
         return dataList.get(position) == null ? VIEW_TYPE_LOADING : VIEW_TYPE_ITEM;
+    }
+
+    public void deleteItem(int position) {
+        dataList.remove(position);
+        notifyItemRemoved(position);
     }
 
     @Override
