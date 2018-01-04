@@ -69,6 +69,7 @@ public class LikedQuotesFragment extends Fragment implements OnLoadMoreListener,
         final View view = inflater.inflate(R.layout.fragment_liked_quotes, container, false);
 
         numberLikedQuotes = (TextView) view.findViewById(R.id.number_liked_quotes);
+        numberLikedQuotes.setText("0 " + getResources().getString(R.string.liked_number));
 
         refreshNumberLiked();
 
