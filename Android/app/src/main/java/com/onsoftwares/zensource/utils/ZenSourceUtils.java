@@ -43,7 +43,7 @@ public class ZenSourceUtils {
         SharedPreferences.Editor editor = sharedPref.edit();
 
         if (classToWrite.equals(String.class)) {
-            editor.putString(key, value.toString());
+            editor.putString(key, value.toString().trim());
         } else if (classToWrite.equals(Integer.class)) {
             editor.putInt(key, (Integer) value);
         }

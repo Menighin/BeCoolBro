@@ -234,10 +234,10 @@ public class HomeFragment extends Fragment implements OnLoadMoreListener, OnZenC
         }
 
         String likedQuotesStr = ZenSourceUtils.getSharedPreferencesValue(getActivity(), getString(R.string.shared_preferences_liked), String.class);
-        HashSet<String> likedQuotes = likedQuotesStr == null ? new HashSet<String>() : new HashSet<String>(Arrays.asList(likedQuotesStr.split(";")));
+        HashSet<String> likedQuotes = likedQuotesStr == null || likedQuotesStr.length() == 0 ? new HashSet<String>() : new HashSet<String>(Arrays.asList(likedQuotesStr.split(";")));
 
         String dislikedQuotesStr = ZenSourceUtils.getSharedPreferencesValue(getActivity(), getString(R.string.shared_preferences_disliked), String.class);
-        HashSet<String> dislikedQuotes = likedQuotesStr == null ? new HashSet<String>() : new HashSet<String>(Arrays.asList(dislikedQuotesStr.split(";")));
+        HashSet<String> dislikedQuotes = dislikedQuotesStr == null || dislikedQuotesStr.length() == 0 ? new HashSet<String>() : new HashSet<String>(Arrays.asList(dislikedQuotesStr.split(";")));
 
         // If it was liked, it is being disliked now and vice-versa
         String id = z.getId() + "";
@@ -280,10 +280,10 @@ public class HomeFragment extends Fragment implements OnLoadMoreListener, OnZenC
         }
 
         String likedQuotesStr = ZenSourceUtils.getSharedPreferencesValue(getActivity(), getString(R.string.shared_preferences_liked), String.class);
-        HashSet<String> likedQuotes = likedQuotesStr == null ? new HashSet<String>() : new HashSet<String>(Arrays.asList(likedQuotesStr.split(";")));
+        HashSet<String> likedQuotes = likedQuotesStr == null || likedQuotesStr.length() == 0 ? new HashSet<String>() : new HashSet<String>(Arrays.asList(likedQuotesStr.split(";")));
 
         String dislikedQuotesStr = ZenSourceUtils.getSharedPreferencesValue(getActivity(), getString(R.string.shared_preferences_disliked), String.class);
-        HashSet<String> dislikedQuotes = likedQuotesStr == null ? new HashSet<String>() : new HashSet<String>(Arrays.asList(dislikedQuotesStr.split(";")));
+        HashSet<String> dislikedQuotes = dislikedQuotesStr == null || dislikedQuotesStr.length() == 0 ? new HashSet<String>() : new HashSet<String>(Arrays.asList(dislikedQuotesStr.split(";")));
 
         // If it was liked, it is being disliked now and vice-versa
         String id = z.getId() + "";

@@ -15,6 +15,7 @@ import android.support.v4.content.FileProvider;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -198,6 +199,7 @@ public class LikedQuotesFragment extends Fragment implements OnLoadMoreListener,
 
     @Override
     public void onDislike(ZenCardModel z, final int pos) {
+
         // Http Put to like the post
         ZenCardUtils.dislikeZenQuote(z, new HttpUtil.CallbackVoid() {
             @Override
@@ -223,10 +225,10 @@ public class LikedQuotesFragment extends Fragment implements OnLoadMoreListener,
         }
 
         String likedQuotesStr = ZenSourceUtils.getSharedPreferencesValue(getActivity(), getString(R.string.shared_preferences_liked), String.class);
-        HashSet<String> likedQuotes = likedQuotesStr == null ? new HashSet<String>() : new HashSet<String>(Arrays.asList(likedQuotesStr.split(";")));
+        HashSet<String> likedQuotes = likedQuotesStr == null || likedQuotesStr.length() == 0 ? new HashSet<String>() : new HashSet<String>(Arrays.asList(likedQuotesStr.split(";")));
 
         String dislikedQuotesStr = ZenSourceUtils.getSharedPreferencesValue(getActivity(), getString(R.string.shared_preferences_disliked), String.class);
-        HashSet<String> dislikedQuotes = likedQuotesStr == null ? new HashSet<String>() : new HashSet<String>(Arrays.asList(dislikedQuotesStr.split(";")));
+        HashSet<String> dislikedQuotes = dislikedQuotesStr == null || dislikedQuotesStr.length() == 0 ? new HashSet<String>() : new HashSet<String>(Arrays.asList(dislikedQuotesStr.split(";")));
 
         // If it was liked, it is being disliked now and vice-versa
         String id = z.getId() + "";
@@ -296,9 +298,9 @@ public class LikedQuotesFragment extends Fragment implements OnLoadMoreListener,
     private void refreshNumberLiked() {
         likedQuoteIds = ZenSourceUtils.getSharedPreferencesValue(getActivity(), getString(R.string.shared_preferences_liked), String.class);
         if (likedQuoteIds != null) {
+            Toast.makeText(getContext(), likedQuoteIds, Toast.LENGTH_SHORT).show();
             likedQuoteIds = likedQuoteIds.replace(';', ',');
             int quotesNumber = 0;
-            Toast.makeText(getContext(), likedQuoteIds, Toast.LENGTH_SHORT).show();
             if (likedQuoteIds.length() > 0) quotesNumber = likedQuoteIds.split(",").length;
             numberLikedQuotes.setText( quotesNumber + " " + getResources().getString(R.string.liked_number));
         }
