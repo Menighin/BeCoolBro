@@ -28,7 +28,7 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
 
         mDrawerFragment  = supportFragmentManager.findFragmentById(R.id.fragment_navigation_drawer) as NavigationDrawerFragment
-        mDrawerFragment!!.setUp(findViewById(R.id.drawer_layout) as DrawerLayout)
+        mDrawerFragment!!.setUp(findViewById(R.id.drawer_layout) as DrawerLayout, toolbar as Toolbar)
 
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         supportActionBar!!.setHomeButtonEnabled(true)

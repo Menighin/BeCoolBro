@@ -7,6 +7,7 @@ import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.support.v7.widget.Toolbar
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -27,6 +28,7 @@ class NavigationDrawerFragment : Fragment() {
     var drawerToggle: ActionBarDrawerToggle? = null
         private set
     private var mDrawerLayout: DrawerLayout? = null
+    private var mToolbar: Toolbar? = null
     private var mRecyclerView: RecyclerView? = null
     private var navigationItems: ArrayList<IconListRecyclerAdapter.ItemModel>? = null
     private var mFrameContent: FrameLayout? = null
@@ -67,6 +69,13 @@ class NavigationDrawerFragment : Fragment() {
                     else -> HomeFragment()
                 }
 
+                // Setting the titles
+                when {
+                    item.id == 1 -> mToolbar!!.title = activity.resources.getString(R.string.menu_home)
+                    item.id == 2 -> mToolbar!!.title = activity.resources.getString(R.string.menu_liked)
+                    item.id == 3 -> mToolbar!!.title = activity.resources.getString(R.string.menu_configurations)
+                }
+
                 val ft = activity.supportFragmentManager.beginTransaction()
                 ft.replace(R.id.frame_content, f)
                 ft.commit()
@@ -81,8 +90,10 @@ class NavigationDrawerFragment : Fragment() {
         return v
     }
 
-    fun setUp(drawerLayout: DrawerLayout) {
+    fun setUp(drawerLayout: DrawerLayout, toolbar: Toolbar) {
+
         mDrawerLayout = drawerLayout
+        mToolbar = toolbar
 
         mFrameContent = drawerLayout.findViewById(R.id.frame_content) as FrameLayout
 

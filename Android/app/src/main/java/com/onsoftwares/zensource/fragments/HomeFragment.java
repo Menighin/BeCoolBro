@@ -119,6 +119,7 @@ public class HomeFragment extends Fragment implements OnLoadMoreListener, OnZenC
             }
         });
 
+
         return view;
     }
 

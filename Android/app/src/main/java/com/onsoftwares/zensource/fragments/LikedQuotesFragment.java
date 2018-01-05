@@ -22,7 +22,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.onsoftwares.zensource.R;
 import com.onsoftwares.zensource.activities.ZenCardZoomActivity;
@@ -299,7 +298,6 @@ public class LikedQuotesFragment extends Fragment implements OnLoadMoreListener,
     private void refreshNumberLiked() {
         likedQuoteIds = ZenSourceUtils.getSharedPreferencesValue(getActivity(), getString(R.string.shared_preferences_liked), String.class);
         if (likedQuoteIds != null) {
-            Toast.makeText(getContext(), likedQuoteIds, Toast.LENGTH_SHORT).show();
             likedQuoteIds = likedQuoteIds.replace(';', ',');
             int quotesNumber = 0;
             if (likedQuoteIds.length() > 0) quotesNumber = likedQuoteIds.split(",").length;
