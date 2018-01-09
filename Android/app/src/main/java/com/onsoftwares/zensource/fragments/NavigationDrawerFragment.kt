@@ -35,6 +35,7 @@ class NavigationDrawerFragment : Fragment() {
 
     private var mUserLearnDrawer: Boolean = false
     private var mFromSavedInstanceState: Boolean = false
+    private var isClickable: Boolean = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,6 +62,8 @@ class NavigationDrawerFragment : Fragment() {
         val adapter = IconListRecyclerAdapter(context, navigationItems, IconListRecyclerAdapter.OnItemClickListener {
             item ->
             run {
+
+                if (!isClickable) return@OnItemClickListener
 
                 val f: Fragment = when {
                     item.id == 1 -> HomeFragment()
@@ -131,4 +134,12 @@ class NavigationDrawerFragment : Fragment() {
             return sharedPreferences.getString(preferenceName, defaultValue)
         }
     }
-}// Required empty public constructor
+
+    fun deactivateMenu() {
+        isClickable = false
+    }
+
+    fun activateMenu() {
+        isClickable = true
+    }
+}

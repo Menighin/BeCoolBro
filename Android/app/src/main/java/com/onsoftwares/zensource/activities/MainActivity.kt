@@ -14,9 +14,10 @@ import android.view.MenuItem
 import com.onsoftwares.zensource.fragments.NavigationDrawerFragment
 import com.onsoftwares.zensource.R
 import com.onsoftwares.zensource.fragments.HomeFragment
+import com.onsoftwares.zensource.interfaces.NavigationActivityHandler
 
-class MainActivity : AppCompatActivity() {
-    // Test
+class MainActivity : AppCompatActivity(), NavigationActivityHandler {
+
     private var toolbar: Toolbar? = null;
     private var mDrawerFragment: NavigationDrawerFragment? = null;
 
@@ -58,6 +59,14 @@ class MainActivity : AppCompatActivity() {
         } else super.onOptionsItemSelected(item)
         // Handle your other action bar items...
 
+    }
+
+    override fun activateNavigation() {
+        mDrawerFragment!!.activateMenu()
+    }
+
+    override fun deactivateNavigation() {
+        mDrawerFragment!!.deactivateMenu()
     }
 
 }

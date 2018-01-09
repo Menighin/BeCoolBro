@@ -46,7 +46,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.Callable;
 
-public class LikedQuotesFragment extends Fragment implements OnLoadMoreListener, OnZenCardAction {
+public class LikedQuotesFragment extends FragmentWithNavigation implements OnLoadMoreListener, OnZenCardAction {
 
     private ProgressBar progressBar;
     private RecyclerView recyclerView;
@@ -99,6 +99,8 @@ public class LikedQuotesFragment extends Fragment implements OnLoadMoreListener,
 
         if (likedQuoteIds != null && likedQuoteIds.length() > 0) {
 
+            super.deactivateNavigation();
+
             // Request for the data of the recycler view
             progressBar.setVisibility(View.VISIBLE);
             recyclerAdapter.setLoading(true);
@@ -115,6 +117,8 @@ public class LikedQuotesFragment extends Fragment implements OnLoadMoreListener,
                             getActivity().runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
+
+                                    LikedQuotesFragment.super.activateNavigation();
 
                                     // Setting all as liked
                                     for (int i = 0; i < list.size(); i++) {
@@ -139,6 +143,12 @@ public class LikedQuotesFragment extends Fragment implements OnLoadMoreListener,
                             });
                         }
                     })
+                    .ifFail(new HttpUtil.CallbackConverted<List<ZenCardModel>>() {
+                        @Override
+                        public void callback(List<ZenCardModel> response) {
+                            LikedQuotesFragment.super.activateNavigation();
+                        }
+                    })
                     .makeGet();
         } else {
             progressBar.setVisibility(View.INVISIBLE);
@@ -152,6 +162,8 @@ public class LikedQuotesFragment extends Fragment implements OnLoadMoreListener,
             likedList.add(null);
 
             recyclerAdapter.notifyItemInserted(likedList.size() - 1);
+
+            super.deactivateNavigation();
 
             HttpUtil.Builder httpBuilder = HttpUtil.Builder()
                     .withUrl("http://zensource-dev.sa-east-1.elasticbeanstalk.com/api/zen/images")
@@ -167,6 +179,8 @@ public class LikedQuotesFragment extends Fragment implements OnLoadMoreListener,
                             getActivity().runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
+
+                                    LikedQuotesFragment.super.activateNavigation();
 
                                     //Remove loading item
                                     likedList.remove(likedList.size() - 1);
@@ -186,6 +200,12 @@ public class LikedQuotesFragment extends Fragment implements OnLoadMoreListener,
                                     if (list.size() == 0) page = 0;
                                 }
                             });
+                        }
+                    })
+                    .ifFail(new HttpUtil.CallbackConverted<List<ZenCardModel>>() {
+                        @Override
+                        public void callback(List<ZenCardModel> response) {
+                            LikedQuotesFragment.super.activateNavigation();
                         }
                     })
                     .makeGet();

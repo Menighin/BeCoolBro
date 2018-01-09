@@ -1,17 +1,34 @@
 <resources>
+    <string name="app_name">ZenSource</string>
 
-    <string name="no_results_found">Nenhum resultado encontrado</string>
-
-    <string name="liked_number"> citações curtidas</string>
+    <string name="shared_preferences">onsoftwares.com.ZenSourceSharedPreferences</string>
+    <string name="shared_preferences_liked">onsoftwares.com.ZenSourceLikedQuotes</string>
+    <string name="shared_preferences_disliked">onsoftwares.com.ZenSourceDislikedQuotes</string>
+    <string name="hello_blank_fragment">Hello blank Drawer</string>
+    <string name="drawer_open">Drawer open</string>
+    <string name="drawer_close">Drawer close</string>
+    <string name="list_icon">List Icon</string>
+    <string name="textview_holder">TextView holder</string>
+    <string name="quote_image">Quote Image</string>
+    <string name="home_card_share">SHARE</string>
+    <string name="transition_zoom_card">transition_zoom_card</string>
+    <string name="share_button">Share button</string>
+    <string name="like_success">Quote marked as liked</string>
+    <string name="dislike_success">Quote marked as disliked</string>
+    <string name="search_title">Search</string>
+    <string name="search_hint">Search quotes</string>
+    <string name="no_results_found">No results found</string>
 
     <!-- Menu -->
     <string name="menu_home">Inicial</string>
     <string name="menu_configurations">Configurações</string>
     <string name="menu_liked">Favoritos</string>
 
+    <!-- Liked fragment -->
+    <string name="liked_number"> quotes marcados</string>
+
     <!-- Configuration Fragment -->
     <string name="config_language">Idioma</string>
     <string name="str_en">Inglês</string>
     <string name="str_pt">Português</string>
-
 </resources>

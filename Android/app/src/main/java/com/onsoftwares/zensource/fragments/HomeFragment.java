@@ -36,6 +36,7 @@ import android.widget.Toast;
 import com.onsoftwares.zensource.R;
 import com.onsoftwares.zensource.activities.ZenCardZoomActivity;
 import com.onsoftwares.zensource.adapters.HomeCardRecyclerAdapter;
+import com.onsoftwares.zensource.interfaces.NavigationActivityHandler;
 import com.onsoftwares.zensource.interfaces.OnLoadMoreListener;
 import com.onsoftwares.zensource.interfaces.OnZenCardAction;
 import com.onsoftwares.zensource.models.ZenCardModel;
@@ -58,7 +59,7 @@ import java.util.concurrent.Callable;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class HomeFragment extends Fragment implements OnLoadMoreListener, OnZenCardAction{
+public class HomeFragment extends FragmentWithNavigation implements OnLoadMoreListener, OnZenCardAction{
 
     private RecyclerView homeCardRecyclerView;
     private SwipeRefreshLayout homeCardSwipeRefreshLayout;
@@ -178,6 +179,8 @@ public class HomeFragment extends Fragment implements OnLoadMoreListener, OnZenC
             if (this.search != null)
                 httpBuilder.addQueryParameter("search", search);
 
+            super.deactivateNavigation();
+
             httpBuilder
                     .withConverter(new ZenCardModel())
                     .ifSuccess(new HttpUtil.CallbackConverted<List<ZenCardModel>>() {
@@ -186,6 +189,8 @@ public class HomeFragment extends Fragment implements OnLoadMoreListener, OnZenC
                             getActivity().runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
+
+                                    HomeFragment.super.activateNavigation();
 
                                     //Remove loading item
                                     homeCardsList.remove(homeCardsList.size() - 1);
@@ -203,6 +208,12 @@ public class HomeFragment extends Fragment implements OnLoadMoreListener, OnZenC
                                     if (list.size() == 0) page = 0;
                                 }
                             });
+                        }
+                    })
+                    .ifFail(new HttpUtil.CallbackConverted<List<ZenCardModel>>() {
+                        @Override
+                        public void callback(List<ZenCardModel> response) {
+                            HomeFragment.super.activateNavigation();
                         }
                     })
                     .makeGet();
@@ -358,6 +369,9 @@ public class HomeFragment extends Fragment implements OnLoadMoreListener, OnZenC
         // Request for the data of the recycler view
         loading = true;
         recyclerAdapter.setLoading(true);
+
+        super.deactivateNavigation();
+
         HttpUtil.Builder httpBuilder = HttpUtil.Builder()
             .withUrl("http://zensource-dev.sa-east-1.elasticbeanstalk.com/api/zen/images")
             .addQueryParameter("page", page + "")
@@ -373,6 +387,8 @@ public class HomeFragment extends Fragment implements OnLoadMoreListener, OnZenC
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
+
+                            HomeFragment.super.activateNavigation();
 
                             setZenCardLikedState(list);
 
@@ -405,6 +421,12 @@ public class HomeFragment extends Fragment implements OnLoadMoreListener, OnZenC
                             homeCardRecyclerView.getLayoutManager().scrollToPosition(0);
                         }
                     });
+                }
+            })
+            .ifFail(new HttpUtil.CallbackConverted<List<ZenCardModel>>() {
+                @Override
+                public void callback(List<ZenCardModel> response) {
+                    HomeFragment.super.activateNavigation();
                 }
             })
             .makeGet();
