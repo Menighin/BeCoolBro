@@ -11,11 +11,13 @@ import com.onsoftwares.zensource.interfaces.NavigationActivityHandler;
 public class FragmentWithNavigation extends Fragment {
 
     public void activateNavigation() {
-        ((NavigationActivityHandler) getActivity()).activateNavigation();
+        if (getActivity() != null)
+            ((NavigationActivityHandler) getActivity()).activateNavigation();
     }
 
     public void deactivateNavigation() {
-        ((NavigationActivityHandler) getActivity()).deactivateNavigation();
+        if (getActivity() != null)
+            ((NavigationActivityHandler) getActivity()).deactivateNavigation();
     }
 
 }

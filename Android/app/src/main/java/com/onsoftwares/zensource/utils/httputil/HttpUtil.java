@@ -123,7 +123,22 @@ public class HttpUtil {
                             ((CallbackVoid) successCallback).callback();
                         }
                     } catch (JSONException e) {
+
                         e.printStackTrace();
+
+                        if (failCallback != null && failCallback instanceof CallbackString)
+                            ((CallbackString) failCallback).callback(responseStr);
+                        else if (failCallback != null && failCallback instanceof CallbackJsonObject) {
+                            ((CallbackJsonObject) failCallback).callback(null);
+                        }
+                        else if (failCallback != null && failCallback instanceof CallbackJsonArray) {
+                            ((CallbackJsonArray) failCallback).callback(null);
+                        }
+                        else if (failCallback != null && failCallback instanceof CallbackConverted<?> && converter != null) {
+                            ((CallbackConverted) failCallback).callback(null);
+                        } else if (failCallback != null && failCallback instanceof CallbackVoid) {
+                            ((CallbackVoid) failCallback).callback();
+                        }
                     }
                 } else {
                     Log.e("WHAT", response.message());

@@ -186,28 +186,30 @@ public class HomeFragment extends FragmentWithNavigation implements OnLoadMoreLi
                     .ifSuccess(new HttpUtil.CallbackConverted<List<ZenCardModel>>() {
                         @Override
                         public void callback(final List<ZenCardModel> list) {
-                            getActivity().runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
 
-                                    HomeFragment.super.activateNavigation();
+                            if (getActivity() != null)
+                                getActivity().runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
 
-                                    //Remove loading item
-                                    homeCardsList.remove(homeCardsList.size() - 1);
-                                    recyclerAdapter.notifyItemRemoved(homeCardsList.size());
+                                        HomeFragment.super.activateNavigation();
 
-                                    recyclerAdapter.setLoading(false);
+                                        //Remove loading item
+                                        homeCardsList.remove(homeCardsList.size() - 1);
+                                        recyclerAdapter.notifyItemRemoved(homeCardsList.size());
 
-                                    setZenCardLikedState(list);
+                                        recyclerAdapter.setLoading(false);
 
-                                    homeCardsList.addAll(list);
-                                    homeCardRecyclerView.getAdapter().notifyDataSetChanged();
-                                    progressBar.setVisibility(View.INVISIBLE);
-                                    loading = false;
+                                        setZenCardLikedState(list);
 
-                                    if (list.size() == 0) page = 0;
-                                }
-                            });
+                                        homeCardsList.addAll(list);
+                                        homeCardRecyclerView.getAdapter().notifyDataSetChanged();
+                                        progressBar.setVisibility(View.INVISIBLE);
+                                        loading = false;
+
+                                        if (list.size() == 0) page = 0;
+                                    }
+                                });
                         }
                     })
                     .ifFail(new HttpUtil.CallbackConverted<List<ZenCardModel>>() {
@@ -227,12 +229,13 @@ public class HomeFragment extends FragmentWithNavigation implements OnLoadMoreLi
         ZenCardUtils.likeZenQuote(z, new HttpUtil.CallbackVoid() {
             @Override
             public void callback() {
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Snackbar.make(homeCardRecyclerView, getResources().getString(R.string.like_success), Snackbar.LENGTH_SHORT).show();
-                    }
-                });
+                if (getActivity() != null)
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Snackbar.make(homeCardRecyclerView, getResources().getString(R.string.like_success), Snackbar.LENGTH_SHORT).show();
+                        }
+                    });
             }
         });
 
@@ -273,12 +276,13 @@ public class HomeFragment extends FragmentWithNavigation implements OnLoadMoreLi
         ZenCardUtils.dislikeZenQuote(z, new HttpUtil.CallbackVoid() {
             @Override
             public void callback() {
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Snackbar.make(homeCardRecyclerView, getResources().getString(R.string.dislike_success), Snackbar.LENGTH_SHORT).show();
-                    }
-                });
+                if (getActivity() != null)
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Snackbar.make(homeCardRecyclerView, getResources().getString(R.string.dislike_success), Snackbar.LENGTH_SHORT).show();
+                        }
+                    });
             }
         });
 
@@ -384,43 +388,44 @@ public class HomeFragment extends FragmentWithNavigation implements OnLoadMoreLi
             .ifSuccess(new HttpUtil.CallbackConverted<List<ZenCardModel>>() {
                 @Override
                 public void callback(final List<ZenCardModel> list) {
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
+                    if (getActivity() != null)
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
 
-                            HomeFragment.super.activateNavigation();
+                                HomeFragment.super.activateNavigation();
 
-                            setZenCardLikedState(list);
+                                setZenCardLikedState(list);
 
-                            homeCardsList.clear();
-                            page++;
+                                homeCardsList.clear();
+                                page++;
 
-                            homeCardsList.addAll(list);
-                            progressBar.setVisibility(View.INVISIBLE);
-                            homeCardRecyclerView.setVisibility(View.VISIBLE);
-                            loading = false;
-                            recyclerAdapter.setLoading(false);
+                                homeCardsList.addAll(list);
+                                progressBar.setVisibility(View.INVISIBLE);
+                                homeCardRecyclerView.setVisibility(View.VISIBLE);
+                                loading = false;
+                                recyclerAdapter.setLoading(false);
 
-                            if (callback != null) {
-                                try {
-                                    callback.call();
-                                } catch (Exception e) {
-                                    e.printStackTrace();
+                                if (callback != null) {
+                                    try {
+                                        callback.call();
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
                                 }
+
+                                if(homeCardsList.size() == 0) {
+                                    homeCardRecyclerView.setVisibility(View.INVISIBLE);
+                                    homeNoResultsFound.setVisibility(View.VISIBLE);
+                                } else {
+                                    homeNoResultsFound.setVisibility(View.INVISIBLE);
+                                }
+
+                                homeCardRecyclerView.getAdapter().notifyDataSetChanged();
+
+                                homeCardRecyclerView.getLayoutManager().scrollToPosition(0);
                             }
-
-                            if(homeCardsList.size() == 0) {
-                                homeCardRecyclerView.setVisibility(View.INVISIBLE);
-                                homeNoResultsFound.setVisibility(View.VISIBLE);
-                            } else {
-                                homeNoResultsFound.setVisibility(View.INVISIBLE);
-                            }
-
-                            homeCardRecyclerView.getAdapter().notifyDataSetChanged();
-
-                            homeCardRecyclerView.getLayoutManager().scrollToPosition(0);
-                        }
-                    });
+                        });
                 }
             })
             .ifFail(new HttpUtil.CallbackConverted<List<ZenCardModel>>() {

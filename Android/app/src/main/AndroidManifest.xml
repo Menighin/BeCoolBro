@@ -11,7 +11,11 @@
         android:roundIcon="@mipmap/zensource_logo"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activities.MainActivity">
+
+        <activity
+            android:name=".activities.MainActivity"
+            android:screenOrientation="portrait" >
+
              <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
@@ -20,9 +24,10 @@
                 android:name="android.app.searchable"
                 android:resource="@xml/searchable" />
         </activity>
-        <activity android:name=".activities.ZenCardZoomActivity" />
 
-        <activity android:name=".activities.SplashActivity" android:theme="@style/SplashTheme">
+        <activity android:name=".activities.ZenCardZoomActivity" android:screenOrientation="portrait"/>
+
+        <activity android:name=".activities.SplashActivity" android:theme="@style/SplashTheme" android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

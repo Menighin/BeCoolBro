@@ -114,33 +114,34 @@ public class LikedQuotesFragment extends FragmentWithNavigation implements OnLoa
                     .ifSuccess(new HttpUtil.CallbackConverted<List<ZenCardModel>>() {
                         @Override
                         public void callback(final List<ZenCardModel> list) {
-                            getActivity().runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
+                            if (getActivity() != null)
+                                getActivity().runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
 
-                                    LikedQuotesFragment.super.activateNavigation();
+                                        LikedQuotesFragment.super.activateNavigation();
 
-                                    // Setting all as liked
-                                    for (int i = 0; i < list.size(); i++) {
-                                        list.get(i).setLiked(true);
+                                        // Setting all as liked
+                                        for (int i = 0; i < list.size(); i++) {
+                                            list.get(i).setLiked(true);
+                                        }
+
+                                        likedList.clear();
+                                        page++;
+
+                                        likedList.addAll(list);
+                                        progressBar.setVisibility(View.INVISIBLE);
+                                        recyclerView.setVisibility(View.VISIBLE);
+                                        recyclerAdapter.setLoading(false);
+
+                                        if (likedList.size() == 0) {
+                                            recyclerView.setVisibility(View.INVISIBLE);
+                                        }
+
+                                        recyclerView.getAdapter().notifyDataSetChanged();
+                                        recyclerView.getLayoutManager().scrollToPosition(0);
                                     }
-
-                                    likedList.clear();
-                                    page++;
-
-                                    likedList.addAll(list);
-                                    progressBar.setVisibility(View.INVISIBLE);
-                                    recyclerView.setVisibility(View.VISIBLE);
-                                    recyclerAdapter.setLoading(false);
-
-                                    if (likedList.size() == 0) {
-                                        recyclerView.setVisibility(View.INVISIBLE);
-                                    }
-
-                                    recyclerView.getAdapter().notifyDataSetChanged();
-                                    recyclerView.getLayoutManager().scrollToPosition(0);
-                                }
-                            });
+                                });
                         }
                     })
                     .ifFail(new HttpUtil.CallbackConverted<List<ZenCardModel>>() {
@@ -176,30 +177,31 @@ public class LikedQuotesFragment extends FragmentWithNavigation implements OnLoa
                     .ifSuccess(new HttpUtil.CallbackConverted<List<ZenCardModel>>() {
                         @Override
                         public void callback(final List<ZenCardModel> list) {
-                            getActivity().runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
+                            if (getActivity() != null)
+                                getActivity().runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
 
-                                    LikedQuotesFragment.super.activateNavigation();
+                                        LikedQuotesFragment.super.activateNavigation();
 
-                                    //Remove loading item
-                                    likedList.remove(likedList.size() - 1);
-                                    recyclerAdapter.notifyItemRemoved(likedList.size());
+                                        //Remove loading item
+                                        likedList.remove(likedList.size() - 1);
+                                        recyclerAdapter.notifyItemRemoved(likedList.size());
 
-                                    recyclerAdapter.setLoading(false);
+                                        recyclerAdapter.setLoading(false);
 
-                                    // Setting all as liked
-                                    for (int i = 0; i < list.size(); i++) {
-                                        list.get(i).setLiked(true);
+                                        // Setting all as liked
+                                        for (int i = 0; i < list.size(); i++) {
+                                            list.get(i).setLiked(true);
+                                        }
+
+                                        likedList.addAll(list);
+                                        recyclerView.getAdapter().notifyDataSetChanged();
+                                        progressBar.setVisibility(View.INVISIBLE);
+
+                                        if (list.size() == 0) page = 0;
                                     }
-
-                                    likedList.addAll(list);
-                                    recyclerView.getAdapter().notifyDataSetChanged();
-                                    progressBar.setVisibility(View.INVISIBLE);
-
-                                    if (list.size() == 0) page = 0;
-                                }
-                            });
+                                });
                         }
                     })
                     .ifFail(new HttpUtil.CallbackConverted<List<ZenCardModel>>() {
@@ -224,14 +226,15 @@ public class LikedQuotesFragment extends FragmentWithNavigation implements OnLoa
         ZenCardUtils.dislikeZenQuote(z, new HttpUtil.CallbackVoid() {
             @Override
             public void callback() {
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Snackbar.make(recyclerView, getResources().getString(R.string.dislike_success), Snackbar.LENGTH_SHORT).show();
-                        recyclerAdapter.deleteItem(pos);
-                        refreshNumberLiked();
-                    }
-                });
+                if (getActivity() != null)
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Snackbar.make(recyclerView, getResources().getString(R.string.dislike_success), Snackbar.LENGTH_SHORT).show();
+                            recyclerAdapter.deleteItem(pos);
+                            refreshNumberLiked();
+                        }
+                    });
             }
         });
 
