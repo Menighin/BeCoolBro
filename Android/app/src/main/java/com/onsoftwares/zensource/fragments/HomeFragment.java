@@ -36,6 +36,7 @@ import android.widget.Toast;
 import com.onsoftwares.zensource.R;
 import com.onsoftwares.zensource.activities.ZenCardZoomActivity;
 import com.onsoftwares.zensource.adapters.HomeCardRecyclerAdapter;
+import com.onsoftwares.zensource.enums.SharedPreferencesEnum;
 import com.onsoftwares.zensource.interfaces.NavigationActivityHandler;
 import com.onsoftwares.zensource.interfaces.OnLoadMoreListener;
 import com.onsoftwares.zensource.interfaces.OnZenCardAction;
@@ -248,10 +249,10 @@ public class HomeFragment extends FragmentWithNavigation implements OnLoadMoreLi
             z.setDislikes(z.getDislikes() - 1);
         }
 
-        String likedQuotesStr = ZenSourceUtils.getSharedPreferencesValue(getActivity(), getString(R.string.shared_preferences_liked), String.class);
+        String likedQuotesStr = ZenSourceUtils.getSharedPreferencesValue(getActivity(), SharedPreferencesEnum.LIKED_QUOTES.value(), String.class);
         HashSet<String> likedQuotes = likedQuotesStr == null || likedQuotesStr.length() == 0 ? new HashSet<String>() : new HashSet<String>(Arrays.asList(likedQuotesStr.split(";")));
 
-        String dislikedQuotesStr = ZenSourceUtils.getSharedPreferencesValue(getActivity(), getString(R.string.shared_preferences_disliked), String.class);
+        String dislikedQuotesStr = ZenSourceUtils.getSharedPreferencesValue(getActivity(), SharedPreferencesEnum.DISLIKED_QUOTES.value(), String.class);
         HashSet<String> dislikedQuotes = dislikedQuotesStr == null || dislikedQuotesStr.length() == 0 ? new HashSet<String>() : new HashSet<String>(Arrays.asList(dislikedQuotesStr.split(";")));
 
         // If it was liked, it is being disliked now and vice-versa
@@ -265,8 +266,8 @@ public class HomeFragment extends FragmentWithNavigation implements OnLoadMoreLi
         else
             likedQuotes.add(id);
 
-        ZenSourceUtils.setSharedPreferenceValue(getActivity(), getString(R.string.shared_preferences_liked), TextUtils.join(";", likedQuotes), String.class);
-        ZenSourceUtils.setSharedPreferenceValue(getActivity(), getString(R.string.shared_preferences_disliked), TextUtils.join(";", dislikedQuotes), String.class);
+        ZenSourceUtils.setSharedPreferenceValue(getActivity(), SharedPreferencesEnum.LIKED_QUOTES.value(), TextUtils.join(";", likedQuotes), String.class);
+        ZenSourceUtils.setSharedPreferenceValue(getActivity(), SharedPreferencesEnum.DISLIKED_QUOTES.value(), TextUtils.join(";", dislikedQuotes), String.class);
     }
 
     @Override
@@ -295,10 +296,10 @@ public class HomeFragment extends FragmentWithNavigation implements OnLoadMoreLi
             z.setLikes(z.getLikes() - 1);
         }
 
-        String likedQuotesStr = ZenSourceUtils.getSharedPreferencesValue(getActivity(), getString(R.string.shared_preferences_liked), String.class);
+        String likedQuotesStr = ZenSourceUtils.getSharedPreferencesValue(getActivity(), SharedPreferencesEnum.LIKED_QUOTES.value(), String.class);
         HashSet<String> likedQuotes = likedQuotesStr == null || likedQuotesStr.length() == 0 ? new HashSet<String>() : new HashSet<String>(Arrays.asList(likedQuotesStr.split(";")));
 
-        String dislikedQuotesStr = ZenSourceUtils.getSharedPreferencesValue(getActivity(), getString(R.string.shared_preferences_disliked), String.class);
+        String dislikedQuotesStr = ZenSourceUtils.getSharedPreferencesValue(getActivity(), SharedPreferencesEnum.DISLIKED_QUOTES.value(), String.class);
         HashSet<String> dislikedQuotes = dislikedQuotesStr == null || dislikedQuotesStr.length() == 0 ? new HashSet<String>() : new HashSet<String>(Arrays.asList(dislikedQuotesStr.split(";")));
 
         // If it was liked, it is being disliked now and vice-versa
@@ -312,8 +313,8 @@ public class HomeFragment extends FragmentWithNavigation implements OnLoadMoreLi
         else
             dislikedQuotes.add(id);
 
-        ZenSourceUtils.setSharedPreferenceValue(getActivity(), getString(R.string.shared_preferences_liked), TextUtils.join(";", likedQuotes), String.class);
-        ZenSourceUtils.setSharedPreferenceValue(getActivity(), getString(R.string.shared_preferences_disliked), TextUtils.join(";", dislikedQuotes), String.class);
+        ZenSourceUtils.setSharedPreferenceValue(getActivity(), SharedPreferencesEnum.LIKED_QUOTES.value(), TextUtils.join(";", likedQuotes), String.class);
+        ZenSourceUtils.setSharedPreferenceValue(getActivity(), SharedPreferencesEnum.DISLIKED_QUOTES.value(), TextUtils.join(";", dislikedQuotes), String.class);
     }
 
     @Override
@@ -438,10 +439,10 @@ public class HomeFragment extends FragmentWithNavigation implements OnLoadMoreLi
     }
 
     private void setZenCardLikedState(List<ZenCardModel> list) {
-        String likedQuotesStr = ZenSourceUtils.getSharedPreferencesValue(getActivity(), getString(R.string.shared_preferences_liked), String.class);
+        String likedQuotesStr = ZenSourceUtils.getSharedPreferencesValue(getActivity(), SharedPreferencesEnum.LIKED_QUOTES.value(), String.class);
         HashSet<String> likedQuotes = likedQuotesStr == null ? new HashSet<String>() : new HashSet<String>(Arrays.asList(likedQuotesStr.split(";")));
 
-        String dislikedQuotesStr = ZenSourceUtils.getSharedPreferencesValue(getActivity(), getString(R.string.shared_preferences_disliked), String.class);
+        String dislikedQuotesStr = ZenSourceUtils.getSharedPreferencesValue(getActivity(), SharedPreferencesEnum.DISLIKED_QUOTES.value(), String.class);
         HashSet<String> dislikedQuotes = likedQuotesStr == null ? new HashSet<String>() : new HashSet<String>(Arrays.asList(dislikedQuotesStr.split(";")));
 
         for (int i = 0; i < list.size(); i++) {

@@ -27,7 +27,7 @@ public class ZenSourceUtils {
     public static final String IMAGE_NAME_ON_CACHE = "zen_quote";
 
     public static <T> T getSharedPreferencesValue(Context c, String key, Class<T> returnType) {
-        SharedPreferences sharedPref = c.getSharedPreferences(c.getString(R.string.shared_preferences), Context.MODE_PRIVATE);
+        SharedPreferences sharedPref = c.getSharedPreferences(SharedPreferencesEnum.SHARED_PREFERENCES_TAG.value(), Context.MODE_PRIVATE);
 
         if (returnType.equals(String.class)) {
             return (T) sharedPref.getString(key, null);
@@ -39,7 +39,7 @@ public class ZenSourceUtils {
     }
 
     public static <T> void setSharedPreferenceValue(Context c, String key, T value, Class<T> classToWrite) {
-        SharedPreferences sharedPref = c.getSharedPreferences(c.getString(R.string.shared_preferences), Context.MODE_PRIVATE);
+        SharedPreferences sharedPref = c.getSharedPreferences(SharedPreferencesEnum.SHARED_PREFERENCES_TAG.value(), Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
 
         if (classToWrite.equals(String.class)) {
