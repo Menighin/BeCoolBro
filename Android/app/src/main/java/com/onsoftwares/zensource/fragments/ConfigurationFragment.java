@@ -4,6 +4,8 @@ package com.onsoftwares.zensource.fragments;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -73,8 +75,19 @@ public class ConfigurationFragment extends Fragment {
             }
         });
 
+        setHasOptionsMenu(true);
+
         return v;
     }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+
+        MenuItem mSearchMenuItem = menu.findItem(R.id.menu_search);
+        mSearchMenuItem.setVisible(false);
+    }
+
 
     private void onLanguageSelected(int pos) {
         LanguagesEnum savedLanguage = LanguagesEnum.fromStr(ZenSourceUtils.getSharedPreferencesValue(getContext(), SharedPreferencesEnum.LANGUAGE.value(), String.class));

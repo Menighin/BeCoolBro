@@ -130,6 +130,7 @@ public class HomeFragment extends FragmentWithNavigation implements OnLoadMoreLi
         super.onPrepareOptionsMenu(menu);
 
         MenuItem mSearchMenuItem = menu.findItem(R.id.menu_search);
+        mSearchMenuItem.setVisible(true);
         SearchView searchView = (SearchView) mSearchMenuItem.getActionView();
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {

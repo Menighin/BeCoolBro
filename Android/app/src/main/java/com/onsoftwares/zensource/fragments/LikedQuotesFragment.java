@@ -17,6 +17,8 @@ import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -87,6 +89,8 @@ public class LikedQuotesFragment extends FragmentWithNavigation implements OnLoa
         recyclerAdapter.setOnZenCardAction(this);
 
         refreshData();
+
+        setHasOptionsMenu(true);
 
         return view;
     }
@@ -327,5 +331,13 @@ public class LikedQuotesFragment extends FragmentWithNavigation implements OnLoa
             if (likedQuoteIds.length() > 0) quotesNumber = likedQuoteIds.split(",").length;
             numberLikedQuotes.setText( quotesNumber + " " + getResources().getString(R.string.liked_number));
         }
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+
+        MenuItem mSearchMenuItem = menu.findItem(R.id.menu_search);
+        mSearchMenuItem.setVisible(false);
     }
 }
