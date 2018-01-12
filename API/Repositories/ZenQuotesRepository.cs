@@ -24,8 +24,8 @@ namespace ZenSource.Repositories
 
             if (search != null)
             {
-                var possibleQuotesBySearch = _ctx.Set<ZenMessage>().Where(m => m.Message.Contains(search)).Select(m => m.IdZenQuote).ToList();
-                query = query.Where(q => q.Author.Contains(search) || possibleQuotesBySearch.Contains(q.Id));
+                var possibleQuotesBySearch = _ctx.Set<ZenMessage>().Where(m => m.Message.ToLower().Contains(search.ToLower())).Select(m => m.IdZenQuote).ToList();
+                query = query.Where(q => q.Author.ToLower().Contains(search.ToLower()) || possibleQuotesBySearch.Contains(q.Id));
             }
 
             if (language != null)
