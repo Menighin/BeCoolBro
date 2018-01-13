@@ -13,7 +13,7 @@ import java.util.Date;
 
 public class ZenQuoteReceiver extends WakefulBroadcastReceiver {
 
-    private static final int NOTIFICATIONS_INTERVAL_IN_HOURS = 2;
+    private static final int NOTIFICATIONS_INTERVAL_IN_HOURS = 8;
 
     public static void setupAlarm(Context context) {
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
