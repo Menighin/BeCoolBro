@@ -15,6 +15,7 @@ import com.onsoftwares.zensource.fragments.NavigationDrawerFragment
 import com.onsoftwares.zensource.R
 import com.onsoftwares.zensource.fragments.HomeFragment
 import com.onsoftwares.zensource.interfaces.NavigationActivityHandler
+import com.onsoftwares.zensource.receivers.ZenQuoteReceiver
 
 class MainActivity : AppCompatActivity(), NavigationActivityHandler {
 
@@ -24,6 +25,9 @@ class MainActivity : AppCompatActivity(), NavigationActivityHandler {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        // Setting up alarm
+        ZenQuoteReceiver.setupAlarm(applicationContext)
 
         toolbar = findViewById(R.id.toolbar_main) as Toolbar
         setSupportActionBar(toolbar)
