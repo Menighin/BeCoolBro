@@ -1,0 +1,1 @@
+C:\Users\Menighin\AppData\Local\Android\sdk\emulator\emulator.exe -avd Nexus_5X_API_25 -dns-server 8.8.8.8

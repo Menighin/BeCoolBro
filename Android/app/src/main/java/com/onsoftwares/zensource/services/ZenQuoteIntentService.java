@@ -8,10 +8,17 @@ import android.content.Intent;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+import android.view.View;
 
 import com.onsoftwares.zensource.R;
 import com.onsoftwares.zensource.activities.ZenCardZoomActivity;
+import com.onsoftwares.zensource.fragments.HomeFragment;
+import com.onsoftwares.zensource.models.ZenCardModel;
 import com.onsoftwares.zensource.receivers.ZenQuoteReceiver;
+import com.onsoftwares.zensource.utils.ZenSourceUtils;
+import com.onsoftwares.zensource.utils.httputil.HttpUtil;
+
+import java.util.List;
 
 /**
  * Created by Menighin on 15/01/2018.
@@ -47,23 +54,46 @@ public class ZenQuoteIntentService extends IntentService {
     }
 
     private void processStartNotification() {
-        // Do something. For example, fetch fresh data from backend to create a rich notification?
+        Log.i("Broadcast", "Getting random quote");
 
-        final NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
-        builder.setContentTitle("Scheduled Notification")
-                .setAutoCancel(true)
-                .setColor(getResources().getColor(R.color.colorAccent))
-                .setContentText("This notification has been triggered by Notification Service")
-                .setSmallIcon(R.mipmap.ic_launcher);
+        // Get random quote and show in notification
+        HttpUtil.Builder()
+            .withUrl("http://zensource-dev.sa-east-1.elasticbeanstalk.com/api/zen/images")
+            .addQueryParameter("l", ZenSourceUtils.getLanguageAPICode(getApplicationContext()))
+            .withConverter(new ZenCardModel())
+            .ifSuccess(new HttpUtil.CallbackConverted<List<ZenCardModel>>() {
+                @Override
+                public void callback(final List<ZenCardModel> list) {
 
-        PendingIntent pendingIntent = PendingIntent.getActivity(this,
-                NOTIFICATION_ID,
-                new Intent(this, ZenCardZoomActivity.class),
-                PendingIntent.FLAG_UPDATE_CURRENT);
-        builder.setContentIntent(pendingIntent);
-//        builder.setDeleteIntent(ZenQuoteReceiver.getDeleteIntent(this));
+                    Log.i("Broadcast", "Returned from random Quote");
 
-        final NotificationManager manager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
-        manager.notify(NOTIFICATION_ID, builder.build());
+                    try {
+                        final NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext());
+                        builder.setContentTitle("Scheduled Notification")
+                                .setAutoCancel(true)
+                                .setColor(getResources().getColor(R.color.colorAccent))
+                                .setContentText("This notification has been triggered by Notification Service")
+                                .setSmallIcon(R.mipmap.zensource_notification);
+
+                        Intent intent = new Intent(getApplicationContext(), ZenCardZoomActivity.class);
+                        intent.putExtra("image64encoded", list.get(0).getImage64encoded());
+
+                        PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(),
+                                NOTIFICATION_ID,
+                                intent,
+                                PendingIntent.FLAG_UPDATE_CURRENT);
+
+
+                        builder.setContentIntent(pendingIntent);
+                        final NotificationManager manager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
+                        manager.notify(NOTIFICATION_ID, builder.build());
+                    }
+                    catch(Exception e) {
+                        Log.e("Braodcast", e.getMessage());
+                        e.printStackTrace();
+                    }
+                }
+            }).makeGet();
+
     }
 }
