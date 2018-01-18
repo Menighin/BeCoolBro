@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.widget.Toast;
 
 import com.onsoftwares.zensource.enums.SharedPreferencesEnum;
+import com.onsoftwares.zensource.receivers.ZenQuoteReceiver;
 import com.onsoftwares.zensource.utils.ZenSourceUtils;
 
 import java.util.Locale;
@@ -24,6 +25,17 @@ public class SplashActivity extends AppCompatActivity {
         }
 
         ZenSourceUtils.setLocale(language, this, MainActivity.class);
+
+        // Setting up the daily quote reminder if it doesnt exists
+        String alarmTimer = ZenSourceUtils.getSharedPreferencesValue(this, SharedPreferencesEnum.DAILY_QUOTE.value(), String.class);
+
+        if (alarmTimer == null) {
+            alarmTimer = ZenSourceUtils.getMillisForNextDay(22, 50) + "";
+            ZenSourceUtils.setSharedPreferenceValue(this, SharedPreferencesEnum.DAILY_QUOTE.value(), alarmTimer, String.class);
+        }
+
+        ZenQuoteReceiver.setupAlarm(this, Long.parseLong(alarmTimer));
+
     }
 
 }

@@ -27,7 +27,7 @@ class MainActivity : AppCompatActivity(), NavigationActivityHandler {
         setContentView(R.layout.activity_main)
 
         // Setting up alarm
-        ZenQuoteReceiver.setupAlarm(applicationContext)
+        //ZenQuoteReceiver.setupAlarm(applicationContext)
 
         toolbar = findViewById(R.id.toolbar_main) as Toolbar
         setSupportActionBar(toolbar)

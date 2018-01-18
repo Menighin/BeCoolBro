@@ -19,6 +19,8 @@ import com.onsoftwares.zensource.R;
 import com.onsoftwares.zensource.enums.LanguagesEnum;
 import com.onsoftwares.zensource.enums.SharedPreferencesEnum;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
 
 public class ZenSourceUtils {
@@ -102,5 +104,28 @@ public class ZenSourceUtils {
         Intent refresh = new Intent(a, activityClass);
         a.startActivity(refresh);
         a.finish();
+    }
+
+    public static long getMillisForNextDay(int hour, int minutes) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(new Date());
+        calendar.set(Calendar.HOUR, hour);
+        calendar.set(Calendar.MINUTE, minutes);
+        return calendar.getTimeInMillis();
+    }
+
+    public static <T> Calendar getCalendarFromMillis(T millis) {
+        Long longMillis = 0L;
+        if (millis instanceof String)
+            longMillis = Long.parseLong((String) millis);
+        else if (millis instanceof Long)
+            longMillis = (Long) millis;
+        else
+            return null;
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(longMillis);
+        return calendar;
+
     }
 }

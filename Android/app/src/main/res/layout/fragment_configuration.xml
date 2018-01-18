@@ -18,4 +18,36 @@
         android:layout_height="wrap_content"
         android:backgroundTint="@color/greyA"/>
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/secondaryText"
+        android:text="@string/config_daily_quote" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/config_time_txt"
+            android:text="10:00"
+            android:textSize="24sp"
+            android:textColor="@color/primaryText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:layout_marginStart="20dp"
+            android:text="@string/edit"
+            android:id="@+id/config_edit_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="?attr/selectableItemBackground"
+            />
+
+    </LinearLayout>
+
+
+
 </LinearLayout>

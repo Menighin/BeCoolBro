@@ -28,4 +28,6 @@
     <string name="config_language">Idioma</string>
     <string name="str_en">Inglês</string>
     <string name="str_pt">Português</string>
+    <string name="config_daily_quote">Quote diário às:</string>
+    <string name="edit">Editar</string>
 </resources>

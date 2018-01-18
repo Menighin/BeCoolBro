@@ -1,6 +1,7 @@
 package com.onsoftwares.zensource.fragments;
 
 
+import android.support.v4.app.DialogFragment;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -10,16 +11,20 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.onsoftwares.zensource.R;
 import com.onsoftwares.zensource.activities.MainActivity;
+import com.onsoftwares.zensource.components.TimePickerFragment;
 import com.onsoftwares.zensource.enums.LanguagesEnum;
 import com.onsoftwares.zensource.enums.SharedPreferencesEnum;
 import com.onsoftwares.zensource.utils.ZenSourceUtils;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -27,7 +32,9 @@ import java.util.ArrayList;
 public class ConfigurationFragment extends Fragment {
 
     private Spinner mSpinner;
+    private Button mEditButton;
     private ArrayList<String> languageOptions;
+    private TextView mTimeText;
 
     public ConfigurationFragment() {
         // Required empty public constructor
@@ -61,7 +68,6 @@ public class ConfigurationFragment extends Fragment {
         if (position < 0) position = 0;
         mSpinner.setSelection(position);
 
-
         // Callback when spinner changes
         mSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -72,6 +78,19 @@ public class ConfigurationFragment extends Fragment {
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
                 // Do nothing
+            }
+        });
+
+        mTimeText = (TextView) v.findViewById(R.id.config_time_txt);
+        Calendar savedTime = ZenSourceUtils.getCalendarFromMillis(ZenSourceUtils.getSharedPreferencesValue(getContext(), SharedPreferencesEnum.DAILY_QUOTE.value(), String.class));
+        mTimeText.setText(savedTime.get(Calendar.HOUR_OF_DAY) + ":" + savedTime.get(Calendar.MINUTE));
+
+        mEditButton = (Button) v.findViewById(R.id.config_edit_btn);
+        mEditButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                DialogFragment newFragment = new TimePickerFragment();
+                newFragment.show(getFragmentManager(), "timePicker");
             }
         });
 

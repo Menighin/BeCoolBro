@@ -15,16 +15,13 @@ import java.util.Date;
 
 public class ZenQuoteReceiver extends WakefulBroadcastReceiver {
 
-    private static final int NOTIFICATIONS_INTERVAL_IN_HOURS = 1;
+    public static void setupAlarm(Context context, long timeMillis) {
 
-    public static void setupAlarm(Context context) {
-        Log.i("Broadcast", "Alarm set up");
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         PendingIntent alarmIntent = getStartPendingIntent(context);
         alarmManager.setRepeating(AlarmManager.RTC_WAKEUP,
-                getTriggerAt(new Date()),
-                    6000,
-//                NOTIFICATIONS_INTERVAL_IN_HOURS * AlarmManager.INTERVAL_HOUR,
+                timeMillis,
+                AlarmManager.INTERVAL_DAY,
                 alarmIntent);
     }
 
@@ -42,13 +39,6 @@ public class ZenQuoteReceiver extends WakefulBroadcastReceiver {
         if (serviceIntent != null) {
             startWakefulService(context, serviceIntent);
         }
-    }
-
-    private static long getTriggerAt(Date now) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(now);
-        calendar.add(Calendar.SECOND, 10);
-        return calendar.getTimeInMillis();
     }
 
     private static PendingIntent getStartPendingIntent(Context context) {
