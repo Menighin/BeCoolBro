@@ -1,6 +1,7 @@
 package com.onsoftwares.zensource.fragments;
 
 
+import android.app.TimePickerDialog;
 import android.support.v4.app.DialogFragment;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -14,6 +15,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.onsoftwares.zensource.R;
@@ -35,6 +37,7 @@ public class ConfigurationFragment extends Fragment {
     private Button mEditButton;
     private ArrayList<String> languageOptions;
     private TextView mTimeText;
+    private Calendar mSavedTime;
 
     public ConfigurationFragment() {
         // Required empty public constructor
@@ -82,14 +85,29 @@ public class ConfigurationFragment extends Fragment {
         });
 
         mTimeText = (TextView) v.findViewById(R.id.config_time_txt);
-        Calendar savedTime = ZenSourceUtils.getCalendarFromMillis(ZenSourceUtils.getSharedPreferencesValue(getContext(), SharedPreferencesEnum.DAILY_QUOTE.value(), String.class));
-        mTimeText.setText(savedTime.get(Calendar.HOUR_OF_DAY) + ":" + savedTime.get(Calendar.MINUTE));
+        mSavedTime = ZenSourceUtils.getCalendarFromMillis(ZenSourceUtils.getSharedPreferencesValue(getContext(), SharedPreferencesEnum.DAILY_QUOTE.value(), String.class));
+        mTimeText.setText(String.format("%02d:%02d", mSavedTime.get(Calendar.HOUR_OF_DAY), mSavedTime.get(Calendar.MINUTE)));
 
         mEditButton = (Button) v.findViewById(R.id.config_edit_btn);
         mEditButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                DialogFragment newFragment = new TimePickerFragment();
+                TimePickerFragment newFragment = TimePickerFragment.newInstance(mSavedTime, new TimePickerDialog.OnTimeSetListener() {
+                    @Override
+                    public void onTimeSet(TimePicker timePicker, int hour, int minute) {
+
+                        // Update TextView
+                        mTimeText.setText(String.format("%02d:%02d", hour, minute));
+
+                        // Save new value to preferences
+                        Calendar c = Calendar.getInstance();
+                        c.set(Calendar.HOUR, hour);
+                        c.set(Calendar.MINUTE, minute);
+                        mSavedTime = c;
+                        ZenSourceUtils.setSharedPreferenceValue(getContext(), SharedPreferencesEnum.DAILY_QUOTE.value(), c.getTimeInMillis() + "", String.class);
+                    }
+                });
+
                 newFragment.show(getFragmentManager(), "timePicker");
             }
         });
