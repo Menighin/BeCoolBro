@@ -5,6 +5,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
@@ -84,11 +85,12 @@ public class ZenQuoteIntentService extends IntentService {
 
                     try {
                         final NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext());
-                        builder.setContentTitle("Scheduled Notification")
+                        builder.setContentTitle(getResources().getString(R.string.daily_quote_title))
                                 .setAutoCancel(true)
                                 .setColor(getResources().getColor(R.color.colorAccent))
-                                .setContentText("This notification has been triggered by Notification Service")
-                                .setSmallIcon(R.mipmap.zensource_notification);
+                                .setContentText(getResources().getString(R.string.daily_quote_content) + " " + list.get(0).getAuthor())
+                                .setSmallIcon(R.mipmap.zensource_notification)
+                                .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.zensource_notification));
 
                         Intent intent = new Intent(getApplicationContext(), ZenCardZoomActivity.class);
                         intent.putExtra("image64encoded", list.get(0).getImage64encoded());
