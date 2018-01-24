@@ -109,7 +109,7 @@ public class ZenSourceUtils {
     public static long getMillisForNextDay(int hour, int minutes) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(new Date());
-        calendar.set(Calendar.HOUR, hour);
+        calendar.set(Calendar.HOUR_OF_DAY, hour);
         calendar.set(Calendar.MINUTE, minutes);
         return calendar.getTimeInMillis();
     }

@@ -9,6 +9,7 @@ import com.onsoftwares.zensource.enums.SharedPreferencesEnum;
 import com.onsoftwares.zensource.receivers.ZenQuoteReceiver;
 import com.onsoftwares.zensource.utils.ZenSourceUtils;
 
+import java.util.Calendar;
 import java.util.Locale;
 
 public class SplashActivity extends AppCompatActivity {
@@ -28,13 +29,18 @@ public class SplashActivity extends AppCompatActivity {
 
         // Setting up the daily quote reminder if it doesnt exists
         String alarmTimer = ZenSourceUtils.getSharedPreferencesValue(this, SharedPreferencesEnum.DAILY_QUOTE.value(), String.class);
+        boolean firstTime = false;
 
         if (alarmTimer == null) {
-            alarmTimer = ZenSourceUtils.getMillisForNextDay(22, 50) + "";
+            alarmTimer = ZenSourceUtils.getMillisForNextDay(9, 00) + "";
             ZenSourceUtils.setSharedPreferenceValue(this, SharedPreferencesEnum.DAILY_QUOTE.value(), alarmTimer, String.class);
+            firstTime = true;
         }
 
-        ZenQuoteReceiver.setupAlarm(this, Long.parseLong(alarmTimer));
+        Calendar today = Calendar.getInstance();
+
+        if (Long.parseLong(alarmTimer) > today.getTimeInMillis() || firstTime)
+            ZenQuoteReceiver.setupAlarm(this, Long.parseLong(alarmTimer), false);
 
     }
 

@@ -12,12 +12,14 @@ import android.view.View;
 
 import com.onsoftwares.zensource.R;
 import com.onsoftwares.zensource.activities.ZenCardZoomActivity;
+import com.onsoftwares.zensource.enums.SharedPreferencesEnum;
 import com.onsoftwares.zensource.fragments.HomeFragment;
 import com.onsoftwares.zensource.models.ZenCardModel;
 import com.onsoftwares.zensource.receivers.ZenQuoteReceiver;
 import com.onsoftwares.zensource.utils.ZenSourceUtils;
 import com.onsoftwares.zensource.utils.httputil.HttpUtil;
 
+import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -41,10 +43,23 @@ public class ZenQuoteIntentService extends IntentService {
             String action = intent.getAction();
             if (ACTION_START.equals(action)) {
                 processStartNotification();
+                resetAlarm();
             }
         } finally {
             ZenQuoteReceiver.completeWakefulIntent(intent);
         }
+    }
+
+    private void resetAlarm() {
+
+        String alarmTimer = ZenSourceUtils.getSharedPreferencesValue(this, SharedPreferencesEnum.DAILY_QUOTE.value(), String.class);
+        Calendar lastFired = Calendar.getInstance();
+        lastFired.setTimeInMillis(Long.parseLong(alarmTimer));
+
+        lastFired.add(Calendar.DATE, 1);
+
+        ZenQuoteReceiver.setupAlarm(this, lastFired.getTimeInMillis(), false);
+
     }
 
     public static Intent createIntentStartNotificationService(Context context) {

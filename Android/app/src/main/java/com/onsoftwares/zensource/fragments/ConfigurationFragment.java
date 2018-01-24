@@ -23,6 +23,7 @@ import com.onsoftwares.zensource.activities.MainActivity;
 import com.onsoftwares.zensource.components.TimePickerFragment;
 import com.onsoftwares.zensource.enums.LanguagesEnum;
 import com.onsoftwares.zensource.enums.SharedPreferencesEnum;
+import com.onsoftwares.zensource.receivers.ZenQuoteReceiver;
 import com.onsoftwares.zensource.utils.ZenSourceUtils;
 
 import java.util.ArrayList;
@@ -101,10 +102,13 @@ public class ConfigurationFragment extends Fragment {
 
                         // Save new value to preferences
                         Calendar c = Calendar.getInstance();
-                        c.set(Calendar.HOUR, hour);
+                        c.set(Calendar.HOUR_OF_DAY, hour);
                         c.set(Calendar.MINUTE, minute);
+                        c.set(Calendar.SECOND, 0);
                         mSavedTime = c;
                         ZenSourceUtils.setSharedPreferenceValue(getContext(), SharedPreferencesEnum.DAILY_QUOTE.value(), c.getTimeInMillis() + "", String.class);
+
+                        ZenQuoteReceiver.setupAlarm(getContext(), c.getTimeInMillis(), true);
                     }
                 });
 
