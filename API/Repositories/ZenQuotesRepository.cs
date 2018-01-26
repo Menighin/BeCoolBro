@@ -74,6 +74,7 @@ namespace ZenSource.Repositories
         {
             return _ctx.ZenQuotes
                 .Where(o => o.Id == id)
+                .Include(o => o.ZenQuoteTags)
                 .Include(o => o.ZenMessages)
                 .ThenInclude(o => o.Language)
                 .FirstOrDefault();
@@ -98,6 +99,16 @@ namespace ZenSource.Repositories
         {
             _ctx.ZenQuotes.Add(zenQuote);
             _ctx.SaveChanges();
+        }
+
+        public List<int> GetQuoteIds(string l = "EN")
+        {
+            var possibleQuotesByLanguage = _ctx.Set<ZenMessage>().Where(m => m.Language.Code.Equals(l, StringComparison.OrdinalIgnoreCase)).Select(m => m.IdZenQuote).ToList();
+
+            return _ctx.Set<ZenQuote>()
+                .Where(o => possibleQuotesByLanguage.Contains(o.Id))
+                .Select(o => o.Id)
+                .ToList();
         }
 
         internal void ValidateQuote(ZenController.ZenQuoteValidateModel quote)

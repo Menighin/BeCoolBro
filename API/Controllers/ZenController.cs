@@ -17,6 +17,7 @@ using System.Numerics;
 using Newtonsoft.Json;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using ZenSource.Utils;
 
 namespace ZenSource.Controllers
 {
@@ -92,11 +93,26 @@ namespace ZenSource.Controllers
             foreach (var v in viewModelList)
             {
                 var img = new ZenQuoteImage(v, _hostingEnvironment).GetImage();
-                var base64 = Convert.ToBase64String(ReadStream(img));
+                var base64 = Convert.ToBase64String(ZenSourceUtil.ReadStream(img));
                 v.Image64Encoded = base64;
             }
 
             return Json(viewModelList);
+        }
+
+        [HttpGet("randomQuote")]
+        public IActionResult RandomQuote(string l = "EN")
+        {
+            var ids = _repository.GetQuoteIds(l);
+            var max = ids.Count;
+
+            var randomNum = new Random().Next(0, max);
+
+            var quote = _repository.GetById(ids[randomNum]);
+
+            var quoteImage = ZenQuoteConverter.Convert(quote, l, _hostingEnvironment);
+
+            return Json(quoteImage);
 
         }
 
@@ -178,36 +194,6 @@ namespace ZenSource.Controllers
             _repository.Save(zenQuote);
         }
 
-        private byte[] ReadStream(Stream stream, int initialLength = 0)
-        {
-            if (initialLength < 1)
-            {
-                initialLength = 32768;
-            }
-            byte[] buffer = new byte[initialLength];
-            int read = 0;
-            int chunk;
-            while ((chunk = stream.Read(buffer, read, buffer.Length - read)) > 0)
-            {
-                read += chunk;
-                if (read == buffer.Length)
-                {
-                    int nextByte = stream.ReadByte();
-                    if (nextByte == -1)
-                    {
-                        return buffer;
-                    }
-                    byte[] newBuffer = new byte[buffer.Length * 2];
-                    Array.Copy(buffer, newBuffer, buffer.Length);
-                    newBuffer[read] = (byte)nextByte;
-                    buffer = newBuffer;
-                    read++;
-                }
-            }
-            byte[] bytes = new byte[read];
-            Array.Copy(buffer, bytes, read);
-            return bytes;
-        }
 
         public class ZenQuotePostModel
         {
