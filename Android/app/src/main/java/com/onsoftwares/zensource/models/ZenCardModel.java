@@ -171,4 +171,23 @@ public class ZenCardModel implements IHttpResponseConverter<List<ZenCardModel>> 
 
         return list;
     }
+
+    public static class SingleItemConverter implements IHttpResponseConverter<ZenCardModel> {
+        @Override
+        public ZenCardModel convertHttpResponse(String response) throws JSONException {
+            JSONObject j = new JSONObject(response);
+
+            int id = j.getInt("id");
+            String message = j.getString("message");
+            String author = j.getString("author");
+            String language = j.getString("language");
+            String image64encoded = j.getString("image64Encoded");
+            int likes = j.getInt("likes");
+            int dislikes = j.getInt("dislikes");
+
+            return new ZenCardModel(id, message, author, language, image64encoded, likes, dislikes);
+
+        }
+    }
+
 }

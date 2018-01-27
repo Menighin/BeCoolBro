@@ -74,12 +74,12 @@ public class ZenQuoteIntentService extends IntentService {
 
         // Get random quote and show in notification
         HttpUtil.Builder()
-            .withUrl("http://zensource-dev.sa-east-1.elasticbeanstalk.com/api/zen/images")
+            .withUrl("http://zensource-dev.sa-east-1.elasticbeanstalk.com/api/zen/randomQuote")
             .addQueryParameter("l", ZenSourceUtils.getLanguageAPICode(getApplicationContext()))
-            .withConverter(new ZenCardModel())
-            .ifSuccess(new HttpUtil.CallbackConverted<List<ZenCardModel>>() {
+            .withConverter(new ZenCardModel.SingleItemConverter())
+            .ifSuccess(new HttpUtil.CallbackConverted<ZenCardModel>() {
                 @Override
-                public void callback(final List<ZenCardModel> list) {
+                public void callback(final ZenCardModel zenCard) {
 
                     Log.i("Broadcast", "Returned from random Quote");
 
@@ -88,12 +88,13 @@ public class ZenQuoteIntentService extends IntentService {
                         builder.setContentTitle(getResources().getString(R.string.daily_quote_title))
                                 .setAutoCancel(true)
                                 .setColor(getResources().getColor(R.color.colorAccent))
-                                .setContentText(getResources().getString(R.string.daily_quote_content) + " " + list.get(0).getAuthor())
+                                .setContentText(getResources().getString(R.string.daily_quote_content) + " " + zenCard.getAuthor())
                                 .setSmallIcon(R.mipmap.zensource_notification)
+                                .setVibrate(new long[] { 1000, 1000, 500})
                                 .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.zensource_notification));
 
                         Intent intent = new Intent(getApplicationContext(), ZenCardZoomActivity.class);
-                        intent.putExtra("image64encoded", list.get(0).getImage64encoded());
+                        intent.putExtra("image64encoded", zenCard.getImage64encoded());
 
                         PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(),
                                 NOTIFICATION_ID,
