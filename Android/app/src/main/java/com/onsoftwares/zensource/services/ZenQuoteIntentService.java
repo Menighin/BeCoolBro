@@ -59,6 +59,8 @@ public class ZenQuoteIntentService extends IntentService {
 
         lastFired.add(Calendar.DATE, 1);
 
+        ZenSourceUtils.setSharedPreferenceValue(this, SharedPreferencesEnum.DAILY_QUOTE.value(), lastFired.getTimeInMillis() + "", String.class);
+        
         ZenQuoteReceiver.setupAlarm(this, lastFired.getTimeInMillis(), false);
 
     }
