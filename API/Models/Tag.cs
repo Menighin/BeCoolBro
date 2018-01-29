@@ -14,11 +14,15 @@ namespace ZenSource.Models
         [MaxLength(20)]
         public string Name { get; set; }
 
-        [Required]
         [MaxLength(20)]
         public string Color { get; set; }
 
         public ICollection<ZenQuoteTag> ZenQuoteTags { get; set; }
+
+        public Tag()
+        {
+            Color = "";
+        }
 
     }
 }

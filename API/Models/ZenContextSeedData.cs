@@ -16,6 +16,12 @@ namespace ZenSource.Models
 
         public void Seed()
         {
+
+
+            #if SEED
+            SeedData.Seed(_context);
+            #endif 
+
             if (!_context.Languages.Any())
             {
                 _context.Languages.Add(new Language()

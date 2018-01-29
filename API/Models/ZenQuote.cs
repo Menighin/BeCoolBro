@@ -33,5 +33,12 @@ namespace ZenSource.Models
 
         public long Dislikes { get; set; }
 
+        public ZenQuote()
+        {
+            CreatedOn = new DateTime();
+            Likes = 0;
+            Dislikes = 0;
+            Valid = true;
+        }
     }
 }
