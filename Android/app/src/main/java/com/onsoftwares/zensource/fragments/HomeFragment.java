@@ -181,7 +181,7 @@ public class HomeFragment extends FragmentWithNavigation implements OnLoadMoreLi
             if (this.search != null)
                 httpBuilder.addQueryParameter("search", search);
 
-            super.deactivateNavigation();
+            // super.deactivateNavigation();
 
             httpBuilder
                     .withConverter(new ZenCardModel())
@@ -194,7 +194,7 @@ public class HomeFragment extends FragmentWithNavigation implements OnLoadMoreLi
                                     @Override
                                     public void run() {
 
-                                        HomeFragment.super.activateNavigation();
+                                        // HomeFragment.super.activateNavigation();
 
                                         //Remove loading item
                                         homeCardsList.remove(homeCardsList.size() - 1);
@@ -217,7 +217,7 @@ public class HomeFragment extends FragmentWithNavigation implements OnLoadMoreLi
                     .ifFail(new HttpUtil.CallbackConverted<List<ZenCardModel>>() {
                         @Override
                         public void callback(List<ZenCardModel> response) {
-                            HomeFragment.super.activateNavigation();
+                            //HomeFragment.super.activateNavigation();
                         }
                     })
                     .makeGet();
@@ -376,7 +376,7 @@ public class HomeFragment extends FragmentWithNavigation implements OnLoadMoreLi
         loading = true;
         recyclerAdapter.setLoading(true);
 
-        super.deactivateNavigation();
+        //super.deactivateNavigation();
 
         HttpUtil.Builder httpBuilder = HttpUtil.Builder()
             .withUrl("http://zensource-dev.sa-east-1.elasticbeanstalk.com/api/zen/images")
@@ -395,7 +395,7 @@ public class HomeFragment extends FragmentWithNavigation implements OnLoadMoreLi
                             @Override
                             public void run() {
 
-                                HomeFragment.super.activateNavigation();
+                                //HomeFragment.super.activateNavigation();
 
                                 setZenCardLikedState(list);
 
@@ -433,7 +433,7 @@ public class HomeFragment extends FragmentWithNavigation implements OnLoadMoreLi
             .ifFail(new HttpUtil.CallbackConverted<List<ZenCardModel>>() {
                 @Override
                 public void callback(List<ZenCardModel> response) {
-                    HomeFragment.super.activateNavigation();
+                    //HomeFragment.super.activateNavigation();
                 }
             })
             .makeGet();

@@ -104,7 +104,7 @@ public class LikedQuotesFragment extends FragmentWithNavigation implements OnLoa
 
         if (likedQuoteIds != null && likedQuoteIds.length() > 0) {
 
-            super.deactivateNavigation();
+           // super.deactivateNavigation();
 
             // Request for the data of the recycler view
             progressBar.setVisibility(View.VISIBLE);
@@ -124,7 +124,7 @@ public class LikedQuotesFragment extends FragmentWithNavigation implements OnLoa
                                     @Override
                                     public void run() {
 
-                                        LikedQuotesFragment.super.activateNavigation();
+                                        //LikedQuotesFragment.super.activateNavigation();
 
                                         // Setting all as liked
                                         for (int i = 0; i < list.size(); i++) {
@@ -152,7 +152,7 @@ public class LikedQuotesFragment extends FragmentWithNavigation implements OnLoa
                     .ifFail(new HttpUtil.CallbackConverted<List<ZenCardModel>>() {
                         @Override
                         public void callback(List<ZenCardModel> response) {
-                            LikedQuotesFragment.super.activateNavigation();
+                            //LikedQuotesFragment.super.activateNavigation();
                         }
                     })
                     .makeGet();
@@ -169,7 +169,7 @@ public class LikedQuotesFragment extends FragmentWithNavigation implements OnLoa
 
             recyclerAdapter.notifyItemInserted(likedList.size() - 1);
 
-            super.deactivateNavigation();
+            //super.deactivateNavigation();
 
             HttpUtil.Builder httpBuilder = HttpUtil.Builder()
                     .withUrl("http://zensource-dev.sa-east-1.elasticbeanstalk.com/api/zen/images")
@@ -187,7 +187,7 @@ public class LikedQuotesFragment extends FragmentWithNavigation implements OnLoa
                                     @Override
                                     public void run() {
 
-                                        LikedQuotesFragment.super.activateNavigation();
+                                        //LikedQuotesFragment.super.activateNavigation();
 
                                         //Remove loading item
                                         likedList.remove(likedList.size() - 1);
@@ -212,7 +212,7 @@ public class LikedQuotesFragment extends FragmentWithNavigation implements OnLoa
                     .ifFail(new HttpUtil.CallbackConverted<List<ZenCardModel>>() {
                         @Override
                         public void callback(List<ZenCardModel> response) {
-                            LikedQuotesFragment.super.activateNavigation();
+                            //LikedQuotesFragment.super.activateNavigation();
                         }
                     })
                     .makeGet();
