@@ -20,7 +20,7 @@ namespace ZenSource.Repositories
 
         public IEnumerable<ZenQuote> GetAll(string search = null, List<int> ids = null, List<int> tags = null, int? page = null, string language = null, bool? valid = null)
         {
-            var query = _ctx.Set<ZenQuote>().AsQueryable();
+            var query = _ctx.Set<ZenQuote>().OrderByDescending(z => z.CreatedOn).AsQueryable();
 
             if (search != null)
             {
@@ -63,7 +63,8 @@ namespace ZenSource.Repositories
                 .Include(o => o.ZenMessages)
                 .ThenInclude(o => o.Language)
                 .Include(o => o.ZenQuoteTags)
-                .ThenInclude(o => o.Tag);
+                .ThenInclude(o => o.Tag)
+                ;
 
             return query
                 .ToList();

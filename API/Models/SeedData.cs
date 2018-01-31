@@ -25,8 +25,6 @@ namespace ZenSource.Models
             context.ZenQuotes.AddRange(GetQuotes1());
             context.SaveChanges();
 
-
-
         }
 
         private static List<Tag> GetTags()

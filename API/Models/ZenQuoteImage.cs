@@ -28,25 +28,16 @@ namespace ZenSource.Models
         public static int IMAGE_WIDTH = 1024;
         public static int IMAGE_HEIGHT = 576;
 
-        private List<Tuple<int, int>> _fontMaps = new List<Tuple<int, int>>()
-        {
-            new Tuple<int, int>(56, 34),
-            new Tuple<int, int>(48, 29),
-            new Tuple<int, int>(42, 25),
-            new Tuple<int, int>(36, 22),
-            new Tuple<int, int>(30, 19)
-        };
-        
         public ZenQuoteImage(IZenDrawable drawable, IHostingEnvironment _hostingEnvironment)
         {
-
             Random rdn = new Random();
             var quoteBackground = rdn.Next(1, BACK_NUM + 1);
 
             _image = Image.Load($"{_hostingEnvironment.ContentRootPath}\\wwwroot\\img\\back{quoteBackground}.jpg");
 
             _fonts = new FontCollection();
-            _font = _fonts.Install($"{_hostingEnvironment.ContentRootPath}\\wwwroot\\fonts\\Cousine-Italic.ttf");
+            //_font = _fonts.Install($"{_hostingEnvironment.ContentRootPath}\\wwwroot\\fonts\\Cousine-Italic.ttf");
+            _font = _fonts.Install($"{_hostingEnvironment.ContentRootPath}\\wwwroot\\fonts\\Flamante-Roma-Medium.ttf");
             _fontAuthor = new Font(_fonts.Install($"{_hostingEnvironment.ContentRootPath}\\wwwroot\\fonts\\Cousine.ttf"), 30);
 
             DrawText(drawable);
@@ -63,11 +54,9 @@ namespace ZenSource.Models
 
         private void DrawText(IZenDrawable drawable)
         {
-            var FONT_WIDTH = _fontMaps[0].Item2;
-            var FONT_SIZE = _fontMaps[0].Item1;
+            var FONT_SIZE = 56;
             var X_TRANSLATE = 40;
             var Y_TRANSLATE = 40;
-            var LINE_HEIGHT = _fontMaps[0].Item1 - 2;
             var MAX_WIDTH = 940;
             var MAX_HEIGHT = 492 - 30; // 30 is for Author name
 
@@ -80,7 +69,7 @@ namespace ZenSource.Models
 
             while(true)
             {
-                var renderOptions = new RendererOptions(font, 72) {WrappingWidth = textOptions.WrapTextWidth };
+                var renderOptions = new RendererOptions(font, 72) { WrappingWidth = textOptions.WrapTextWidth };
                 var textMeasure = TextMeasurer.Measure(quote, renderOptions);
                 currentHeight = textMeasure.Height;
                 currentWidth = textMeasure.Width;
@@ -95,7 +84,9 @@ namespace ZenSource.Models
             }
 
             var yDraw = (MAX_HEIGHT - currentHeight) > Y_TRANSLATE * 2 ? IMAGE_HEIGHT / 2 - Y_TRANSLATE * 2 : IMAGE_HEIGHT / 2;
-            _image.DrawText(quote, font, Brushes.Solid(Rgba32.White), Pens.Solid(Rgba32.DimGray, 1), new Vector2(X_TRANSLATE, yDraw), textOptions);
+
+            //_image.DrawText(quote, font, Brushes.Solid(Rgba32.White), Pens.Solid<Rgba32>(new SolidBrush<Rgba32>(Rgba32.Black), 1), new Vector2(X_TRANSLATE, yDraw), textOptions);
+            _image.DrawText(quote, font, Brushes.Solid(Rgba32.White), Pens.Solid(Rgba32.Black, 1), new Vector2(X_TRANSLATE, yDraw), textOptions);
 
             // Drawing Author name
             textOptions = new TextGraphicsOptions() { HorizontalAlignment = HorizontalAlignment.Right, VerticalAlignment = VerticalAlignment.Top };
